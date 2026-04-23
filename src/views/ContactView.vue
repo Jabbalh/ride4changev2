@@ -5,7 +5,7 @@
       <div class="container">
         <span class="overline">Nous contacter</span>
         <h1>CONTACT</h1>
-        <p>Une question, envie de nous rejoindre ? On vous répond sous 48h.</p>
+        <p>Une question, envie de nous rejoindre ?</p>
       </div>
     </section>
 
@@ -19,7 +19,7 @@
               <span>✅</span>
               <div>
                 <strong>Message envoyé !</strong>
-                <p>Nous vous répondrons dans les 48 heures.</p>
+                <p>Nous vous répondrons.</p>
               </div>
             </div>
             <form v-else @submit.prevent="handleSubmit" class="form">
@@ -75,32 +75,32 @@
               </div>
             </div>
 
-            <div class="info-card">
-              <h3>Réunions mensuelles</h3>
-              <p>Tous les premiers samedis du mois à 10h au garage du club.</p>
-              <p style="margin-top:0.5rem;color:var(--grey);">Ouvertes aux sympathisants sur invitation.</p>
-            </div>
+<!--            <div class="info-card">-->
+<!--              <h3>Réunions mensuelles</h3>-->
+<!--              <p>Tous les premiers samedis du mois à 10h au garage du club.</p>-->
+<!--              <p style="margin-top:0.5rem;color:var(&#45;&#45;grey);">Ouvertes aux sympathisants sur invitation.</p>-->
+<!--            </div>-->
 
             <div class="info-card social-card">
               <h3>Suivez-nous</h3>
               <div class="social-row">
-                <a href="#" class="social-btn">Facebook</a>
-                <a href="#" class="social-btn">Instagram</a>
-                <a href="#" class="social-btn">YouTube</a>
+                <a href="https://www.facebook.com/profile.php?id=61573516003975" target="_blank" class="social-btn">Facebook</a>
+                <a href="https://www.instagram.com/ride4change_ludo_et_paule/" target="_blank" class="social-btn">Instagram</a>
+                <a href="https://www.tiktok.com/@ride4change" target="_blank" class="social-btn">Tiktok</a>
               </div>
             </div>
 
-            <div class="adhesion-cta">
-              <span class="overline-label">Prêt à nous rejoindre ?</span>
-              <h3>Cotisation annuelle</h3>
-              <div class="price">80 <span>€ / an</span></div>
-              <ul>
-                <li>✅ Accès à toutes les sorties</li>
-                <li>✅ Assurance groupe</li>
-                <li>✅ Gilet officiel</li>
-                <li>✅ Newsletter & agenda prioritaire</li>
-              </ul>
-            </div>
+<!--            <div class="adhesion-cta">-->
+<!--              <span class="overline-label">Prêt à nous rejoindre ?</span>-->
+<!--              <h3>Cotisation annuelle</h3>-->
+<!--              <div class="price">80 <span>€ / an</span></div>-->
+<!--              <ul>-->
+<!--                <li>✅ Accès à toutes les sorties</li>-->
+<!--                <li>✅ Assurance groupe</li>-->
+<!--                <li>✅ Gilet officiel</li>-->
+<!--                <li>✅ Newsletter & agenda prioritaire</li>-->
+<!--              </ul>-->
+<!--            </div>-->
           </div>
         </div>
       </div>
@@ -120,10 +120,9 @@ const handleSubmit = () => {
 }
 
 const infos = [
-  { icon:'📍', label:'Adresse', value:'Zone Industrielle Nord, 13200 Arles' },
-  { icon:'📧', label:'Email', value:'contact@iron-brotherhood.fr' },
-  { icon:'📞', label:'Téléphone', value:'+33 4 90 00 00 00' },
-  { icon:'🕐', label:'Permanence', value:'Sam. 10h–12h & 14h–17h' },
+  { icon:'📍', label:'Adresse', value:'24 rue Maurice, 35290 Saint Meen le Grand' },
+  { icon:'📧', label:'Email', value:'1ride4change@gmail.com' },
+  { icon:'📞', label:'Téléphone', value:'+33 00 00 00 00 00' }
 ]
 </script>
 
