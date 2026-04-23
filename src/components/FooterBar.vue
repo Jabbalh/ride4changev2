@@ -60,14 +60,7 @@ const links = [
 .footer-logo span { font-family: 'Barlow Condensed',sans-serif; letter-spacing: 0.15em; text-transform: uppercase; font-size: 1rem; }
 .footer-logo strong { color: var(--red); }
 .footer-brand p { color: var(--grey); font-size: 0.9rem; line-height: 1.7; margin-bottom: 1.5rem; }
-.social-links { display: flex; gap: 0.75rem; }
-.social-links a {
-  width: 38px; height: 38px; border: 1px solid rgba(255,255,255,0.15);
-  display: flex; align-items: center; justify-content: center;
-  font-family: 'Barlow Condensed',sans-serif; font-size: 0.75rem; letter-spacing: 0.05em;
-  color: var(--grey); transition: all 0.3s;
-}
-.social-links a:hover { border-color: var(--red); color: var(--red); }
+
 .footer-nav h4, .footer-contact h4 {
   font-family: 'Barlow Condensed',sans-serif; letter-spacing: 0.2em;
   text-transform: uppercase; font-size: 0.8rem; color: var(--red);

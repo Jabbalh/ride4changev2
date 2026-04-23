@@ -21,6 +21,14 @@
           <router-link to="/association" class="btn btn-primary">Découvrir l'asso</router-link>
           <router-link to="/galerie" class="btn btn-outline">Voir la galerie</router-link>
         </div>
+<!--        <div class="hero-actions">-->
+<!--          <span class="stat-label">Nous suivre: </span>-->
+<!--          <div class="social-links">-->
+<!--            <a href="https://www.facebook.com/profile.php?id=61573516003975" target="_blank" aria-label="Facebook">FB</a>-->
+<!--            <a href="https://www.instagram.com/ride4change_ludo_et_paule/" target="_blank" aria-label="Instagram">IG</a>-->
+<!--            <a href="https://www.tiktok.com/@ride4change" target="_blank" aria-label="Tiktok">TT</a>-->
+<!--          </div>-->
+<!--        </div>-->
         <div class="hero-stats">
           <div v-for="s in stats" :key="s.label" class="stat">
             <span class="stat-value">{{ s.value }}</span>
@@ -211,7 +219,7 @@ const testimonials = [
   padding-left: 0.25em;
   font-family: 'Bebas Neue',sans-serif;
   font-size: clamp(2rem, 3vw, 3rem);
-  color: transparent; -webkit-text-stroke: 2px rgba(255,255,255,0.2);
+  color: transparent; -webkit-text-stroke: 2px rgba(255,255,255,0.8);
   letter-spacing: 0.3em;
 }
 .hero-sub {
