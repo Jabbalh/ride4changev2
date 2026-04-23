@@ -1,0 +1,1 @@
+export type Photo = { id: number, cat: string, size: string, emoji: string, bg: string, tag: string,title: string, date: string, desc: string}

@@ -1,0 +1,200 @@
+/* ===== IRON ROAD MC — DESIGN SYSTEM ===== */
+:root {
+  --rouge: #e63312;
+  --rouge-sombre: #b8200a;
+  --noir: #0a0a0a;
+  --noir-medium: #141414;
+  --noir-soft: #1e1e1e;
+  --gris-acier: #2a2a2a;
+  --gris-clair: #888;
+  --blanc: #f5f0eb;
+  --blanc-pur: #ffffff;
+  --or: #c9a84c;
+
+  --font-display: 'Bebas Neue', sans-serif;
+  --font-heading: 'Barlow Condensed', sans-serif;
+  --font-body: 'Barlow', sans-serif;
+
+  --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --shadow-red: 0 0 40px rgba(230, 51, 18, 0.25);
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-body);
+  background: var(--noir);
+  color: var(--blanc);
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--noir); }
+::-webkit-scrollbar-thumb { background: var(--rouge); border-radius: 3px; }
+
+/* Typography */
+h1, h2, h3, h4 {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: 0.02em;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+/* Utility classes */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+.section-title {
+  font-family: var(--font-display);
+  font-size: clamp(2.5rem, 6vw, 4.5rem);
+  letter-spacing: 0.05em;
+  color: var(--blanc);
+  position: relative;
+  display: inline-block;
+}
+
+.section-title span {
+  color: var(--rouge);
+}
+
+.section-title::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 0;
+  width: 60px;
+  height: 3px;
+  background: var(--rouge);
+}
+
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  background: var(--rouge);
+  color: var(--blanc-pur);
+  font-family: var(--font-heading);
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 0.85rem 2rem;
+  border: 2px solid var(--rouge);
+  cursor: pointer;
+  transition: var(--transition);
+  clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
+}
+
+.btn-primary:hover {
+  background: transparent;
+  color: var(--rouge);
+  box-shadow: var(--shadow-red);
+}
+
+.btn-outline {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  background: transparent;
+  color: var(--blanc);
+  font-family: var(--font-heading);
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 0.85rem 2rem;
+  border: 2px solid var(--gris-acier);
+  cursor: pointer;
+  transition: var(--transition);
+  clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
+}
+
+.btn-outline:hover {
+  border-color: var(--rouge);
+  color: var(--rouge);
+}
+
+/* Page wrapper */
+.page-wrapper {
+  min-height: 100vh;
+}
+
+/* Page header banner */
+.page-banner {
+  padding: 8rem 0 4rem;
+  background: var(--noir-medium);
+  border-bottom: 1px solid var(--gris-acier);
+  position: relative;
+  overflow: hidden;
+}
+
+.page-banner::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    -45deg,
+    transparent,
+    transparent 40px,
+    rgba(230, 51, 18, 0.03) 40px,
+    rgba(230, 51, 18, 0.03) 41px
+  );
+}
+
+.page-banner-content {
+  position: relative;
+  z-index: 1;
+}
+
+.page-banner-label {
+  font-family: var(--font-heading);
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--rouge);
+  margin-bottom: 0.75rem;
+}
+
+/* Animations */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.animate-in {
+  animation: fadeInUp 0.7s ease forwards;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .container { padding: 0 1.25rem; }
+}
