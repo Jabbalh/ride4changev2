@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Ride 4 Change</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;}
+  :root{--red:#E24B4A;--red-dark:#A32D2D;--black:#111;--gray:#1a1a1a;--gray2:#222;--gray3:#333;--text:#f0f0f0;--muted:#aaa;}
+  body{background:#111;color:#f0f0f0;font-family:'Segoe UI',system-ui,sans-serif;overflow-x:hidden;}
+  a{color:inherit;text-decoration:none;}
+
+  /* NAV */
+  nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:1rem 2.5rem;background:rgba(17,17,17,0.92);backdrop-filter:blur(8px);border-bottom:1px solid #2a2a2a;}
+  .logo{font-size:1.3rem;font-weight:700;letter-spacing:1px;}
+  .logo span{color:var(--red);}
+  .nav-links{display:flex;gap:2rem;font-size:.9rem;color:#ccc;}
+  .nav-links a:hover{color:var(--red);transition:color .2s;}
+  .nav-cta{background:var(--red);color:#fff;padding:.5rem 1.2rem;border-radius:4px;font-size:.85rem;font-weight:600;letter-spacing:.5px;transition:background .2s;}
+  .nav-cta:hover{background:var(--red-dark);}
+
+  /* HERO */
+  .hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:6rem 2rem 4rem;position:relative;overflow:hidden;}
+  .hero-bg{position:absolute;inset:0;background:radial-gradient(ellipse at 60% 40%, #2a0a0a 0%, #111 60%);}
+  .hero-line{position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,transparent,var(--red),transparent);}
+  .hero-content{position:relative;z-index:1;}
+  .hero-badge{display:inline-block;background:rgba(226,75,74,.15);border:1px solid var(--red);color:var(--red);font-size:.75rem;letter-spacing:2px;padding:.3rem 1rem;border-radius:2px;margin-bottom:1.5rem;text-transform:uppercase;}
+  .hero h1{font-size:clamp(3rem,8vw,6rem);font-weight:800;letter-spacing:-1px;line-height:1;margin-bottom:1rem;}
+  .hero h1 span{color:var(--red);}
+  .hero p{font-size:1.15rem;color:#bbb;max-width:560px;margin:0 auto 2.5rem;line-height:1.7;}
+  .btn{display:inline-block;padding:.85rem 2rem;border-radius:4px;font-weight:600;font-size:.95rem;letter-spacing:.5px;transition:all .2s;cursor:pointer;}
+  .btn-red{background:var(--red);color:#fff;}
+  .btn-red:hover{background:var(--red-dark);}
+  .btn-outline{border:1px solid #555;color:#ccc;margin-left:1rem;}
+  .btn-outline:hover{border-color:var(--red);color:var(--red);}
+  .hero-scroll{position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:.5rem;color:#555;font-size:.75rem;letter-spacing:1px;}
+  .scroll-dot{width:4px;height:4px;background:var(--red);border-radius:50%;animation:bounce 1.5s infinite;}
+  @keyframes bounce{0%,100%{transform:translateY(0);}50%{transform:translateY(6px);}}
+
+  /* STATS */
+  .stats{display:grid;grid-template-columns:repeat(3,1fr);background:#161616;border-top:1px solid #222;border-bottom:1px solid #222;}
+  .stat{padding:2rem;text-align:center;border-right:1px solid #222;}
+  .stat:last-child{border-right:none;}
+  .stat-num{font-size:2.5rem;font-weight:800;color:var(--red);}
+  .stat-label{font-size:.8rem;color:#888;letter-spacing:1px;text-transform:uppercase;margin-top:.25rem;}
+
+  /* SECTIONS */
+  section{padding:5rem 2rem;}
+  .container{max-width:1000px;margin:0 auto;}
+  .section-tag{font-size:.7rem;letter-spacing:3px;color:var(--red);text-transform:uppercase;margin-bottom:.75rem;}
+  .section-title{font-size:clamp(1.8rem,4vw,2.8rem);font-weight:700;margin-bottom:1.5rem;line-height:1.2;}
+  .section-title span{color:var(--red);}
+
+  /* PRÉSENTATION */
+  #presentation{background:#111;}
+  .pres-grid{display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:center;}
+  .pres-text p{color:#aaa;line-height:1.8;margin-bottom:1.2rem;font-size:1rem;}
+  .pres-visual{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
+  .pres-card{background:#1a1a1a;border:1px solid #2a2a2a;border-radius:8px;padding:1.5rem;text-align:center;}
+  .pres-card-icon{font-size:2rem;margin-bottom:.75rem;}
+  .pres-card h4{font-size:.9rem;font-weight:600;margin-bottom:.5rem;}
+  .pres-card p{font-size:.8rem;color:#777;line-height:1.5;}
+  .accent-bar{width:50px;height:3px;background:var(--red);margin:1.5rem 0;}
+
+  /* GALERIE */
+  #galerie{background:#0e0e0e;}
+  .gallery-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-top:3rem;}
+  .gallery-item{border-radius:6px;overflow:hidden;aspect-ratio:4/3;background:#1a1a1a;border:1px solid #222;position:relative;display:flex;align-items:center;justify-content:center;}
+  .gallery-item.large{grid-column:span 2;aspect-ratio:16/9;}
+  .gallery-placeholder{width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.5rem;}
+  .gp-icon{width:40px;height:40px;border-radius:50%;background:#2a2a2a;display:flex;align-items:center;justify-content:center;}
+  .gp-icon svg{width:20px;height:20px;fill:#555;}
+  .gallery-label{font-size:.75rem;color:#555;letter-spacing:1px;}
+  .gallery-overlay{position:absolute;inset:0;background:rgba(226,75,74,.08);opacity:0;transition:opacity .2s;}
+  .gallery-item:hover .gallery-overlay{opacity:1;}
+
+  /* A PROPOS */
+  #apropos{background:#111;}
+  .apropos-grid{display:grid;grid-template-columns:1fr 1.2fr;gap:4rem;align-items:start;}
+  .team-cards{display:flex;flex-direction:column;gap:1rem;}
+  .team-card{display:flex;align-items:center;gap:1rem;background:#1a1a1a;border:1px solid #2a2a2a;border-radius:8px;padding:1rem 1.25rem;}
+  .avatar{width:44px;height:44px;border-radius:50%;background:#2a1010;border:2px solid var(--red);display:flex;align-items:center;justify-content:center;font-size:.85rem;font-weight:700;color:var(--red);flex-shrink:0;}
+  .team-info p{font-size:.85rem;font-weight:600;}
+  .team-info span{font-size:.75rem;color:#777;}
+  .values{display:flex;flex-direction:column;gap:.75rem;margin-top:1.5rem;}
+  .value-item{display:flex;align-items:center;gap:.75rem;font-size:.95rem;color:#ccc;}
+  .value-dot{width:8px;height:8px;background:var(--red);border-radius:50%;flex-shrink:0;}
+  .apropos-text p{color:#aaa;line-height:1.8;margin-bottom:1rem;font-size:1rem;}
+
+  /* CONTACT */
+  #contact{background:#0e0e0e;}
+  .contact-grid{display:grid;grid-template-columns:1fr 1.2fr;gap:4rem;align-items:start;}
+  .contact-info{display:flex;flex-direction:column;gap:1.25rem;}
+  .contact-item{display:flex;align-items:center;gap:1rem;padding:1rem 1.25rem;background:#1a1a1a;border:1px solid #2a2a2a;border-radius:8px;}
+  .c-icon{width:36px;height:36px;background:#2a1010;border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .c-icon svg{width:18px;height:18px;fill:var(--red);}
+  .c-text p{font-size:.85rem;font-weight:600;}
+  .c-text span{font-size:.8rem;color:#777;}
+  .contact-form{display:flex;flex-direction:column;gap:1rem;}
+  .form-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
+  input,textarea{width:100%;background:#1a1a1a;border:1px solid #2a2a2a;border-radius:6px;padding:.8rem 1rem;color:#f0f0f0;font-size:.9rem;font-family:inherit;outline:none;transition:border-color .2s;}
+  input:focus,textarea:focus{border-color:var(--red);}
+  input::placeholder,textarea::placeholder{color:#555;}
+  textarea{resize:vertical;min-height:120px;}
+  .submit-btn{background:var(--red);color:#fff;border:none;padding:.9rem;border-radius:6px;font-size:.95rem;font-weight:600;letter-spacing:.5px;cursor:pointer;transition:background .2s;}
+  .submit-btn:hover{background:var(--red-dark);}
+
+  /* FOOTER */
+  footer{background:#0a0a0a;border-top:1px solid #1e1e1e;padding:2rem 2.5rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;}
+  .footer-logo{font-size:1.1rem;font-weight:700;}
+  .footer-logo span{color:var(--red);}
+  .footer-copy{font-size:.8rem;color:#555;}
+  .footer-links{display:flex;gap:1.5rem;font-size:.8rem;color:#666;}
+  .footer-links a:hover{color:var(--red);}
+  .social-btn{display:inline-flex;align-items:center;gap:.4rem;background:#1a1a1a;border:1px solid #2a2a2a;color:#ccc;padding:.5rem 1rem;border-radius:6px;font-size:.82rem;font-weight:500;transition:all .2s;}
+  .social-btn:hover{border-color:var(--red);color:var(--red);}
+  .social-float{position:fixed;right:1.25rem;top:50%;transform:translateY(-50%);z-index:200;display:flex;flex-direction:column;gap:.6rem;}
+  .social-float a{width:38px;height:38px;background:#1a1a1a;border:1px solid #2a2a2a;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#aaa;transition:all .2s;}
+  .social-float a:hover{background:#2a1010;border-color:var(--red);color:var(--red);transform:scale(1.1);}
+  @media(max-width:768px){.social-float{right:.5rem;}}
+
+  /* ANIMATIONS */
+  .fade-in{opacity:0;transform:translateY(24px);transition:opacity .6s ease,transform .6s ease;}
+  .fade-in.visible{opacity:1;transform:none;}
+
+  @media(max-width:768px){
+    .pres-grid,.apropos-grid,.contact-grid{grid-template-columns:1fr;}
+    .gallery-grid{grid-template-columns:1fr 1fr;}
+    .gallery-item.large{grid-column:span 2;}
+    nav .nav-links{display:none;}
+    .form-row{grid-template-columns:1fr;}
+    .stats{grid-template-columns:1fr;}
+    .stat{border-right:none;border-bottom:1px solid #222;}
+  }
+</style>
+</head>
+<body>
+
+<!-- SOCIAL FLOAT -->
+<div class="social-float">
+  <a href="https://facebook.com" target="_blank" title="Facebook">
+    <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+  </a>
+  <a href="https://tiktok.com" target="_blank" title="TikTok">
+    <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 0 0-.79-.05 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.33-6.34V8.69a8.18 8.18 0 0 0 4.78 1.52V6.75a4.85 4.85 0 0 1-1.01-.06z"/></svg>
+  </a>
+  <a href="https://instagram.com" target="_blank" title="Instagram">
+    <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><rect x="2" y="2" width="20" height="20" rx="5"/><path fill="#1a1a1a" d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5" stroke="#1a1a1a" stroke-width="2" stroke-linecap="round"/></svg>
+  </a>
+</div>
+
+<!-- NAV -->
+<nav>
+  <div class="logo">RIDE<span>4</span>CHANGE</div>
+  <div class="nav-links">
+    <a href="#presentation">Présentation</a>
+    <a href="#galerie">Galerie</a>
+    <a href="#apropos">À propos</a>
+    <a href="#contact">Contact</a>
+  </div>
+  <a href="#contact" class="nav-cta">Nous rejoindre</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-line"></div>
+  <div class="hero-content fade-in visible">
+    <div class="hero-badge">Association Handi-Sport Moto</div>
+    <h1>Rouler sans <span>limites</span></h1>
+    <p>Ride 4 Change prouve que le handicap n'est pas un obstacle à la liberté. Ensemble, nous ouvrons la route à tous les passionnés de moto.</p>
+    <div>
+      <a href="#contact" class="btn btn-red">Rejoindre l'association</a>
+      <a href="#presentation" class="btn btn-outline">Découvrir</a>
+    </div>
+  </div>
+  <div class="hero-scroll">
+    <span>Défiler</span>
+    <div class="scroll-dot"></div>
+  </div>
+</section>
+
+<!-- STATS -->
+<div class="stats">
+  <div class="stat fade-in">
+    <div class="stat-num">120+</div>
+    <div class="stat-label">Membres actifs</div>
+  </div>
+  <div class="stat fade-in">
+    <div class="stat-num">35+</div>
+    <div class="stat-label">Événements par an</div>
+  </div>
+  <div class="stat fade-in">
+    <div class="stat-num">8</div>
+    <div class="stat-label">Ans d'engagement</div>
+  </div>
+</div>
+
+<!-- PRÉSENTATION -->
+<section id="presentation">
+  <div class="container">
+    <div class="pres-grid">
+      <div class="pres-text fade-in">
+        <div class="section-tag">Notre mission</div>
+        <h2 class="section-title">La moto accessible <span>à tous</span></h2>
+        <div class="accent-bar"></div>
+        <p>Ride 4 Change est une association dédiée à rendre la pratique de la moto accessible aux personnes en situation de handicap. Nous croyons que la passion du deux-roues ne connaît pas de frontières.</p>
+        <p>Nous accompagnons, formons et intégrons des pilotes handicapés dans un environnement bienveillant, sécurisé et stimulant — parce que chacun mérite de ressentir la liberté de la route.</p>
+        <a href="#contact" class="btn btn-red" style="margin-top:1rem;display:inline-block;">Nous contacter</a>
+      </div>
+      <div class="pres-visual fade-in">
+        <div class="pres-card">
+          <div class="pres-card-icon">🏍️</div>
+          <h4>Pratique adaptée</h4>
+          <p>Matériel et motos spécialement aménagés pour chaque type de handicap.</p>
+        </div>
+        <div class="pres-card">
+          <div class="pres-card-icon">🤝</div>
+          <h4>Accompagnement</h4>
+          <p>Un suivi personnalisé par des instructeurs formés et engagés.</p>
+        </div>
+        <div class="pres-card">
+          <div class="pres-card-icon">🏆</div>
+          <h4>Compétition</h4>
+          <p>Participation à des événements handi-sport locaux et nationaux.</p>
+        </div>
+        <div class="pres-card">
+          <div class="pres-card-icon">❤️</div>
+          <h4>Communauté</h4>
+          <p>Un réseau solidaire de passionnés qui s'entraident et se soutiennent.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- GALERIE -->
+<section id="galerie">
+  <div class="container">
+    <div class="fade-in">
+      <div class="section-tag">Nos moments</div>
+      <h2 class="section-title">La <span>galerie</span></h2>
+    </div>
+    <div class="gallery-grid">
+      <div class="gallery-item large fade-in">
+        <div class="gallery-placeholder">
+          <div class="gp-icon"><svg viewBox="0 0 24 24"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg></div>
+          <span class="gallery-label">Événement principal</span>
+        </div>
+        <div class="gallery-overlay"></div>
+      </div>
+      <div class="gallery-item fade-in">
+        <div class="gallery-placeholder">
+          <div class="gp-icon"><svg viewBox="0 0 24 24"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg></div>
+          <span class="gallery-label">Sortie en groupe</span>
+        </div>
+        <div class="gallery-overlay"></div>
+      </div>
+      <div class="gallery-item fade-in">
+        <div class="gallery-placeholder">
+          <div class="gp-icon"><svg viewBox="0 0 24 24"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg></div>
+          <span class="gallery-label">Formation</span>
+        </div>
+        <div class="gallery-overlay"></div>
+      </div>
+      <div class="gallery-item fade-in">
+        <div class="gallery-placeholder">
+          <div class="gp-icon"><svg viewBox="0 0 24 24"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg></div>
+          <span class="gallery-label">Compétition</span>
+        </div>
+        <div class="gallery-overlay"></div>
+      </div>
+      <div class="gallery-item fade-in">
+        <div class="gallery-placeholder">
+          <div class="gp-icon"><svg viewBox="0 0 24 24"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg></div>
+          <span class="gallery-label">Rassemblement</span>
+        </div>
+        <div class="gallery-overlay"></div>
+      </div>
+      <div class="gallery-item fade-in">
+        <div class="gallery-placeholder">
+          <div class="gp-icon"><svg viewBox="0 0 24 24"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg></div>
+          <span class="gallery-label">Atelier mécanique</span>
+        </div>
+        <div class="gallery-overlay"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- À PROPOS -->
+<section id="apropos">
+  <div class="container">
+    <div class="apropos-grid">
+      <div class="fade-in">
+        <div class="section-tag">Qui sommes-nous</div>
+        <h2 class="section-title">Notre <span>équipe</span></h2>
+        <div class="accent-bar"></div>
+        <div class="team-cards">
+          <div class="team-card">
+            <div class="avatar">JL</div>
+            <div class="team-info">
+              <p>Jean-Luc Martin</p>
+              <span>Président & Fondateur</span>
+            </div>
+          </div>
+          <div class="team-card">
+            <div class="avatar">SA</div>
+            <div class="team-info">
+              <p>Sophie Arnaud</p>
+              <span>Responsable Formation</span>
+            </div>
+          </div>
+          <div class="team-card">
+            <div class="avatar">MC</div>
+            <div class="team-info">
+              <p>Marc Chevalier</p>
+              <span>Coordinateur Événements</span>
+            </div>
+          </div>
+          <div class="team-card">
+            <div class="avatar">LB</div>
+            <div class="team-info">
+              <p>Lucie Bernard</p>
+              <span>Chargée de Communication</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="apropos-text fade-in">
+        <div class="section-tag">Notre histoire</div>
+        <h2 class="section-title">Fondée en <span>2016</span></h2>
+        <div class="accent-bar"></div>
+        <p>Ride 4 Change est née d'une conviction simple : le handicap ne devrait jamais être un frein à la passion. Fondée par des motards et des professionnels du handi-sport, notre association a grandi grâce à l'engagement sans faille de ses membres.</p>
+        <p>Depuis nos débuts, nous avons accompagné des centaines de pilotes dans leur apprentissage, organisé des dizaines d'événements, et milité pour une meilleure reconnaissance du handi-sport moto en France.</p>
+        <div class="values">
+          <div class="value-item"><div class="value-dot"></div><span>Inclusivité et respect de chaque membre</span></div>
+          <div class="value-item"><div class="value-dot"></div><span>Sécurité avant tout dans chaque activité</span></div>
+          <div class="value-item"><div class="value-dot"></div><span>Passion partagée comme moteur commun</span></div>
+          <div class="value-item"><div class="value-dot"></div><span>Innovation dans les solutions adaptées</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="container">
+    <div class="fade-in" style="text-align:center;margin-bottom:3rem;">
+      <div class="section-tag">Prenez contact</div>
+      <h2 class="section-title">Rejoignez <span>Ride 4 Change</span></h2>
+    </div>
+    <div class="contact-grid">
+      <div class="contact-info fade-in">
+        <div class="contact-item">
+          <div class="c-icon"><svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg></div>
+          <div class="c-text"><p>contact@ride4change.fr</p><span>Réponse sous 48h</span></div>
+        </div>
+        <div class="contact-item">
+          <div class="c-icon"><svg viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg></div>
+          <div class="c-text"><p>+33 (0)6 12 34 56 78</p><span>Lun–Ven, 9h–18h</span></div>
+        </div>
+        <div class="contact-item">
+          <div class="c-icon"><svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg></div>
+          <div class="c-text"><p>Lyon, France</p><span>Interventions nationales</span></div>
+        </div>
+        <p style="font-size:.85rem;color:#666;margin-top:1rem;line-height:1.7;">Que vous soyez en situation de handicap, proche aidant, ou simplement passionné de moto, toutes les vocations sont les bienvenues !</p>
+        <div style="display:flex;gap:.75rem;margin-top:1.5rem;">
+          <a href="https://facebook.com" target="_blank" class="social-btn" title="Facebook">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+            Facebook
+          </a>
+          <a href="https://tiktok.com" target="_blank" class="social-btn" title="TikTok">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 0 0-.79-.05 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.33-6.34V8.69a8.18 8.18 0 0 0 4.78 1.52V6.75a4.85 4.85 0 0 1-1.01-.06z"/></svg>
+            TikTok
+          </a>
+          <a href="https://instagram.com" target="_blank" class="social-btn" title="Instagram">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path fill="#1a1a1a" d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5" stroke="#1a1a1a" stroke-width="2" stroke-linecap="round"/></svg>
+            Instagram
+          </a>
+        </div>
+      </div>
+      <div class="fade-in">
+        <div class="contact-form">
+          <div class="form-row">
+            <input type="text" placeholder="Prénom"/>
+            <input type="text" placeholder="Nom"/>
+          </div>
+          <input type="email" placeholder="Email"/>
+          <input type="text" placeholder="Sujet"/>
+          <textarea placeholder="Votre message…"></textarea>
+          <button class="submit-btn">Envoyer le message</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">RIDE<span>4</span>CHANGE</div>
+  <div class="footer-copy">© 2026 Ride 4 Change — Association Handi-Sport Moto</div>
+  <div style="display:flex;align-items:center;gap:.75rem;">
+    <a href="https://facebook.com" target="_blank" class="social-btn" title="Facebook"><svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg></a>
+    <a href="https://tiktok.com" target="_blank" class="social-btn" title="TikTok"><svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 0 0-.79-.05 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.33-6.34V8.69a8.18 8.18 0 0 0 4.78 1.52V6.75a4.85 4.85 0 0 1-1.01-.06z"/></svg></a>
+    <a href="https://instagram.com" target="_blank" class="social-btn" title="Instagram"><svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><rect x="2" y="2" width="20" height="20" rx="5"/><path fill="#1a1a1a" d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5" stroke="#1a1a1a" stroke-width="2" stroke-linecap="round"/></svg></a>
+  </div>
+  <div class="footer-links">
+    <a href="#">Mentions légales</a>
+    <a href="#">Confidentialité</a>
+  </div>
+</footer>
+
+<script>
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); });
+}, {threshold: 0.12});
+document.querySelectorAll('.fade-in').forEach(el => obs.observe(el));
+
+document.querySelectorAll('a[href^="#"]').forEach(a => {
+  a.addEventListener('click', e => {
+    e.preventDefault();
+    const t = document.querySelector(a.getAttribute('href'));
+    if(t) t.scrollIntoView({behavior:'smooth'});
+  });
+});
+
+document.querySelector('.submit-btn').addEventListener('click', function() {
+  this.textContent = 'Message envoyé !';
+  this.style.background = '#1a7a3a';
+  setTimeout(() => { this.textContent = 'Envoyer le message'; this.style.background = ''; }, 3000);
+});
+</script>
+</body>
+</html>
