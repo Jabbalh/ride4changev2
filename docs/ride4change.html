@@ -82,15 +82,31 @@
 
   /* GALERIE */
   #galerie{background:#0e0e0e;}
-  .gallery-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-top:3rem;}
-  .gallery-item{border-radius:6px;overflow:hidden;aspect-ratio:4/3;background:#1a1a1a;border:1px solid #222;position:relative;display:flex;align-items:center;justify-content:center;}
-  .gallery-item.large{grid-column:span 2;aspect-ratio:16/9;}
-  .gallery-placeholder{width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.5rem;}
-  .gp-icon{width:40px;height:40px;border-radius:50%;background:#2a2a2a;display:flex;align-items:center;justify-content:center;}
-  .gp-icon svg{width:20px;height:20px;fill:#555;}
-  .gallery-label{font-size:.75rem;color:#555;letter-spacing:1px;}
-  .gallery-overlay{position:absolute;inset:0;background:rgba(226,75,74,.08);opacity:0;transition:opacity .2s;}
-  .gallery-item:hover .gallery-overlay{opacity:1;}
+  .carousel-wrapper{position:relative;margin-top:3rem;border-radius:16px;overflow:hidden;border:1px solid #222;aspect-ratio:16/9;background:#1a1a1a;}
+  .carousel-track{display:flex;height:100%;transition:transform .6s cubic-bezier(.4,0,.2,1);}
+  .carousel-slide{min-width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.75rem;position:relative;}
+  .slide-label{font-size:.85rem;color:#888;letter-spacing:2px;text-transform:uppercase;}
+  .slide-icon{width:56px;height:56px;border-radius:50%;background:#2a2a2a;border:1px solid #333;display:flex;align-items:center;justify-content:center;font-size:1.5rem;}
+  .carousel-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.5) 0%,transparent 50%);}
+
+  /* Nav arrows */
+  .carousel-btn{position:absolute;top:50%;transform:translateY(-50%);z-index:10;width:40px;height:40px;background:rgba(20,20,20,.8);border:1px solid #333;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;color:#ccc;}
+  .carousel-btn:hover{background:var(--red);border-color:var(--red);color:#fff;}
+  .carousel-btn.prev{left:1rem;}
+  .carousel-btn.next{right:1rem;}
+  .carousel-btn svg{width:18px;height:18px;fill:currentColor;}
+
+  /* Dots */
+  .carousel-dots{position:absolute;bottom:1rem;left:50%;transform:translateX(-50%);display:flex;gap:.5rem;z-index:10;}
+  .dot{width:8px;height:8px;border-radius:50%;background:#555;cursor:pointer;transition:all .3s;}
+  .dot.active{background:var(--red);width:22px;border-radius:4px;}
+
+  /* Progress ring */
+  .carousel-progress{position:absolute;top:1rem;right:1rem;z-index:10;}
+  .carousel-progress svg{transform:rotate(-90deg);}
+  .progress-ring{stroke:var(--red);stroke-dasharray:88;stroke-dashoffset:88;transition:stroke-dashoffset .1s linear;stroke-linecap:round;}
+  .progress-bg{stroke:#333;}
+  .progress-count{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:.65rem;color:#aaa;font-weight:600;}
 
   /* A PROPOS */
   #apropos{background:#111;}
@@ -273,48 +289,59 @@
       <div class="section-tag">Nos moments</div>
       <h2 class="section-title">La <span>galerie</span></h2>
     </div>
-    <div class="gallery-grid">
-      <div class="gallery-item large fade-in">
-        <div class="gallery-placeholder">
-          <div class="gp-icon"><svg viewBox="0 0 24 24"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg></div>
-          <span class="gallery-label">Événement principal</span>
+
+    <div class="carousel-wrapper fade-in">
+      <div class="carousel-track" id="carouselTrack">
+        <div class="carousel-slide" style="background:linear-gradient(135deg,#1a0a0a,#2a1010);">
+          <div class="slide-icon">🏍️</div>
+          <div class="slide-label">Événement principal</div>
+          <div class="carousel-overlay"></div>
         </div>
-        <div class="gallery-overlay"></div>
+        <div class="carousel-slide" style="background:linear-gradient(135deg,#0a0a1a,#1a1030);">
+          <div class="slide-icon">🤝</div>
+          <div class="slide-label">Sortie en groupe</div>
+          <div class="carousel-overlay"></div>
+        </div>
+        <div class="carousel-slide" style="background:linear-gradient(135deg,#0a1a0a,#102010);">
+          <div class="slide-icon">🎓</div>
+          <div class="slide-label">Formation</div>
+          <div class="carousel-overlay"></div>
+        </div>
+        <div class="carousel-slide" style="background:linear-gradient(135deg,#1a1000,#2a2010);">
+          <div class="slide-icon">🏆</div>
+          <div class="slide-label">Compétition</div>
+          <div class="carousel-overlay"></div>
+        </div>
+        <div class="carousel-slide" style="background:linear-gradient(135deg,#150a1a,#251030);">
+          <div class="slide-icon">🎉</div>
+          <div class="slide-label">Rassemblement</div>
+          <div class="carousel-overlay"></div>
+        </div>
+        <div class="carousel-slide" style="background:linear-gradient(135deg,#0a1515,#102020);">
+          <div class="slide-icon">🔧</div>
+          <div class="slide-label">Atelier mécanique</div>
+          <div class="carousel-overlay"></div>
+        </div>
       </div>
-      <div class="gallery-item fade-in">
-        <div class="gallery-placeholder">
-          <div class="gp-icon"><svg viewBox="0 0 24 24"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg></div>
-          <span class="gallery-label">Sortie en groupe</span>
-        </div>
-        <div class="gallery-overlay"></div>
-      </div>
-      <div class="gallery-item fade-in">
-        <div class="gallery-placeholder">
-          <div class="gp-icon"><svg viewBox="0 0 24 24"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg></div>
-          <span class="gallery-label">Formation</span>
-        </div>
-        <div class="gallery-overlay"></div>
-      </div>
-      <div class="gallery-item fade-in">
-        <div class="gallery-placeholder">
-          <div class="gp-icon"><svg viewBox="0 0 24 24"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg></div>
-          <span class="gallery-label">Compétition</span>
-        </div>
-        <div class="gallery-overlay"></div>
-      </div>
-      <div class="gallery-item fade-in">
-        <div class="gallery-placeholder">
-          <div class="gp-icon"><svg viewBox="0 0 24 24"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg></div>
-          <span class="gallery-label">Rassemblement</span>
-        </div>
-        <div class="gallery-overlay"></div>
-      </div>
-      <div class="gallery-item fade-in">
-        <div class="gallery-placeholder">
-          <div class="gp-icon"><svg viewBox="0 0 24 24"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg></div>
-          <span class="gallery-label">Atelier mécanique</span>
-        </div>
-        <div class="gallery-overlay"></div>
+
+      <!-- Arrows -->
+      <button class="carousel-btn prev" id="prevBtn">
+        <svg viewBox="0 0 24 24"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
+      </button>
+      <button class="carousel-btn next" id="nextBtn">
+        <svg viewBox="0 0 24 24"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
+      </button>
+
+      <!-- Dots -->
+      <div class="carousel-dots" id="carouselDots"></div>
+
+      <!-- Progress ring -->
+      <div class="carousel-progress">
+        <svg width="34" height="34" viewBox="0 0 34 34">
+          <circle class="progress-bg" cx="17" cy="17" r="14" fill="none" stroke-width="2"/>
+          <circle class="progress-ring" id="progressRing" cx="17" cy="17" r="14" fill="none" stroke-width="2"/>
+        </svg>
+        <div class="progress-count" id="progressCount">1/6</div>
       </div>
     </div>
   </div>
@@ -449,6 +476,67 @@ const obs = new IntersectionObserver(entries => {
   entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); });
 }, {threshold: 0.12});
 document.querySelectorAll('.fade-in').forEach(el => obs.observe(el));
+
+// Carousel
+const track = document.getElementById('carouselTrack');
+const dotsEl = document.getElementById('carouselDots');
+const ring = document.getElementById('progressRing');
+const countEl = document.getElementById('progressCount');
+const total = track.children.length;
+const INTERVAL = 5000;
+const CIRCUMFERENCE = 88;
+let current = 0, rafId, startTs = null, paused = false;
+
+// Build dots
+for(let i=0;i<total;i++){
+  const d = document.createElement('div');
+  d.className = 'dot' + (i===0?' active':'');
+  d.addEventListener('click', () => goTo(i));
+  dotsEl.appendChild(d);
+}
+
+function updateUI(){
+  track.style.transform = `translateX(-${current*100}%)`;
+  dotsEl.querySelectorAll('.dot').forEach((d,i) => d.classList.toggle('active', i===current));
+  countEl.textContent = `${current+1}/${total}`;
+}
+
+function goTo(idx){
+  current = (idx + total) % total;
+  updateUI();
+  resetRing();
+}
+
+function resetRing(){
+  cancelAnimationFrame(rafId);
+  startTs = null;
+  if(!paused) rafId = requestAnimationFrame(tick);
+}
+
+function tick(ts){
+  if(!startTs) startTs = ts;
+  const elapsed = ts - startTs;
+  const pct = Math.min(elapsed / INTERVAL, 1);
+  ring.style.strokeDashoffset = CIRCUMFERENCE * (1 - pct);
+  if(pct < 1){
+    rafId = requestAnimationFrame(tick);
+  } else {
+    current = (current + 1) % total;
+    updateUI();
+    startTs = null;
+    rafId = requestAnimationFrame(tick);
+  }
+}
+
+document.getElementById('prevBtn').addEventListener('click', () => goTo(current - 1));
+document.getElementById('nextBtn').addEventListener('click', () => goTo(current + 1));
+
+const wrapper = document.querySelector('.carousel-wrapper');
+wrapper.addEventListener('mouseenter', () => { paused = true; cancelAnimationFrame(rafId); });
+wrapper.addEventListener('mouseleave', () => { paused = false; startTs = null; rafId = requestAnimationFrame(tick); });
+
+updateUI();
+rafId = requestAnimationFrame(tick);
 
 // Scroll progress
 const progressBar = document.getElementById('progressBar');

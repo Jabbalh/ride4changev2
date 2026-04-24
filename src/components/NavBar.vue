@@ -59,6 +59,8 @@ nav{
   background: rgba(13,13,13,0.97);
   padding: 0.7rem 0;
   border-bottom: 1px solid rgba(230,57,70,0.3);
+  border-left: 1px solid rgba(230,57,70,0.3);
+  border-right: 1px solid rgba(230,57,70,0.3);
   backdrop-filter: blur(10px);
 }
 .nav-inner {
