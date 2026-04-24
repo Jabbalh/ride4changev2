@@ -89,6 +89,50 @@
         <div class="center-cta">
           <router-link to="/galerie" class="btn btn-primary">Voir toutes les photos</router-link>
         </div>
+
+        <!-- GALLERY CAROUSEL PREVIEW -->
+        <div class="gallery-carousel-wrapper">
+          <div class="section-heading center">
+            <span class="overline">Aperçu</span>
+            <h2>La galerie en mouvement</h2>
+          </div>
+          
+          <div class="carousel-container">
+            <div 
+              v-for="(photo, index) in galleryPhotos" 
+              :key="photo.id"
+              class="carousel-slide"
+              :class="{ active: currentSlide === index }"
+              :style="{ background: photo.bg }"
+            >
+              <span class="carousel-emoji">{{ photo.emoji }}</span>
+              <div class="carousel-caption">
+                <h3>{{ photo.title }}</h3>
+              </div>
+            </div>
+            
+            <div class="carousel-progress-container">
+              <div class="carousel-progress-bar" :style="{ width: progress + '%' }"></div>
+            </div>
+
+            <div class="carousel-indicators">
+              <span 
+                v-for="(_, index) in galleryPhotos" 
+                :key="index"
+                class="indicator"
+                :class="{ active: currentSlide === index }"
+                @click="goToSlide(index)"
+              ></span>
+            </div>
+
+            <button class="carousel-control prev" @click="prevSlide" aria-label="Photo précédente">
+              <span>‹</span>
+            </button>
+            <button class="carousel-control next" @click="handleNext" aria-label="Photo suivante">
+              <span>›</span>
+            </button>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -137,9 +181,75 @@
 </template>
 
 <script setup lang="ts">
+import { ref, onMounted, onUnmounted } from 'vue'
 import SocialFloat from "@/components/SocialFloat.vue";
 
 const baseUrl = import.meta.env.BASE_URL;
+
+// GALLERY CAROUSEL
+const galleryPhotos = [
+  { id: 1, emoji: '🏍️', bg: 'linear-gradient(135deg,#1a0d0d,#3d1a1a)', title: 'Route des Gorges du Verdon' },
+  { id: 2, emoji: '🎁', bg: 'linear-gradient(135deg,#0d1a0d,#1a3d1a)', title: 'Collecte de Noël' },
+  { id: 3, emoji: '🏁', bg: 'linear-gradient(135deg,#1a1a0d,#3d3d1a)', title: 'Rallye des 3 Cols' },
+  { id: 4, emoji: '🔧', bg: 'linear-gradient(135deg,#0d0d1a,#1a1a3d)', title: 'Journée mécanique' },
+]
+
+const currentSlide = ref(0)
+const progress = ref(0)
+const SLIDE_DURATION = 5000 // 5 seconds
+const PROGRESS_INTERVAL = 50 // Update progress every 50ms
+
+let slideInterval: any
+let progressInterval: any
+
+const startCarousel = () => {
+  slideInterval = setInterval(() => {
+    nextSlide()
+  }, SLIDE_DURATION)
+
+  progressInterval = setInterval(() => {
+    progress.value += (PROGRESS_INTERVAL / SLIDE_DURATION) * 100
+  }, PROGRESS_INTERVAL)
+}
+
+const stopCarousel = () => {
+  clearInterval(slideInterval)
+  clearInterval(progressInterval)
+}
+
+const resetCarousel = () => {
+  stopCarousel()
+  progress.value = 0
+  startCarousel()
+}
+
+const nextSlide = () => {
+  currentSlide.value = (currentSlide.value + 1) % galleryPhotos.length
+}
+
+const prevSlide = () => {
+  currentSlide.value = (currentSlide.value - 1 + galleryPhotos.length) % galleryPhotos.length
+  resetCarousel()
+}
+
+const handleNext = () => {
+  nextSlide()
+  resetCarousel()
+}
+
+const goToSlide = (index: number) => {
+  if (currentSlide.value === index) return
+  currentSlide.value = index
+  resetCarousel()
+}
+
+onMounted(() => {
+  startCarousel()
+})
+
+onUnmounted(() => {
+  stopCarousel()
+})
 const anneeExistance = new Date().getFullYear() - 2025;
 const stats = [
   { value: '5+', label: 'Membres actifs' },
@@ -154,7 +264,7 @@ const values = [
   { icon: 'toto.jpg', title: 'Des copains', desc: "Parce qu'on aime les copains qui nous accompagnent." },
 ]
 const actions = [
-  { tag: 'Courses', emoji: '🏁', color: 'linear-gradient(135deg,#1f1a1a,#2d1f00)', title: 'Le man', desc: 'Un petit tour au man.' },
+  { tag: 'Courses', emoji: '🏁', color: 'linear-gradient(135deg,#1f1a1a,#2d1f00)', title: 'Le mans', desc: 'Un petit tour au man.' },
   { tag: 'Baptèmes', emoji: '🪖', color: 'linear-gradient(135deg,#1a1f1a,#1f2d1f)', title: 'Initiation sécurité', desc: 'Des baptèmes de moto.' },
   { tag: 'Je ne sais pas', emoji: '🩺', color: 'linear-gradient(135deg,#1a1a2d,#1a1a1a)', title: 'Je ne sais pas', desc: 'Un autre truc ?.' },
 ]
@@ -289,7 +399,124 @@ const testimonials = [
 }
 .action-info h3 { font-family: 'Barlow Condensed',sans-serif; font-size: 1.2rem; font-weight: 700; margin-bottom: 0.5rem; }
 .action-info p { font-size: 0.88rem; color: var(--grey); line-height: 1.6; }
-.center-cta { text-align: center; }
+.center-cta { text-align: center; margin-bottom: 5rem; }
+
+/* GALLERY CAROUSEL */
+.gallery-carousel-wrapper {
+  margin-top: 4rem;
+}
+.section-heading.center {
+  text-align: center;
+  margin-bottom: 2.5rem;
+}
+.carousel-container {
+  position: relative;
+  height: 400px;
+  background: var(--dark2);
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,0.05);
+}
+.carousel-slide {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.8s ease;
+  z-index: 1;
+}
+.carousel-slide.active {
+  opacity: 1;
+  z-index: 2;
+}
+.carousel-emoji {
+  font-size: 8rem;
+  margin-bottom: 1rem;
+  transform: translateY(20px);
+  transition: transform 0.8s ease;
+}
+.carousel-slide.active .carousel-emoji {
+  transform: translateY(0);
+}
+.carousel-caption {
+  position: absolute;
+  bottom: 3rem;
+  text-align: center;
+}
+.carousel-caption h3 {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 2rem;
+  letter-spacing: 0.05em;
+  color: var(--white);
+}
+.carousel-progress-container {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: rgba(255,255,255,0.1);
+  z-index: 10;
+}
+.carousel-progress-bar {
+  height: 100%;
+  background: var(--red);
+  width: 0;
+}
+.carousel-indicators {
+  position: absolute;
+  bottom: 1.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 0.75rem;
+  z-index: 10;
+}
+.indicator {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.3);
+  transition: all 0.3s;
+  cursor: pointer;
+}
+.indicator.active {
+  background: var(--red);
+  transform: scale(1.3);
+}
+
+.carousel-control {
+  position:absolute;
+  top:50%;
+  transform:translateY(-50%);
+  z-index:10;
+  font-size:1.5rem;
+  width:40px;
+  height:40px;
+  background:rgba(20,20,20,.8);
+  border:1px solid #333;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  transition:all .2s;
+  color:#ccc;
+}
+.carousel-control:hover {
+  background:var(--red);border-color:var(--red);color:#fff;
+}
+.carousel-control.prev { left: 1rem; }
+.carousel-control.next { right: 1rem; }
+
+@media (max-width: 768px) {
+  .carousel-container { height: 300px; }
+  .carousel-emoji { font-size: 6rem; }
+  .carousel-caption h3 { font-size: 1.5rem; }
+  .carousel-control { width: 36px; height: 36px; font-size: 1.5rem; }
+}
 
 /* EVENT BANNER */
 .event-banner {

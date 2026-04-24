@@ -80,7 +80,10 @@ const events = [
 }
 .page-header .container { position: relative; z-index: 1; }
 .page-header .overline { font-family:'Barlow Condensed',sans-serif; font-size:0.8rem; letter-spacing:0.3em; text-transform:uppercase; color:var(--red); display:block; margin-bottom:0.75rem; }
-.page-header h1 { font-family:'Bebas Neue',sans-serif; font-size:clamp(4rem,10vw,8rem); line-height:0.95; }
+.page-header h1 {
+  font-family: 'Bebas Neue',sans-serif; font-size: clamp(1.5rem, 5vw, 5rem);
+  line-height: 0.95;
+}
 .page-header p { color:var(--grey-light); font-size:1.1rem; margin-top:1rem; max-width:500px; }
 
 .events-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: start; }

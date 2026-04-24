@@ -120,7 +120,10 @@ const closeModal = () => { selected.value = undefined }
   letter-spacing: 0.3em; text-transform: uppercase; color: var(--red);
   display: block; margin-bottom: 0.75rem;
 }
-.page-header h1 { font-family: 'Bebas Neue',sans-serif; font-size: clamp(4rem, 10vw, 8rem); line-height: 0.95; }
+.page-header h1 {
+  font-family: 'Bebas Neue',sans-serif; font-size: clamp(1.5rem, 5vw, 5rem);
+  line-height: 0.95;
+}
 .page-header p { color: var(--grey-light); font-size: 1.1rem; margin-top: 1rem; max-width: 500px; }
 
 .filters-bar {
