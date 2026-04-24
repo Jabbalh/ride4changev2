@@ -1,7 +1,5 @@
 <script setup lang="ts">
-withDefaults(defineProps<{ displayImage: boolean }>(), {
-  displayImage: true,
-});
+defineProps({ displayImage: {type: Boolean, default: true} });
 </script>
 <template>
   <a href="https://www.tiktok.com/@ride4change" target="_blank" title="TikTok">

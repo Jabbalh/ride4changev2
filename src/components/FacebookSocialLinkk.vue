@@ -1,7 +1,5 @@
 <script setup lang="ts">
-withDefaults(defineProps<{ displayImage: boolean }>(), {
-  displayImage: true,
-});
+defineProps({ displayImage: {type: Boolean, default: true} });
 </script>
 <template>
       <a href="https://www.facebook.com/profile.php?id=61573516003975" target="_blank" title="Facebook">

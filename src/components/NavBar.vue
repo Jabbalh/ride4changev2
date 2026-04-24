@@ -8,7 +8,7 @@
       <button class="burger" @click="menuOpen = !menuOpen">
         <span></span><span></span><span></span>
       </button>
-      <ul class="nav-links" :class="{ open: menuOpen }">
+      <ul class="nav-links" :class="{ open: menuOpen, hidden: !menuOpen }">
         <li v-for="link in links" :key="link.to">
           <router-link :to="link.to" @click="menuOpen = false">{{ link.label }}</router-link>
         </li>
@@ -18,10 +18,12 @@
       </ul>
     </div>
   </nav>
+  <ProgressScroll />
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue'
+import ProgressScroll from "@/components/ProgressScroll.vue";
 const isScrolled = ref(false)
 const menuOpen = ref(false)
 const links = [
@@ -42,14 +44,14 @@ onUnmounted(() => window.removeEventListener('scroll', handleScroll))
   position: fixed; top: 0; left: 0; right: 0;
   z-index: 1000;
   transition: all 0.4s ease;
-  margin: 1.5rem;
 }
 nav{
   padding:.75rem 1.75rem;
   background:rgba(20,20,20,0.85);
   backdrop-filter:blur(14px);
   border:1px solid rgba(255,255,255,0.07);
-  border-radius:50px;
+
+  border-radius: 0 0 50px 50px;
   box-shadow:0 4px 30px rgba(0,0,0,0.4);
 }
 
@@ -94,6 +96,7 @@ nav{
     border-left: 2px solid var(--red);
   }
   .nav-links.open { transform: translateX(0); }
+  .nav-links.hidden { display: none; }
   .nav-links a { font-size: 1.1rem; padding: 0.5rem 0; }
   .menu-open .burger span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
   .menu-open .burger span:nth-child(2) { opacity: 0; }

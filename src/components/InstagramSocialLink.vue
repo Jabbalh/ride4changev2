@@ -1,7 +1,5 @@
 <script setup lang="ts">
-withDefaults(defineProps<{ displayImage: boolean }>(), {
-  displayImage: true,
-});
+defineProps({ displayImage: {type: Boolean, default: true} });
 </script>
 <template>
   <a href="https://www.instagram.com/ride4change_ludo_et_paule/" target="_blank" title="Instagram">
