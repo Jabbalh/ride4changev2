@@ -38,10 +38,21 @@ onUnmounted(() => window.removeEventListener('scroll', handleScroll))
 
 <style scoped>
 .navbar {
+  padding:.85rem 1.5rem;
   position: fixed; top: 0; left: 0; right: 0;
-  z-index: 1000; padding: 1.2rem 0;
+  z-index: 1000;
   transition: all 0.4s ease;
+  margin: 1.5rem;
 }
+nav{
+  padding:.75rem 1.75rem;
+  background:rgba(20,20,20,0.85);
+  backdrop-filter:blur(14px);
+  border:1px solid rgba(255,255,255,0.07);
+  border-radius:50px;
+  box-shadow:0 4px 30px rgba(0,0,0,0.4);
+}
+
 .navbar.scrolled {
   background: rgba(13,13,13,0.97);
   padding: 0.7rem 0;

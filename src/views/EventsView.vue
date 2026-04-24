@@ -1,5 +1,6 @@
 <template>
   <div class="events-page">
+    <SocialFloat />
     <section class="page-header">
       <div class="header-bg"></div>
       <div class="container">
@@ -53,6 +54,8 @@
 </template>
 
 <script setup lang="ts">
+import SocialFloat from "@/components/SocialFloat.vue";
+
 const events = [
   { id:1, month:'Avr', day:'20', type:'Sortie', title:'Sortie Printemps — Luberon', location:'Vaucluse (84)', desc:'Ouverture de la saison, 200 km dans le Luberon.', past: false },
   { id:2, month:'Mai', day:'04', type:'Formation', title:'Stage conduite sécurité', location:'Arles (13)', desc:'Formation avec moniteur FFM — 8 places disponibles.', past: false },

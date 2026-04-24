@@ -1,5 +1,6 @@
 <template>
   <div class="gallery-page">
+    <SocialFloat />
     <!-- PAGE HEADER -->
     <section class="page-header">
       <div class="header-bg"></div>
@@ -71,6 +72,7 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import type {Photo} from "@/models/CustomType.ts";
+import SocialFloat from "@/components/SocialFloat.vue";
 
 const activeFilter = ref('all')
 const selected = ref<Photo>()

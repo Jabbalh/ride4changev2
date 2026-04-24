@@ -1,5 +1,6 @@
 <template>
   <div class="about">
+    <SocialFloat />
     <!-- PAGE HEADER -->
     <section class="page-header">
       <div class="header-bg"></div>
@@ -90,6 +91,8 @@
 </template>
 
 <script setup lang="ts">
+import SocialFloat from "@/components/SocialFloat.vue";
+
 const milestones = [
   { year: '2025', text: 'Création de l\'association par 1 fondateurs' },
   { year: '2025', text: 'Pôle Mécanique Alès Cévennes — Week-end ensoleillé à Alès pour le PHS DAY du 8 novembre' },

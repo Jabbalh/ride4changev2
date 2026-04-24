@@ -84,9 +84,9 @@
             <div class="info-card social-card">
               <h3>Suivez-nous</h3>
               <div class="social-row">
-                <a href="https://www.facebook.com/profile.php?id=61573516003975" target="_blank" class="social-btn">Facebook</a>
-                <a href="https://www.instagram.com/ride4change_ludo_et_paule/" target="_blank" class="social-btn">Instagram</a>
-                <a href="https://www.tiktok.com/@ride4change" target="_blank" class="social-btn">Tiktok</a>
+                <FacebookSocialLinkk :displayImage="false" class="social-btn"/>
+                <InstagramSocialLink :displayImage="false" class="social-btn"/>
+                <TiktokSocialLink :displayImage="false" class="social-btn"/>
               </div>
             </div>
 
@@ -110,6 +110,9 @@
 
 <script setup  lang="ts">
 import { ref, reactive } from 'vue'
+import FacebookSocialLinkk from "@/components/FacebookSocialLinkk.vue";
+import InstagramSocialLink from "@/components/InstagramSocialLink.vue";
+import TiktokSocialLink from "@/components/TiktokSocialLink.vue";
 
 const sent = ref(false)
 const form = reactive({ prenom:'', nom:'', email:'', objet:'', moto:'', message:'' })

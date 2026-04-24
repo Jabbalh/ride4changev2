@@ -1,5 +1,6 @@
 <template>
   <div class="home">
+    <SocialFloat />
     <!-- HERO -->
     <section class="hero">
       <div class="hero-bg">
@@ -136,6 +137,8 @@
 </template>
 
 <script setup lang="ts">
+import SocialFloat from "@/components/SocialFloat.vue";
+
 const baseUrl = import.meta.env.BASE_URL;
 const anneeExistance = new Date().getFullYear() - 2025;
 const stats = [

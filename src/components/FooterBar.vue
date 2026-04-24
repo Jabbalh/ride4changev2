@@ -10,9 +10,10 @@
             </div>
             <p>Suivez nous sur les réseaux sociaux.</p>
             <div class="social-links">
-              <a href="https://www.facebook.com/profile.php?id=61573516003975" target="_blank" aria-label="Facebook">FB</a>
-              <a href="https://www.instagram.com/ride4change_ludo_et_paule/" target="_blank" aria-label="Instagram">IG</a>
-              <a href="https://www.tiktok.com/@ride4change" target="_blank" aria-label="Tiktok">TT</a>
+              <FacebookSocialLinkk />
+              <InstagramSocialLink />
+              <TiktokSocialLink />
+
             </div>
           </div>
           <div class="footer-nav">
@@ -42,6 +43,10 @@
 </template>
 
 <script setup lang="ts">
+import FacebookSocialLinkk from "@/components/FacebookSocialLinkk.vue";
+import InstagramSocialLink from "@/components/InstagramSocialLink.vue";
+import TiktokSocialLink from "@/components/TiktokSocialLink.vue";
+
 const links = [
   { to: '/', label: 'Accueil' },
   { to: '/association', label: "L'Association" },
