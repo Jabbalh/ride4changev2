@@ -8,9 +8,9 @@
         <div class="hero-pattern"></div>
       </div>
       <div class="container hero-content">
-        <div class="hero-badge">
-          <span>Fondée en 2025 · Saint Meen le Grand, France</span>
-        </div>
+<!--        <div class="hero-badge">-->
+<!--          <span>Fondée en 2025 · Saint Meen le Grand, France</span>-->
+<!--        </div>-->
         <h1 class="hero-title">
           <img src="/logo.jpg" alt="Logo" class="image-logo">
           <span class="line1">Ride</span>
@@ -18,10 +18,10 @@
           <span class="line3">Change</span>
         </h1>
         <p class="hero-sub">Profitez de votre seule vie et lâchez les chevaux</p>
-        <div class="hero-actions">
-          <router-link to="/association" class="btn btn-primary">Découvrir l'asso</router-link>
-          <router-link to="/galerie" class="btn btn-outline">Voir la galerie</router-link>
-        </div>
+<!--        <div class="hero-actions">-->
+<!--          <router-link to="/association" class="btn btn-primary">Découvrir l'asso</router-link>-->
+<!--          <router-link to="/galerie" class="btn btn-outline">Voir la galerie</router-link>-->
+<!--        </div>-->
 <!--        <div class="hero-actions">-->
 <!--          <span class="stat-label">Nous suivre: </span>-->
 <!--          <div class="social-links">-->
@@ -30,12 +30,12 @@
 <!--            <a href="https://www.tiktok.com/@ride4change" target="_blank" aria-label="Tiktok">TT</a>-->
 <!--          </div>-->
 <!--        </div>-->
-        <div class="hero-stats">
-          <div v-for="s in stats" :key="s.label" class="stat">
-            <span class="stat-value">{{ s.value }}</span>
-            <span class="stat-label">{{ s.label }}</span>
-          </div>
-        </div>
+<!--        <div class="hero-stats">-->
+<!--          <div v-for="s in stats" :key="s.label" class="stat">-->
+<!--            <span class="stat-value">{{ s.value }}</span>-->
+<!--            <span class="stat-label">{{ s.label }}</span>-->
+<!--          </div>-->
+<!--        </div>-->
       </div>
 <!--      <div class="hero-scroll">-->
 <!--        <span>Scroll</span>-->
@@ -279,7 +279,7 @@ const testimonials = [
 /* HERO */
 .hero {
   position: relative;
-
+  min-height: 20vh;
   margin-top: 3rem;
   padding-top: var(--nav-height);
   display: flex;
@@ -288,7 +288,9 @@ const testimonials = [
 }
 .hero-bg {
   position: absolute; inset: 0;
-  background: linear-gradient(160deg, #0d0d0d 0%, #1a0a0a 40%, #0d0d0d 100%);
+  background-image: linear-gradient(160deg, rgba(13, 13, 13, 0.9) 0%, rgba(26, 10, 10, 0.4) 40%, rgba(13, 13, 13, 0.9) 100%), url('/moto2.jpg');
+  background-size: cover;
+  background-position: center;
 }
 .hero-overlay {
   position: absolute; inset: 0;
@@ -304,6 +306,7 @@ const testimonials = [
 .hero-content {
   position: relative; z-index: 2;
   padding-bottom: 80px;
+  height: 40vh;
 }
 .hero-badge {
   display: inline-block;
