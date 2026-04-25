@@ -8,3 +8,6 @@ defineProps({ displayImage: {type: Boolean, default: true} });
     <span v-else>Instagram</span>
   </a>
 </template>
+<style scoped>
+img{width:1.5rem;height:1.5rem;}
+</style>
