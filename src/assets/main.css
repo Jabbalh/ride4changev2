@@ -139,3 +139,7 @@ img { max-width: 100%; display: block; }
   color: var(--grey); transition: all 0.3s;
 }
 .social-links a:hover { border-color: var(--red); color: var(--red); }
+
+.margin-top-p {
+  margin-top: 1rem;
+}

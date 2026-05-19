@@ -12,7 +12,7 @@
 <!--          <span>Fondée en 2025 · Saint Meen le Grand, France</span>-->
 <!--        </div>-->
         <h1 class="hero-title">
-          <img src="/logo.jpg" alt="Logo" class="image-logo">
+          <img src="/logo.svg" alt="Logo" class="image-logo">
           <span class="line1">Ride</span>
           <span class="line2">4</span>
           <span class="line3">Change</span>
@@ -50,7 +50,7 @@
           <div class="section-heading">
             <span class="overline">Qui sommes-nous</span>
             <h2>Plus qu'un club,<br>une famille</h2>
-            <p>Ride 4 change rassemble des passionnés de moto autour de valeurs communes : le respect, la solidarité et l'amour de la route.</p>
+            <p>Ride 4 Change rassemble des passionnés de moto autour de valeurs communes : la solidarité, l’entraide et l’amour de la route et des circuits.</p>
           </div>
           <router-link to="/association" class="btn btn-primary">En savoir plus</router-link>
         </div>
@@ -288,7 +288,7 @@ const testimonials = [
 }
 .hero-bg {
   position: absolute; inset: 0;
-  background-image: linear-gradient(160deg, rgba(13, 13, 13, 0.9) 0%, rgba(26, 10, 10, 0.4) 40%, rgba(13, 13, 13, 0.9) 100%), url('/moto2.jpg');
+  background-image: linear-gradient(160deg, rgba(13, 13, 13, 0.9) 0%, rgba(26, 10, 10, 0.4) 40%, rgba(13, 13, 13, 0.9) 100%), url('/accuei.jpg');
   background-size: cover;
   background-position: center;
 }
@@ -340,7 +340,7 @@ const testimonials = [
 }
 .hero-sub {
   font-family: 'Barlow Condensed',sans-serif; letter-spacing: 0.4em;
-  text-transform: uppercase; color: var(--grey-light);
+  text-transform: uppercase; color: var(--white);
   font-size: 0.9rem; margin-bottom: 2.5rem;
 }
 .hero-actions { display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 4rem; }

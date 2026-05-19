@@ -14,14 +14,18 @@
     <!-- HISTOIRE -->
     <section class="section histoire">
       <div class="container">
+        <div class="section-heading">
+          <span class="overline">Notre histoire</span>
+          <h2>Née de la passion, unis par la route</h2>
+        </div>
         <div class="histoire-grid">
           <div class="histoire-text">
-            <div class="section-heading">
-              <span class="overline">Notre histoire</span>
-              <h2>Nés de la passion,<br>unis par la route</h2>
-            </div>
-            <p>Ride 4 change est né en 2025 né d'une envie de faire de la compétition malgré un handicap. Ce qui n'était au départ qu'un défit est devenue un engagement.</p>
-            <p style="margin-top:1rem;">Aujourd'hui, plus de 10 membres actifs partagent les mêmes valeurs : le goût de la route, la solidarité entre motards.</p>
+
+            <p>Née de la passion de la moto sur route et unie par le défi de la compétition sur circuit, Ride 4 Change voit le jour en 2025.</p>
+            <p class="margin-top-p">À l’origine, un défi personnel : prouver que la pratique de la vitesse moto reste possible malgré le handicap. Très vite, ce projet dépasse le cadre individuel pour devenir un véritable engagement.</p>
+            <p class="margin-top-p">Aujourd’hui, Ride 4 Change œuvre pour promouvoir la moto de vitesse accessible à tous, personnes en situation de handicap comme valides. L’association défend des valeurs fortes : dépassement de soi, inclusion, solidarité et passion.</p>
+            <p class="margin-top-p">Sur les plus beaux circuits d’Europe, notre équipe repousse ses limites avec une seule ambition : montrer que la passion n’a pas de barrières.</p>
+            <p class="margin-top-p">Plus qu’un projet sportif, Ride 4 Change est une aventure humaine. Une équipe de plus de 10 membres actifs partage aujourd’hui cette vision, animée par l’amour de la moto, dans le respect essentiel de la sécurité et de l’exigence de la discipline.</p>
             <div class="milestones">
               <div v-for="m in milestones" :key="m.year" class="milestone">
                 <span class="m-year">{{ m.year }}</span>
@@ -31,12 +35,11 @@
           </div>
           <div class="histoire-visual">
             <div class="visual-card big">
-              <span>🏍️</span>
-              <p>Fondateur, 2025</p>
+              <span><img :src="baseUrl + 'Bassin.jpg'" ></span>
             </div>
             <div class="visual-row">
-              <div class="visual-card small"><span>🏆</span></div>
-              <div class="visual-card small"><span>🗺️</span></div>
+              <div class="visual-card small"><span><img :src="baseUrl + 'LeMans99.jpg'" ></span></div>
+              <div class="visual-card small"><span><img :src="baseUrl + 'LeMans99-2.jpg'" ></span></div>
             </div>
           </div>
         </div>
@@ -93,10 +96,14 @@
 <script setup lang="ts">
 import SocialFloat from "@/components/SocialFloat.vue";
 
+const baseUrl = import.meta.env.BASE_URL;
+
 const milestones = [
-  { year: '2025', text: 'Création de l\'association par 1 fondateurs' },
-  { year: '2025', text: 'Pôle Mécanique Alès Cévennes — Week-end ensoleillé à Alès pour le PHS DAY du 8 novembre' },
-  { year: '2026', text: 'Le Mans - Une petite course sur un petit circuit' },
+  { year: '2025', text: 'Création de l’association par 4 membres fondateurs' },
+  { year: '2025', text: 'Engagement sportif à la Bridgestone PMR Cup avec une quatrième place au championnat en catégorie 1000 cm3' },
+  { year: '2026', text: "L'équipe devient une famille avec plus de 10 membres actifs" },
+  { year: '2026', text: "Engager à la Bridgestone PMR Cup" },
+  { year: '2026', text: "Debut des initiations pistes sur le mythique circuit Bugatti au Mans" },
 ]
 const bureau = [
   { name: 'Ludovic Rouvrais', role: 'Président', initials: 'LR', bio: 'Motard depuis plus de 30 ans, Ludovic pilote l\'association avec passion et rigueur.' },
@@ -137,11 +144,11 @@ const bureau = [
   align-items: center; justify-content: center; gap: 1rem;
   text-align: center;
 }
-.visual-card.big { height: 260px; margin-bottom: 1rem; }
+.visual-card.big {  margin-bottom: 1rem; }
 .visual-card.big span { font-size: 5rem; }
 .visual-card.big p { font-size: 0.85rem; color: var(--grey); max-width: 200px; }
 .visual-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
-.visual-card.small { height: 140px; }
+/*.visual-card.small { height: 140px; margin-top: 25px; }*/
 .visual-card.small span { font-size: 3rem; }
 
 .bureau-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; }
@@ -173,6 +180,6 @@ const bureau = [
 .adhesion-box li { padding: 0.5rem 0; font-size: 0.95rem; border-bottom: 1px solid rgba(255,255,255,0.07); }
 
 @media (max-width: 900px) {
-  .histoire-grid, .docs-grid { grid-template-columns: 1fr; gap: 3rem; }
+  .histoire-grid, .docs-grid { grid-template-columns: 1fr; gap: 0rem; }
 }
 </style>
