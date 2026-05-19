@@ -252,13 +252,13 @@ onUnmounted(() => {
 })
 const anneeExistance = new Date().getFullYear() - 2025;
 const stats = [
-  { value: '5+', label: 'Membres actifs' },
+  { value: '10', label: 'Membres actifs' },
   { value: anneeExistance, label: 'Année(s) d\'existence' },
   { value: '20', label: 'Sorties par an' },
   { value: '12000', label: 'Km parcourus / an' },
 ]
 const values = [
-  { icon: 'yeye.jpg', title: 'Le pilote', desc: 'Ludo, notre pilote toujours au top.' },
+  { icon: 'ludo-pilote.jpg', title: 'Le pilote', desc: 'Ludo, notre pilote toujours au top.' },
   { icon: 'partenaire.jpg', title: 'Un partenaire', desc: 'Ca sert toujours un bon garage.' },
   { icon: 'moto1.jpg', title: 'Des courses', desc: "Parce qu'on aime aussi la compétition." },
   { icon: 'toto.jpg', title: 'Des copains', desc: "Parce qu'on aime les copains qui nous accompagnent." },
