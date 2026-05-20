@@ -29,7 +29,7 @@ const menuOpen = ref(false)
 const links = [
   { to: '/', label: 'Accueil' },
   { to: '/association', label: "L'Association" },
-  { to: '/galerie', label: 'Galerie' },
+  { to: '/competition', label: 'Compétition' },
   { to: '/evenements', label: 'Événements' },
   { to: '/contact', label: 'Contact' },
 ]

@@ -4,6 +4,7 @@ import About from '@/views/AboutView.vue'
 import Gallery from '@/views/GalleryView.vue'
 import Events from '@/views/EventsView.vue'
 import Contact from '@/views/ContactView.vue';
+import CompetitionView from "@/views/CompetitionView.vue";
 
 const router = createRouter({
   history: createWebHashHistory(import.meta.env.BASE_URL),
@@ -11,6 +12,7 @@ const router = createRouter({
     { path: '/', component: Home },
     { path: '/association', component: About },
     { path: '/galerie', component: Gallery },
+    { path: '/competition', component: CompetitionView },
     { path: '/evenements', component: Events },
     { path: '/contact', component: Contact }
   ],
