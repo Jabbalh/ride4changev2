@@ -1,6 +1,5 @@
 <template>
   <div class="about">
-    <SocialFloat />
     <!-- PAGE HEADER -->
     <section class="page-header">
       <div class="header-bg"></div>
@@ -99,11 +98,11 @@ import SocialFloat from "@/components/SocialFloat.vue";
 const baseUrl = import.meta.env.BASE_URL;
 
 const milestones = [
-  { year: '2025', text: 'Création de l’association par 4 membres fondateurs' },
-  { year: '2025', text: 'Engagement sportif à la Bridgestone PMR Cup avec une quatrième place au championnat en catégorie 1000 cm3' },
-  { year: '2026', text: "L'équipe devient une famille avec plus de 10 membres actifs" },
-  { year: '2026', text: "Engager à la Bridgestone PMR Cup" },
   { year: '2026', text: "Debut des initiations pistes sur le mythique circuit Bugatti au Mans" },
+  { year: '2026', text: "Engager à la Bridgestone PMR Cup" },
+  { year: '2026', text: "L'équipe devient une famille avec plus de 10 membres actifs" },
+  { year: '2025', text: 'Engagement sportif à la Bridgestone PMR Cup avec une quatrième place au championnat en catégorie 1000 cm3' },
+  { year: '2025', text: 'Création de l’association par 4 membres fondateurs' },
 ]
 const bureau = [
   { name: 'Ludovic Rouvrais', role: 'Président', initials: 'LR', bio: 'Motard depuis plus de 30 ans, Ludovic pilote l\'association avec passion et rigueur.' },

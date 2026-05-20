@@ -1,6 +1,5 @@
 <template>
   <div class="home">
-    <SocialFloat />
     <!-- HERO -->
     <section class="hero">
       <div class="hero-bg">

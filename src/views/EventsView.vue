@@ -1,6 +1,5 @@
 <template>
   <div class="events-page">
-    <SocialFloat />
     <section class="page-header">
       <div class="header-bg"></div>
       <div class="container">

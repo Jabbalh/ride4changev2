@@ -2,6 +2,7 @@
   <div id="app-wrapper">
     <NavBar />
     <main>
+      <SocialFloat />
       <router-view v-slot="{ Component }">
         <transition name="fade" mode="out-in">
           <component :is="Component" />
@@ -15,6 +16,7 @@
 <script setup lang="ts">
 import NavBar from '@/components/NavBar.vue'
 import FooterBar from '@/components/FooterBar.vue'
+import SocialFloat from "@/components/SocialFloat.vue";
 </script>
 
 <style>

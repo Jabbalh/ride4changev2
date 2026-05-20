@@ -1,6 +1,5 @@
 <template>
   <div class="gallery-page">
-    <SocialFloat />
     <!-- PAGE HEADER -->
     <section class="page-header">
       <div class="header-bg"></div>
