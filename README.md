@@ -40,7 +40,7 @@ wrangler.toml   configuration Cloudflare
 
 ## Modifier le contenu
 
-Les **événements** sont gérés dans Supabase (voir ci-dessous). Le reste du contenu est écrit directement dans les pages : chaque vue de `src/views/` commence par une ou plusieurs listes à éditer.
+Les **événements** et les **dates clés de la page L'Association** sont gérés dans Supabase (voir ci-dessous). Le reste du contenu, y compris le texte de présentation de L'Association, est écrit directement dans les pages : chaque vue de `src/views/` commence par une ou plusieurs listes à éditer.
 
 - **Boutique** : `src/views/BoutiqueView.vue`, liste `products`. Un article avec `available: true` affiche le bouton « Commander ».
 - **Initiation & Roulage** : `src/views/InitiationView.vue`, listes `formules`, `equipement` et `deroulement`
@@ -54,6 +54,15 @@ Le calendrier de la page **Événements** est lu dans la table `events` de Supab
 
 - **Depuis le site (espace éditeur)** : lien « Espace éditeur » en bas de page, ou `/#/admin/evenements`, puis connexion avec un compte éditeur. L'article se rédige dans un éditeur visuel (voir ci-dessous).
 - **Depuis le dashboard Supabase** : **Table Editor** → `events`. C'est aussi là qu'on **supprime** un événement ; depuis le site, on décoche « Publié » pour le masquer.
+
+#### Dates clés de L'Association (table `milestones`)
+
+La liste « année + description » de la page **L'Association** est lue dans la table `milestones`. Le texte de présentation, lui, reste écrit dans `src/views/AboutView.vue` : il change rarement, et cela évite un appel à la base.
+
+- **Depuis le site** : Espace éditeur → onglet **L'Association**, ou le lien « ✎ Modifier les dates » sous la liste, visible une fois connecté. On peut y **ajouter**, **modifier** sur place ou **supprimer** une date (avec confirmation). Contrairement aux événements, il n'y a pas de brouillon : une date est visible dès son ajout.
+- **Ordre d'affichage** : libre, celui de la liste de l'espace éditeur. Les boutons **↑** et **↓** déplacent une date d'un cran, et le formulaire d'ajout propose de placer la nouvelle date **en tête** ou **en fin de liste**. L'ordre complet est enregistré en une seule opération.
+- **Contrôles** : année entre 1900 et 2100, description obligatoire (500 caractères maximum), vérifiés par le site et imposés par la base.
+- **Mise en place (une fois)** : exécuter dans le SQL Editor `supabase/migrations/20260927090000_create_milestones.sql`, qui reprend les dates affichées jusqu'ici, puis `20260928090000_milestones_position.sql`, qui ajoute l'ordre manuel en conservant l'ordre existant.
 
 #### Comptes éditeurs
 

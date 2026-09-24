@@ -43,6 +43,27 @@ export type Database = {
         Update: Partial<Database['public']['Tables']['events']['Insert']>
         Relationships: []
       }
+      milestones: {
+        Row: {
+          id: number
+          year: number
+          description: string
+          position: number
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: never
+          year: number
+          description: string
+          // Fixée par la base à l'insertion (en tête de liste), modifiable ensuite via reorder_milestones
+          position?: never
+          created_at?: string
+          updated_at?: string
+        }
+        Update: Partial<Database['public']['Tables']['milestones']['Insert']>
+        Relationships: []
+      }
       editors: {
         Row: {
           user_id: string
@@ -59,6 +80,7 @@ export type Database = {
     Views: { [_ in never]: never }
     Functions: {
       is_editor: { Args: Record<PropertyKey, never>; Returns: boolean }
+      reorder_milestones: { Args: { ids: number[] }; Returns: number }
     }
     Enums: {
       event_type:

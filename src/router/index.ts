@@ -34,6 +34,7 @@ const router = createRouter({
     { path: '/connexion', component: () => import('@/views/admin/LoginView.vue') },
     { path: '/admin/evenements', component: () => import('@/views/admin/AdminEventsView.vue'), meta: { requiresEditor: true } },
     { path: '/admin/evenements/nouveau', component: () => import('@/views/admin/EventFormView.vue'), meta: { requiresEditor: true } },
+    { path: '/admin/association', component: () => import('@/views/admin/AdminMilestonesView.vue'), meta: { requiresEditor: true } },
     {
       path: '/admin/evenements/:id(\\d+)',
       component: () => import('@/views/admin/EventFormView.vue'),

@@ -20,10 +20,12 @@ Le modèle de référence est la rubrique **Événements** :
 | Droits éditeurs | `supabase/migrations/20260925090000_events_editors.sql` (table `editors`, `is_editor()`) |
 | Connexion | `src/composables/useAuth.ts`, `src/views/admin/LoginView.vue` |
 | Écriture (liste admin, formulaire) | `src/composables/useEventAdmin.ts`, `src/views/admin/*` |
+| Rubrique simple éditable sur place (sans page détail ni brouillon) | `…_create_milestones.sql`, `useMilestones.ts`, `useMilestoneAdmin.ts`, `AdminMilestonesView.vue` |
+| Navigation de l'espace éditeur | `src/components/admin/AdminNav.vue` (`SECTIONS`) |
 
 Principes à conserver :
 - **Visiteurs : lecture seule.** Le navigateur utilise la clé publique. Pour `anon`, RLS n'autorise que le `select` des lignes `published`.
-- **Écriture réservée aux éditeurs**, jamais à « tout utilisateur connecté » (`authenticated` seul ne suffit pas : n'importe qui peut créer un compte si les inscriptions sont ouvertes). Policies `to authenticated` avec `(select public.is_editor())`, et `grant insert/update (colonnes éditables)` uniquement. Pas de delete depuis le site.
+- **Écriture réservée aux éditeurs**, jamais à « tout utilisateur connecté » (`authenticated` seul ne suffit pas : n'importe qui peut créer un compte si les inscriptions sont ouvertes). Policies `to authenticated` avec `(select public.is_editor())`, et `grant insert/update (colonnes éditables)` uniquement. Pas de delete depuis le site par défaut (événements : on dépublie). Si l'utilisateur demande la suppression (ex : `milestones`), ajouter `grant delete` et une policy `for delete … using ((select public.is_editor()))`, avec une confirmation dans l'interface.
 - **Les requêtes publiques filtrent `.eq('published', true)`**, puisqu'un éditeur connecté voit aussi les brouillons via RLS.
 - **Les données restent brutes en base.** On stocke des dates (`date`), jamais des libellés comme « Juin » ou « Passé ». Le composable calcule l'affichage.
 - **Supabase est la seule ressource tierce autorisée** (voir « Vie privée » dans le README). N'ajouter aucune autre dépendance externe côté navigateur.
@@ -31,8 +33,9 @@ Principes à conserver :
 ## Ajouter une rubrique (ex : boutique, formules d'initiation)
 
 1. **Migration** : créer `supabase/migrations/<AAAAMMJJHHMMSS>_create_<table>.sql` en copiant la structure de celle des événements :
-   - `id bigint generated always as identity primary key`, `published boolean not null default true`, `created_at`, `updated_at` ;
-   - un ordre d'affichage explicite si nécessaire (`position int`) ;
+   - `id bigint generated always as identity primary key`, `created_at`, `updated_at`, et `published boolean not null default true` si des brouillons sont utiles (pas pour une simple liste comme `milestones`) ;
+   - si la rubrique remplace un contenu codé en dur, reprendre ce contenu dans la migration (`insert … values`) pour ne rien perdre ;
+   - un ordre d'affichage manuel si nécessaire : reprendre le modèle de `…_milestones_position.sql`. Colonne `position` avec un trigger d'insertion (la nouvelle ligne arrive en tête), fonction `reorder_<table>(ids bigint[]) returns integer` en `security invoker` (la fonction renvoie le nombre de lignes modifiées, à vérifier côté site), `grant update (position)`, et des boutons ↑ ↓ qui envoient l'ordre complet ;
    - un **enum** plutôt que du texte libre pour les listes fermées, car il donne une liste déroulante dans le Table Editor ;
    - le trigger `updated_at`, qui réutilise `public.set_updated_at()`, déjà créée : ne pas la recréer ;
    - `enable row level security`, `revoke all … from anon, authenticated`, `grant select … to anon, authenticated`, et une policy `for select to anon, authenticated using (published)`.
@@ -40,7 +43,7 @@ Principes à conserver :
 3. **Composable** : créer `src/composables/use<Rubrique>.ts` sur le modèle de `useEvents.ts`. Il gère `loading`, `error`, le cas `supabase === null` et le tri. Il renvoie des données prêtes à afficher.
 4. **Vue** : remplacer le tableau codé en dur par le composable, et gérer les états chargement, erreur (avec un bouton « Réessayer ») et liste vide. Garder le CSS existant.
 5. **Texte riche** : colonne `text` (HTML de `RichTextEditor`, ou Markdown), rendue **uniquement** via `renderRichText()` puis `v-html`, avec la classe globale `.article-content`. L'éditeur doit enregistrer `''` quand il est vide (et non `<p></p>`), sinon la colonne générée `has_details` passe à vrai. Pour les images, un bucket dédié par rubrique, avec une policy insert `to authenticated with check (bucket_id = '…' and (select public.is_editor()))`. Jamais de `v-html` sur du contenu brut. Pour une page détail, reprendre le trio `details` / `has_details` (colonne générée `~ '\S'`) / sélection explicite qui exclut `details` de la liste.
-6. **Édition depuis le site** (si demandée) : dans une nouvelle migration, ajouter les policies éditeur sur la table (select de tout, insert, update avec `(select public.is_editor())`) et les `grant` par colonne. Écrire un module `use<Rubrique>Admin.ts` sur le modèle de `useEventAdmin.ts`, avec `.select('id').single()` après insert ou update pour qu'un refus RLS lève une erreur au lieu d'un faux succès. Ajouter des routes `/admin/<rubrique>` avec `meta: { requiresEditor: true }` et un import dynamique. Réutiliser `is_editor()` : ne pas la recréer.
+6. **Édition depuis le site** (si demandée) : dans une nouvelle migration, ajouter les policies éditeur sur la table (select de tout, insert, update avec `(select public.is_editor())`) et les `grant` par colonne. Écrire un module `use<Rubrique>Admin.ts` sur le modèle de `useEventAdmin.ts`, avec `.select('id').single()` après insert ou update pour qu'un refus RLS lève une erreur au lieu d'un faux succès. Ajouter des routes `/admin/<rubrique>` avec `meta: { requiresEditor: true }` et un import dynamique, puis un onglet dans `AdminNav.vue`. Réutiliser `is_editor()` : ne pas la recréer.
 7. **Images** : utiliser Supabase Storage, avec un bucket public en lecture, et stocker le chemin dans la table. Ne pas mettre d'URL externe arbitraire.
 8. **Documentation** : mettre à jour la section « Contenu géré dans Supabase » du `README.md` (tableau des colonnes), et `CLAUDE.md` si l'architecture change.
 

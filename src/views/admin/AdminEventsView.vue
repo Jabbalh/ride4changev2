@@ -2,14 +2,11 @@
   <div class="admin-page">
     <section class="section">
       <div class="container">
+        <AdminNav />
         <div class="admin-header">
-          <div>
-            <span class="overline">Espace éditeur · {{ email }}</span>
-            <h1>ÉVÉNEMENTS</h1>
-          </div>
+          <h1>ÉVÉNEMENTS</h1>
           <div class="actions">
             <router-link to="/admin/evenements/nouveau" class="btn btn-primary">+ Nouvel événement</router-link>
-            <button class="btn btn-outline" @click="logout">Se déconnecter</button>
           </div>
         </div>
 
@@ -53,13 +50,11 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
-import { useAuth } from '@/composables/useAuth'
+import { useRoute } from 'vue-router'
+import AdminNav from '@/components/admin/AdminNav.vue'
 import { adminErrorMessage, fetchAllEvents, type AdminEventRow } from '@/composables/useEventAdmin'
 
 const route = useRoute()
-const router = useRouter()
-const { email, signOut } = useAuth()
 
 const events = ref<AdminEventRow[]>([])
 const loading = ref(true)
@@ -78,11 +73,6 @@ async function load() {
   }
 }
 load()
-
-async function logout() {
-  await signOut()
-  await router.push('/evenements')
-}
 </script>
 
 <style scoped>

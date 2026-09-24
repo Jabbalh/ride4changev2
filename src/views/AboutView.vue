@@ -25,12 +25,18 @@
             <p class="margin-top-p">Aujourd’hui, Ride 4 Change œuvre pour promouvoir la moto de vitesse accessible à tous, personnes en situation de handicap comme valides. L’association défend des valeurs fortes : dépassement de soi, inclusion, solidarité et passion.</p>
             <p class="margin-top-p">Sur les plus beaux circuits d’Europe, notre équipe repousse ses limites avec une seule ambition : montrer que la passion n’a pas de barrières.</p>
             <p class="margin-top-p">Plus qu’un projet sportif, Ride 4 Change est une aventure humaine. Une équipe de plus de 10 membres actifs partage aujourd’hui cette vision, animée par l’amour de la moto, dans le respect essentiel de la sécurité et de l’exigence de la discipline.</p>
-            <div class="milestones">
-              <div v-for="m in milestones" :key="m.year" class="milestone">
+            <!-- Dates clés : table milestones dans Supabase (éditables dans l'espace éditeur) -->
+            <div v-if="milestonesLoading || milestones.length || milestonesError" class="milestones">
+              <p v-if="milestonesLoading" class="m-state">Chargement…</p>
+              <p v-else-if="milestonesError" class="m-state">
+                {{ milestonesError }} <button class="m-retry" @click="reloadMilestones">Réessayer</button>
+              </p>
+              <div v-for="m in milestones" v-else :key="m.id" class="milestone">
                 <span class="m-year">{{ m.year }}</span>
-                <span class="m-text">{{ m.text }}</span>
+                <span class="m-text">{{ m.description }}</span>
               </div>
             </div>
+            <router-link v-if="isEditor" to="/admin/association" class="m-edit">✎ Modifier les dates</router-link>
           </div>
           <div class="histoire-visual">
             <div class="visual-card big">
@@ -93,17 +99,17 @@
 </template>
 
 <script setup lang="ts">
-import SocialFloat from "@/components/SocialFloat.vue";
+import { useMilestones } from '@/composables/useMilestones'
+import { useAuth } from '@/composables/useAuth'
 
 const baseUrl = import.meta.env.BASE_URL;
 
-const milestones = [
-  { year: '2026', text: "Debut des initiations pistes sur le mythique circuit Bugatti au Mans" },
-  { year: '2026', text: "Engager à la Bridgestone PMR Cup" },
-  { year: '2026', text: "L'équipe devient une famille avec plus de 10 membres actifs" },
-  { year: '2025', text: 'Engagement sportif à la Bridgestone PMR Cup avec une quatrième place au championnat en catégorie 1000 cm3' },
-  { year: '2025', text: 'Création de l’association par 4 membres fondateurs' },
-]
+// Seules les dates clés viennent de Supabase ; le reste de la page reste en dur (contenu stable)
+const { milestones, loading: milestonesLoading, error: milestonesError, reload: reloadMilestones } = useMilestones()
+
+// Lien « Modifier » pour un éditeur connecté (session locale, aucun appel réseau pour un visiteur)
+const { isEditor, init } = useAuth()
+init()
 const bureau = [
   { name: 'Ludovic Rouvrais', role: 'Président', initials: 'LR', bio: 'Motard depuis plus de 30 ans, Ludovic pilote l\'association avec passion et rigueur.' },
   { name: 'Anthony Martin', role: 'Bricoleur', initials: 'AM', bio: 'Bricoleur passionné.' },
@@ -138,6 +144,9 @@ const bureau = [
 .milestone { display: flex; gap: 1rem; margin-bottom: 1rem; }
 .m-year { font-family: 'Bebas Neue',sans-serif; font-size: 1.3rem; color: var(--red); flex-shrink: 0; }
 .m-text { font-size: 0.9rem; color: var(--grey-light); padding-top: 0.2rem; }
+.m-state { font-size: 0.9rem; color: var(--grey); }
+.m-retry { background: none; border: none; color: var(--red); cursor: pointer; font: inherit; text-decoration: underline; padding: 0; }
+.m-edit { display: inline-block; margin-top: 0.5rem; font-family: 'Barlow Condensed',sans-serif; font-size: 0.85rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--red); }
 .visual-card {
   background: var(--dark2); display: flex; flex-direction: column;
   align-items: center; justify-content: center; gap: 1rem;
