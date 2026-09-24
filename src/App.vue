@@ -23,7 +23,7 @@ import SocialFloat from "@/components/SocialFloat.vue";
 #app-wrapper {
   display: flex;
   flex-direction: column;
-  min-height: 101vh;
+  min-height: 100vh;
 }
 main { flex: 1; }
 </style>
