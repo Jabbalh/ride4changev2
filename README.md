@@ -96,7 +96,10 @@ L'article s'affiche sur la page `/#/evenements/<id>`, accessible depuis la liste
 
 **Depuis l'espace éditeur**, il se rédige dans un éditeur visuel, comme un traitement de texte : titres, gras, italique, souligné, barré, couleurs de la charte (blanc, rouge, orange, gris), alignement, listes, citations, séparateurs, liens et **images**. Les raccourcis habituels fonctionnent (Ctrl+B, Ctrl+I, Ctrl+U, Ctrl+Z).
 
-- **Images** : le bouton 🖼 envoie la photo dans Supabase Storage (bucket `event-images`). Elle est d'abord redimensionnée dans le navigateur (1600 px maximum, 5 Mo maximum côté Supabase). Formats acceptés : JPEG, PNG, WebP, GIF.
+- **Images** : bouton 🖼, copier-coller ou glisser-déposer dans l'article. La photo est envoyée dans Supabase Storage (bucket `event-images`) **dès son insertion**, et non à l'enregistrement de l'événement. Formats acceptés : JPEG, PNG, WebP, GIF.
+  - Taille : le fichier d'origine peut peser jusqu'à 25 Mo. Il est réduit à 1600 px dans le navigateur, puis doit faire au plus **5 Mo**. Ces 5 Mo sont vérifiés par le site, avec un message immédiat, et imposés par Supabase quoi qu'il arrive.
+  - Les GIF ne sont pas réduits, pour garder l'animation : un GIF de plus de 5 Mo est refusé.
+  - Une image insérée puis retirée de l'article, ou un article jamais enregistré, laisse le fichier dans Storage. Faire le ménage de temps en temps dans **Storage → event-images**.
 - **Contenu collé** depuis Word ou un site web : seules la couleur et l'alignement sont conservés. Les autres styles (polices, tailles, fonds) sont retirés pour garder la charte du site.
 - **Images d'autres sites** : elles sont retirées automatiquement (RGPD). Seules s'affichent les images de Supabase Storage et celles du site (`/fichier.jpg`, dans `public/`).
 - Les liens vers d'autres sites s'ouvrent dans un nouvel onglet, et le HTML dangereux (scripts…) est filtré.

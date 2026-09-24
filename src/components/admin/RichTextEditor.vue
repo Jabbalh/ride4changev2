@@ -65,7 +65,7 @@ import Image from '@tiptap/extension-image'
 import TextAlign from '@tiptap/extension-text-align'
 import { Color, TextStyle } from '@tiptap/extension-text-style'
 import { renderRichText } from '@/lib/richText'
-import { uploadEventImage } from '@/lib/eventImages'
+import { ImageUploadError, uploadEventImage } from '@/lib/eventImages'
 
 // v-model : HTML de l'article ('' si vide). Le contenu initial peut aussi être du Markdown (anciens articles).
 const model = defineModel<string>({ required: true })
@@ -97,6 +97,23 @@ const editor = useEditor({
   ],
   editorProps: {
     attributes: { class: 'article-content editor-surface' },
+    // Images collées ou glissées : même envoi contrôlé (format, taille, réduction) que le bouton 🖼.
+    // Sans ça, le navigateur pourrait ouvrir le fichier déposé à la place de la page (article perdu).
+    handlePaste: (_view, event) => {
+      const files = imageFiles(event.clipboardData?.files)
+      if (!files.length) return false
+      files.forEach(file => insertImageFile(file))
+      return true
+    },
+    handleDrop: (view, event, _slice, moved) => {
+      if (moved) return false
+      const files = imageFiles(event.dataTransfer?.files)
+      if (!files.length) return false
+      event.preventDefault()
+      const pos = view.posAtCoords({ left: event.clientX, top: event.clientY })?.pos
+      files.forEach(file => insertImageFile(file, pos))
+      return true
+    },
   },
   onUpdate: ({ editor }) => {
     // Un éditeur vide produit « <p></p> » : on enregistre '' pour que has_details reste faux
@@ -146,25 +163,33 @@ const fileInput = ref<HTMLInputElement>()
 const uploading = ref(false)
 const uploadError = ref('')
 
+function imageFiles(list?: FileList | null): File[] {
+  return Array.from(list ?? []).filter(f => f.type.startsWith('image/'))
+}
+
 async function onFileChosen(e: Event) {
   const input = e.target as HTMLInputElement
   const file = input.files?.[0]
   input.value = ''
-  if (!file) return
+  if (file) await insertImageFile(file)
+}
+
+/** Envoie l'image puis l'insère à la position donnée (dépôt) ou à la position du curseur. */
+async function insertImageFile(file: File, pos?: number) {
   uploading.value = true
   uploadError.value = ''
   try {
     const src = await uploadEventImage(file)
     const alt = file.name.replace(/\.[^.]+$/, '').replace(/[-_]+/g, ' ')
-    editor.value?.chain().focus().setImage({ src, alt }).run()
+    const chain = editor.value?.chain().focus()
+    if (pos === undefined) chain?.setImage({ src, alt }).run()
+    else chain?.insertContentAt(pos, { type: 'image', attrs: { src, alt } }).run()
   } catch (err) {
     console.error(err)
-    const status = (err as { statusCode?: string | number })?.statusCode
-    uploadError.value = err instanceof Error && err.message.startsWith('Format')
+    // Messages de uploadEventImage (format, taille…) affichés tels quels ; sinon message générique
+    uploadError.value = err instanceof ImageUploadError
       ? err.message
-      : String(status) === '413'
-        ? 'Image trop lourde (5 Mo maximum).'
-        : "L'envoi de l'image a échoué. Vérifiez que vous êtes connecté avec un compte éditeur."
+      : "L'envoi de l'image a échoué. Vérifiez que vous êtes connecté avec un compte éditeur."
   } finally {
     uploading.value = false
   }
