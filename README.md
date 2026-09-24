@@ -40,14 +40,64 @@ wrangler.toml   configuration Cloudflare
 
 ## Modifier le contenu
 
-Le contenu est écrit directement dans les pages. Chaque vue de `src/views/` commence par une ou plusieurs listes (événements, articles de la boutique, formules d'initiation…) à éditer :
+Les **événements** sont gérés dans Supabase (voir ci-dessous). Le reste du contenu est écrit directement dans les pages : chaque vue de `src/views/` commence par une ou plusieurs listes à éditer.
 
-- **Événements** : `src/views/EventsView.vue`, liste `events`
 - **Boutique** : `src/views/BoutiqueView.vue`, liste `products`. Un article avec `available: true` affiche le bouton « Commander ».
 - **Initiation & Roulage** : `src/views/InitiationView.vue`, listes `formules`, `equipement` et `deroulement`
 - **Coordonnées** : `src/views/ContactView.vue`, liste `infos`
 
 Les images se déposent dans `public/`.
+
+### Contenu géré dans Supabase
+
+Le calendrier de la page **Événements** est lu dans la table `events` de Supabase. Pour ajouter ou modifier un événement : dashboard Supabase → **Table Editor** → `events`. La modification est visible immédiatement sur le site, sans redéploiement.
+
+| Colonne | Rôle |
+|---|---|
+| `title` | Titre de l'événement (obligatoire) |
+| `type` | Sortie, Roulage, Initiation, Formation, Compétition, Rassemblement, Rallye, Solidarité, Atelier ou AG (liste déroulante) |
+| `starts_on` / `ends_on` | Date de début (obligatoire) et date de fin (vide si l'événement dure une journée) |
+| `location`, `description` | Lieu et description courte (affichée dans la liste) |
+| `details` | Article détaillé en **Markdown** (voir ci-dessous). S'il n'est pas vide, l'événement devient cliquable et ouvre sa page article |
+| `has_details` | Calculé automatiquement (non modifiable) : coché si `details` contient du texte |
+| `participants` | Texte libre, affiché seulement sur l'événement à la une (ex : « 120 participants ») |
+| `is_featured` | Coché : l'événement est mis en avant en haut de la page (le prochain événement coché est retenu) |
+| `published` | Décoché : l'événement est masqué sans être supprimé |
+
+« À venir » ou « Passé » est calculé automatiquement à partir de la date. Les 6 derniers événements passés restent affichés.
+
+#### Écrire un article (colonne `details`)
+
+L'article s'affiche sur la page `/#/evenements/<id>`, accessible depuis la liste (« Lire la suite ») et depuis l'événement à la une (« En savoir plus »). Il s'écrit en Markdown :
+
+```markdown
+Deux jours de **roulage** et de convivialité.
+
+## Programme
+- Samedi : sessions par niveau
+- Dimanche : balade et barbecue
+
+> Pensez à votre combinaison !
+
+![Photo du circuit](/moto1.jpg)
+
+[Site du circuit](https://www.circuit-loheac.fr)
+```
+
+- Un simple retour à la ligne est conservé tel quel.
+- **Images** : seules les images du site (`/fichier.jpg`, déposées dans `public/`) ou de Supabase Storage (bucket public) s'affichent. Les images d'autres sites sont retirées automatiquement (RGPD).
+- Les liens vers d'autres sites s'ouvrent dans un nouvel onglet.
+- Le HTML dangereux (scripts…) est filtré.
+
+**Mise en place (une fois) :**
+
+1. Dans Supabase, **SQL Editor** : exécuter, dans l'ordre, chaque fichier de `supabase/migrations/` qui n'a pas encore été appliqué (les noms commencent par leur date).
+2. En local : copier `.env.example` en `.env.local` et y mettre l'URL du projet et la clé **publishable** (ou **anon**), à récupérer dans **Project Settings → API**.
+3. Sur Cloudflare, dans les réglages du worker : **Settings → Build → Variables and secrets**, ajouter `VITE_SUPABASE_URL` et `VITE_SUPABASE_PUBLISHABLE_KEY`. Ce sont des variables **de build** : elles sont intégrées au site lors du `pnpm build`. Les définir comme variables d'exécution (runtime) ne suffit pas.
+
+La clé publishable est visible dans le code du site, et c'est normal : les règles de sécurité en base (RLS) ne permettent que la lecture des événements publiés. Ne jamais utiliser la clé **secret** ou **service_role** côté site.
+
+Toute évolution du schéma passe par une nouvelle migration dans `supabase/migrations/`. Le skill Claude Code `supabase-content` décrit la marche à suivre, y compris pour brancher d'autres rubriques.
 
 ### Ajouter une page
 
@@ -105,4 +155,4 @@ Le dossier `docs/` contient une ancienne version du site, servie par GitHub Page
 
 ## Vie privée
 
-Le site ne charge aucune ressource tierce. Les polices sont hébergées localement via Fontsource, et les icônes des réseaux sociaux sont des SVG intégrés. Merci de conserver ce principe (RGPD).
+Le site ne charge aucune ressource tierce, à une exception près : l'API Supabase, pour les événements. Les polices sont hébergées localement via Fontsource, et les icônes des réseaux sociaux sont des SVG intégrés. Merci de conserver ce principe (RGPD), et de choisir une région Europe pour le projet Supabase.
