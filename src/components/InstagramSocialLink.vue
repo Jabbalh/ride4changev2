@@ -1,13 +1,28 @@
 <script setup lang="ts">
+import { useId } from 'vue'
 defineProps({ displayImage: {type: Boolean, default: true} });
+// id unique : le composant apparaît plusieurs fois sur la page
+const gradientId = `ig-gradient-${useId()}`
 </script>
 <template>
   <a href="https://www.instagram.com/ride4change_ludo_et_paule/" target="_blank" title="Instagram">
-<!--    <svg v-if="displayImage" viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><rect x="2" y="2" width="20" height="20" rx="5"/><path fill="#1a1a1a" d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5" stroke="#1a1a1a" stroke-width="2" stroke-linecap="round"/></svg>-->
-    <img v-if="displayImage" src="http://www.google.com/s2/favicons?domain=instagram.com" />
+    <svg v-if="displayImage" viewBox="0 0 24 24" aria-hidden="true">
+      <defs>
+        <radialGradient :id="gradientId" cx="0.3" cy="1.07" r="1.2">
+          <stop offset="0" stop-color="#FFDD55"/>
+          <stop offset="0.1" stop-color="#FFDD55"/>
+          <stop offset="0.5" stop-color="#FF543E"/>
+          <stop offset="1" stop-color="#C837AB"/>
+        </radialGradient>
+      </defs>
+      <rect x="1" y="1" width="22" height="22" rx="6.5" :fill="`url(#${gradientId})`"/>
+      <rect x="5" y="5" width="14" height="14" rx="4.2" fill="none" stroke="#fff" stroke-width="1.8"/>
+      <circle cx="12" cy="12" r="3.3" fill="none" stroke="#fff" stroke-width="1.8"/>
+      <circle cx="16.1" cy="7.9" r="1.05" fill="#fff"/>
+    </svg>
     <span v-else>Instagram</span>
   </a>
 </template>
 <style scoped>
-img{width:1.5rem;height:1.5rem;}
+svg{width:1.5rem;height:1.5rem;display:block;}
 </style>
