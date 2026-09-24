@@ -31,7 +31,27 @@
 .article-content hr { border: none; border-top: 1px solid rgba(255, 255, 255, 0.1); margin: 2rem 0; }
 .article-content code { background: var(--dark2); padding: 0.1rem 0.35rem; font-size: 0.9em; }
 
-.article-content table { border-collapse: collapse; width: 100%; font-size: 0.92rem; }
+/* Tableaux : colonnes de largeur égale, le texte passe à la ligne plutôt que de déborder (mobile compris) */
+.article-content table { border-collapse: collapse; width: 100%; table-layout: fixed; font-size: 0.92rem; clear: both; }
 .article-content th,
-.article-content td { border-bottom: 1px solid rgba(255, 255, 255, 0.1); padding: 0.55rem 0.75rem; text-align: left; }
-.article-content th { font-family: 'Barlow Condensed', sans-serif; letter-spacing: 0.1em; text-transform: uppercase; color: var(--white); }
+.article-content td { border: 1px solid rgba(255, 255, 255, 0.1); padding: 0.55rem 0.75rem; text-align: left; vertical-align: top; overflow-wrap: anywhere; }
+.article-content th { font-family: 'Barlow Condensed', sans-serif; letter-spacing: 0.1em; text-transform: uppercase; color: var(--white); background: var(--dark); }
+.article-content td > p:last-child,
+.article-content th > p:last-child { margin-bottom: 0; }
+.article-content td img,
+.article-content th img { margin: 0; border-left: none; }
+
+/* Image alignée : le texte l'entoure (attribut data-align posé par l'éditeur) */
+.article-content img[data-align="left"] { float: left; max-width: 50%; margin: 0.35rem 1.5rem 1rem 0; }
+.article-content img[data-align="right"] { float: right; max-width: 50%; margin: 0.35rem 0 1rem 1.5rem; border-left: none; border-right: 3px solid var(--red); }
+/* Un titre, un séparateur ou un tableau repartent sous l'image : pratique pour enchaîner des blocs « image + texte » */
+.article-content h1,
+.article-content h2,
+.article-content h3,
+.article-content hr { clear: both; }
+.article-content::after { content: ''; display: block; clear: both; }
+
+/* Sur petit écran, pas de place pour le texte à côté : l'image repasse au-dessus, en pleine largeur */
+@media (max-width: 600px) {
+  .article-content img[data-align] { float: none; max-width: 100%; margin: 1.5rem 0; }
+}
