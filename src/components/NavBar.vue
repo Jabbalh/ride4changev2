@@ -30,7 +30,9 @@ const links = [
   { to: '/', label: 'Accueil' },
   { to: '/association', label: "L'Association" },
   { to: '/competition', label: 'Compétition' },
+  { to: '/initiation-roulage', label: 'Initiation & Roulage' },
   { to: '/evenements', label: 'Événements' },
+  { to: '/boutique', label: 'Boutique' },
   { to: '/contact', label: 'Contact' },
 ]
 const handleScroll = () => { isScrolled.value = window.scrollY > 50 }
@@ -64,18 +66,19 @@ nav{
   backdrop-filter: blur(10px);
 }
 .nav-inner {
-  max-width: 1200px; margin: 0 auto; padding: 0 2rem;
+  max-width: 1400px; margin: 0 auto; padding: 0 2rem; gap: 2rem;
   display: flex; align-items: center; justify-content: space-between;
 }
 .nav-logo { display: flex; align-items: center; gap: 0.75rem; }
 .logo-icon { font-size: 1.8rem; color: var(--red); animation: spin 12s linear infinite; }
 @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-.logo-text { font-family: 'Barlow Condensed',sans-serif; font-size: 1.1rem; letter-spacing: 0.15em; text-transform: uppercase; }
+.logo-text { font-family: 'Barlow Condensed',sans-serif; font-size: 1.1rem; letter-spacing: 0.15em; text-transform: uppercase; white-space: nowrap; }
 .logo-text strong { color: var(--red); }
-.nav-links { list-style: none; display: flex; align-items: center; gap: 2rem; }
+.nav-links { list-style: none; display: flex; align-items: center; gap: 1.25rem; }
 .nav-links a {
-  font-family: 'Barlow Condensed',sans-serif; font-size: 0.9rem;
-  letter-spacing: 0.12em; text-transform: uppercase; color: var(--grey-light);
+  font-family: 'Barlow Condensed',sans-serif; font-size: 0.85rem;
+  letter-spacing: 0.1em; text-transform: uppercase; color: var(--grey-light);
+  white-space: nowrap;
   transition: color 0.3s; position: relative;
 }
 .nav-links a::after {
@@ -88,7 +91,8 @@ nav{
 .nav-cta::after { display: none !important; }
 .burger { display: none; flex-direction: column; gap: 5px; background: none; border: none; cursor: pointer; padding: 4px; }
 .burger span { display: block; width: 24px; height: 2px; background: var(--white); transition: all 0.3s ease; }
-@media (max-width: 768px) {
+/* 7 liens + bouton : bascule en menu burger avant que la barre ne déborde */
+@media (max-width: 1150px) {
   .burger { display: flex; }
   .nav-links {
     position: fixed; top: 0; right: 0; width: 280px; height: 100vh;

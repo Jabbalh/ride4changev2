@@ -1,4 +1,4 @@
-const OBJETS = ['', 'adhesion', 'info', 'evenement', 'presse', 'autre'] as const
+const OBJETS = ['', 'adhesion', 'info', 'initiation', 'boutique', 'evenement', 'presse', 'autre'] as const
 
 export interface ContactMessage {
   prenom: string

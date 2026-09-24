@@ -43,6 +43,8 @@
                   <option value="">Sélectionner...</option>
                   <option value="adhesion">Demande d'adhésion</option>
                   <option value="info">Informations générales</option>
+                  <option value="initiation">Initiation / Roulage</option>
+                  <option value="boutique">Boutique / Commande</option>
                   <option value="evenement">Événement / Partenariat</option>
                   <option value="presse">Presse / Média</option>
                   <option value="autre">Autre</option>
@@ -113,6 +115,7 @@
 
 <script setup  lang="ts">
 import { ref, reactive } from 'vue'
+import { useRoute } from 'vue-router'
 import FacebookSocialLinkk from "@/components/FacebookSocialLinkk.vue";
 import InstagramSocialLink from "@/components/InstagramSocialLink.vue";
 import TiktokSocialLink from "@/components/TiktokSocialLink.vue";
@@ -120,7 +123,13 @@ import TiktokSocialLink from "@/components/TiktokSocialLink.vue";
 const sent = ref(false)
 const sending = ref(false)
 const error = ref('')
-const form = reactive({ prenom:'', nom:'', email:'', objet:'', moto:'', message:'', website:'' })
+// L'objet peut être pré-rempli via l'URL, ex : /contact?objet=boutique
+const objetsPrefill = ['adhesion', 'info', 'initiation', 'boutique', 'evenement', 'presse', 'autre']
+const objetInitial = useRoute().query.objet
+const form = reactive({
+  prenom:'', nom:'', email:'', moto:'', message:'', website:'',
+  objet: typeof objetInitial === 'string' && objetsPrefill.includes(objetInitial) ? objetInitial : ''
+})
 
 const handleSubmit = async () => {
   sending.value = true

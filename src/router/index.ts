@@ -5,6 +5,8 @@ import Gallery from '@/views/GalleryView.vue'
 import Events from '@/views/EventsView.vue'
 import Contact from '@/views/ContactView.vue';
 import CompetitionView from "@/views/CompetitionView.vue";
+import InitiationView from "@/views/InitiationView.vue";
+import BoutiqueView from "@/views/BoutiqueView.vue";
 
 const router = createRouter({
   history: createWebHashHistory(import.meta.env.BASE_URL),
@@ -13,7 +15,9 @@ const router = createRouter({
     { path: '/association', component: About },
     { path: '/galerie', component: Gallery },
     { path: '/competition', component: CompetitionView },
+    { path: '/initiation-roulage', component: InitiationView },
     { path: '/evenements', component: Events },
+    { path: '/boutique', component: BoutiqueView },
     { path: '/contact', component: Contact }
   ],
   scrollBehavior() { return { top: 0 } }

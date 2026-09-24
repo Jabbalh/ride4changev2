@@ -51,7 +51,9 @@ const links = [
   { to: '/', label: 'Accueil' },
   { to: '/association', label: "L'Association" },
   { to: '/galerie', label: 'Galerie' },
+  { to: '/initiation-roulage', label: 'Initiation & Roulage' },
   { to: '/evenements', label: 'Événements' },
+  { to: '/boutique', label: 'Boutique' },
   { to: '/contact', label: 'Contact' },
 ]
 </script>
