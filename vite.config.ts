@@ -7,8 +7,8 @@ import vueDevTools from 'vite-plugin-vue-devtools'
 
 // https://vite.dev/config/
 export default defineConfig({
-  // Vercel sert le site à la racine ; GitHub Pages sous /ride4changev2/
-  base: process.env.VERCEL ? '/' : '/ride4changev2/',
+  // Cloudflare Pages sert le site à la racine ; GitHub Pages sous /ride4changev2/
+  base: process.env.CF_PAGES ? '/' : '/ride4changev2/',
   plugins: [
     vue(),
     vueJsx(),

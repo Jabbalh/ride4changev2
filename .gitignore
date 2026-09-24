@@ -38,5 +38,5 @@ __screenshots__/
 # Vite
 *.timestamp-*-*.mjs
 
-# Vercel
-.vercel
+# Cloudflare (wrangler)
+.wrangler
