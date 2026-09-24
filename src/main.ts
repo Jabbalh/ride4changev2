@@ -12,6 +12,7 @@ import '@fontsource/barlow/400-italic.css'
 import '@fontsource/barlow/600.css'
 import '@fontsource/barlow/700.css'
 import './assets/main.css'
+import './assets/article.css'
 
 const app = createApp(App)
 app.use(router)

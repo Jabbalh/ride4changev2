@@ -76,6 +76,8 @@ export function useEvents() {
       const { data, error: dbError } = await supabase
         .from('events')
         .select(LIST_COLUMNS)
+        // Filtre explicite : RLS laisse un éditeur connecté voir aussi les brouillons
+        .eq('published', true)
         .order('starts_on', { ascending: true })
       if (dbError) throw dbError
       const now = today()
@@ -111,6 +113,7 @@ export function useEvent(id: MaybeRefOrGetter<number>) {
         .from('events')
         .select(DETAIL_COLUMNS)
         .eq('id', eventId)
+        .eq('published', true)
         .maybeSingle()
       if (dbError) throw dbError
       event.value = data ? toCalendarEvent(data, today()) : null

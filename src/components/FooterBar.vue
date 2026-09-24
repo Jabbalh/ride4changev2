@@ -36,7 +36,7 @@
     <div class="footer-bottom">
       <div class="container">
         <p>© {{ new Date().getFullYear() }} Ride 4 change — Tous droits réservés</p>
-        <p>Association loi 1901 — Fondée en 2025</p>
+        <p>Association loi 1901 — Fondée en 2025 · <router-link to="/admin/evenements" class="editor-link">Espace éditeur</router-link></p>
       </div>
     </div>
   </footer>
@@ -84,6 +84,8 @@ const links = [
 }
 .footer-bottom .container { display: flex; justify-content: space-between; align-items: center; }
 .footer-bottom p { font-size: 0.8rem; color: var(--grey); font-family: 'Barlow Condensed',sans-serif; letter-spacing: 0.05em; }
+.editor-link { color: var(--grey); text-decoration: underline; text-underline-offset: 2px; }
+.editor-link:hover { color: var(--red); }
 @media (max-width: 768px) {
   .footer-grid { grid-template-columns: 1fr; gap: 2rem; }
   .footer-bottom .container { flex-direction: column; gap: 0.5rem; text-align: center; }

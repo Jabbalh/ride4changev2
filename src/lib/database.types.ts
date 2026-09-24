@@ -43,9 +43,23 @@ export type Database = {
         Update: Partial<Database['public']['Tables']['events']['Insert']>
         Relationships: []
       }
+      editors: {
+        Row: {
+          user_id: string
+          created_at: string
+        }
+        Insert: {
+          user_id: string
+          created_at?: string
+        }
+        Update: Partial<Database['public']['Tables']['editors']['Insert']>
+        Relationships: []
+      }
     }
     Views: { [_ in never]: never }
-    Functions: { [_ in never]: never }
+    Functions: {
+      is_editor: { Args: Record<PropertyKey, never>; Returns: boolean }
+    }
     Enums: {
       event_type:
         | 'Sortie'
@@ -62,5 +76,16 @@ export type Database = {
     CompositeTypes: { [_ in never]: never }
   }
 }
+
+type Enums = Database['public']['Enums']
+
+// Valeurs des enums à l'exécution (listes déroulantes des formulaires), comme les génère `supabase gen types`
+export const Constants = {
+  public: {
+    Enums: {
+      event_type: ['Sortie', 'Roulage', 'Initiation', 'Formation', 'Compétition', 'Rassemblement', 'Rallye', 'Solidarité', 'Atelier', 'AG'],
+    },
+  },
+} as const satisfies { public: { Enums: { [K in keyof Enums]: readonly Enums[K][] } } }
 
 export type Tables<T extends keyof Database['public']['Tables']> = Database['public']['Tables'][T]['Row']

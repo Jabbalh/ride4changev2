@@ -4,6 +4,7 @@
       <div class="header-bg"></div>
       <div class="container">
         <router-link to="/evenements" class="back-link">← Tous les événements</router-link>
+        <router-link v-if="isEditor && event" :to="`/admin/evenements/${event.id}`" class="back-link edit-link">✎ Modifier</router-link>
         <template v-if="event">
           <span class="overline">{{ event.type }}<template v-if="event.past"> · Passé</template></span>
           <h1>{{ event.title }}</h1>
@@ -26,7 +27,7 @@
         </div>
 
         <div v-else class="detail-layout">
-          <!-- Article Markdown (colonne `details`), ou à défaut le résumé -->
+          <!-- Article (colonne `details` : HTML de l'éditeur ou Markdown), ou à défaut le résumé -->
           <article v-if="articleHtml" class="article-content" v-html="articleHtml"></article>
           <p v-else class="article-summary">{{ event.description }}</p>
 
@@ -50,14 +51,19 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useEvent } from '@/composables/useEvents'
-import { renderMarkdown } from '@/lib/markdown'
+import { renderRichText } from '@/lib/richText'
+import { useAuth } from '@/composables/useAuth'
 
 const props = defineProps<{ id: number }>()
 
 const { event, loading, error, reload } = useEvent(() => props.id)
 
-// HTML nettoyé par DOMPurify dans renderMarkdown : v-html est sûr ici
-const articleHtml = computed(() => event.value?.has_details && event.value.details ? renderMarkdown(event.value.details) : '')
+// Lien « Modifier » pour un éditeur connecté (lecture de la session locale, aucun appel réseau pour un visiteur)
+const { isEditor, init } = useAuth()
+init()
+
+// HTML nettoyé par DOMPurify dans renderRichText : v-html est sûr ici
+const articleHtml = computed(() => event.value?.has_details && event.value.details ? renderRichText(event.value.details) : '')
 </script>
 
 <style scoped>
@@ -76,6 +82,7 @@ const articleHtml = computed(() => event.value?.has_details && event.value.detai
   color: var(--grey-light); transition: color 0.3s;
 }
 .back-link:hover { color: var(--red); }
+.edit-link { margin-left: 1.5rem; color: var(--red); }
 .page-header .overline { font-family:'Barlow Condensed',sans-serif; font-size:0.8rem; letter-spacing:0.3em; text-transform:uppercase; color:var(--red); display:block; margin-bottom:0.75rem; }
 .page-header h1 {
   font-family: 'Bebas Neue',sans-serif; font-size: clamp(2rem, 5vw, 4.5rem);
@@ -89,34 +96,8 @@ const articleHtml = computed(() => event.value?.has_details && event.value.detai
 .detail-layout { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 4rem; align-items: start; }
 .article-summary { color: var(--grey-light); font-size: 1.05rem; line-height: 1.7; }
 
-/* Contenu Markdown : généré par v-html, d'où :deep() */
-.article-content { color: var(--grey-light); font-size: 1.02rem; line-height: 1.75; max-width: 760px; }
-.article-content :deep(h1),
-.article-content :deep(h2) { font-family:'Bebas Neue',sans-serif; font-size: 2rem; line-height: 1.1; color: var(--white); margin: 2.25rem 0 0.75rem; }
-.article-content :deep(h3),
-.article-content :deep(h4) { font-family:'Barlow Condensed',sans-serif; font-size: 1.25rem; font-weight: 700; letter-spacing: 0.05em; color: var(--white); margin: 1.75rem 0 0.5rem; }
-.article-content :deep(> :first-child) { margin-top: 0; }
-.article-content :deep(p),
-.article-content :deep(ul),
-.article-content :deep(ol),
-.article-content :deep(blockquote),
-.article-content :deep(table) { margin-bottom: 1.1rem; }
-.article-content :deep(ul),
-.article-content :deep(ol) { padding-left: 1.4rem; }
-.article-content :deep(li) { margin-bottom: 0.35rem; }
-.article-content :deep(li::marker) { color: var(--red); }
-.article-content :deep(strong) { color: var(--white); }
-.article-content :deep(a) { color: var(--red); border-bottom: 1px solid currentColor; }
-.article-content :deep(a:hover) { color: var(--white); }
-.article-content :deep(img) { max-width: 100%; height: auto; display: block; margin: 1.5rem 0; border-left: 3px solid var(--red); }
-.article-content :deep(blockquote) { border-left: 3px solid var(--red); background: var(--dark); padding: 1rem 1.25rem; font-style: italic; }
-.article-content :deep(blockquote p:last-child) { margin-bottom: 0; }
-.article-content :deep(hr) { border: none; border-top: 1px solid rgba(255,255,255,0.1); margin: 2rem 0; }
-.article-content :deep(code) { background: var(--dark2); padding: 0.1rem 0.35rem; font-size: 0.9em; }
-.article-content :deep(table) { border-collapse: collapse; width: 100%; font-size: 0.92rem; }
-.article-content :deep(th),
-.article-content :deep(td) { border-bottom: 1px solid rgba(255,255,255,0.1); padding: 0.55rem 0.75rem; text-align: left; }
-.article-content :deep(th) { font-family:'Barlow Condensed',sans-serif; letter-spacing: 0.1em; text-transform: uppercase; color: var(--white); }
+/* Styles du contenu de l'article : src/assets/article.css (partagés avec l'éditeur) */
+.article-content { max-width: 760px; }
 
 .info-card { background: var(--dark); padding: 1.75rem; border-left: 3px solid var(--red); position: sticky; top: 6rem; }
 .info-card h3 { font-family:'Barlow Condensed',sans-serif; font-size:0.85rem; letter-spacing:0.2em; text-transform:uppercase; color:var(--red); margin-bottom:1rem; }

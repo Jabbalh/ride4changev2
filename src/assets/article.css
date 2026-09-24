@@ -1,0 +1,37 @@
+/* ===== Contenu riche des articles =====
+   Partagé par la page article (EventDetailView) et l'éditeur visuel (RichTextEditor),
+   pour que l'édition ressemble exactement au rendu final. */
+
+.article-content { color: var(--grey-light); font-size: 1.02rem; line-height: 1.75; }
+.article-content > :first-child { margin-top: 0; }
+
+.article-content h1,
+.article-content h2 { font-family: 'Bebas Neue', sans-serif; font-weight: 400; font-size: 2rem; line-height: 1.1; color: var(--white); margin: 2.25rem 0 0.75rem; }
+.article-content h3,
+.article-content h4 { font-family: 'Barlow Condensed', sans-serif; font-size: 1.25rem; font-weight: 700; letter-spacing: 0.05em; color: var(--white); margin: 1.75rem 0 0.5rem; }
+
+.article-content p,
+.article-content ul,
+.article-content ol,
+.article-content blockquote,
+.article-content table { margin-bottom: 1.1rem; }
+.article-content ul,
+.article-content ol { padding-left: 1.4rem; }
+.article-content li { margin-bottom: 0.35rem; }
+.article-content li > p { margin-bottom: 0; }
+.article-content li::marker { color: var(--red); }
+
+.article-content strong { color: var(--white); }
+.article-content a { color: var(--red); border-bottom: 1px solid currentColor; text-decoration: none; }
+.article-content a:hover { color: var(--white); }
+
+.article-content img { max-width: 100%; height: auto; display: block; margin: 1.5rem 0; border-left: 3px solid var(--red); }
+.article-content blockquote { border-left: 3px solid var(--red); background: var(--dark); padding: 1rem 1.25rem; font-style: italic; }
+.article-content blockquote p:last-child { margin-bottom: 0; }
+.article-content hr { border: none; border-top: 1px solid rgba(255, 255, 255, 0.1); margin: 2rem 0; }
+.article-content code { background: var(--dark2); padding: 0.1rem 0.35rem; font-size: 0.9em; }
+
+.article-content table { border-collapse: collapse; width: 100%; font-size: 0.92rem; }
+.article-content th,
+.article-content td { border-bottom: 1px solid rgba(255, 255, 255, 0.1); padding: 0.55rem 0.75rem; text-align: left; }
+.article-content th { font-family: 'Barlow Condensed', sans-serif; letter-spacing: 0.1em; text-transform: uppercase; color: var(--white); }

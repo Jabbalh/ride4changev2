@@ -50,7 +50,31 @@ Les images se déposent dans `public/`.
 
 ### Contenu géré dans Supabase
 
-Le calendrier de la page **Événements** est lu dans la table `events` de Supabase. Pour ajouter ou modifier un événement : dashboard Supabase → **Table Editor** → `events`. La modification est visible immédiatement sur le site, sans redéploiement.
+Le calendrier de la page **Événements** est lu dans la table `events` de Supabase. Deux façons d'ajouter ou de modifier un événement, visibles immédiatement sur le site sans redéploiement :
+
+- **Depuis le site (espace éditeur)** : lien « Espace éditeur » en bas de page, ou `/#/admin/evenements`, puis connexion avec un compte éditeur. L'article se rédige dans un éditeur visuel (voir ci-dessous).
+- **Depuis le dashboard Supabase** : **Table Editor** → `events`. C'est aussi là qu'on **supprime** un événement ; depuis le site, on décoche « Publié » pour le masquer.
+
+#### Comptes éditeurs
+
+Être connecté ne suffit pas : seuls les comptes listés dans la table `editors` peuvent écrire. Les règles de sécurité en base (RLS) l'imposent, quoi que fasse le navigateur.
+
+Mise en place (une fois) :
+
+1. **SQL Editor** : exécuter `supabase/migrations/20260925090000_events_editors.sql`.
+2. **Authentication → Sign In / Providers** : désactiver **Allow new users to sign up**. Les comptes sont alors créés uniquement par l'administrateur (recommandé, même si la table `editors` protège déjà les données).
+
+Ajouter un éditeur :
+
+1. **Authentication → Users → Add user → Create new user** : email, mot de passe, cocher **Auto Confirm User**.
+2. **SQL Editor** :
+   ```sql
+   insert into public.editors (user_id) select id from auth.users where email = 'prenom@exemple.fr';
+   ```
+
+Retirer un éditeur : `delete from public.editors where user_id = (select id from auth.users where email = 'prenom@exemple.fr');` (ou supprimer son compte dans **Authentication → Users**).
+
+Mot de passe oublié : le réinitialiser depuis **Authentication → Users**.
 
 | Colonne | Rôle |
 |---|---|
@@ -58,7 +82,7 @@ Le calendrier de la page **Événements** est lu dans la table `events` de Supab
 | `type` | Sortie, Roulage, Initiation, Formation, Compétition, Rassemblement, Rallye, Solidarité, Atelier ou AG (liste déroulante) |
 | `starts_on` / `ends_on` | Date de début (obligatoire) et date de fin (vide si l'événement dure une journée) |
 | `location`, `description` | Lieu et description courte (affichée dans la liste) |
-| `details` | Article détaillé en **Markdown** (voir ci-dessous). S'il n'est pas vide, l'événement devient cliquable et ouvre sa page article |
+| `details` | Article détaillé : HTML produit par l'éditeur visuel, ou Markdown s'il est saisi dans le dashboard (voir ci-dessous). S'il n'est pas vide, l'événement devient cliquable et ouvre sa page article |
 | `has_details` | Calculé automatiquement (non modifiable) : coché si `details` contient du texte |
 | `participants` | Texte libre, affiché seulement sur l'événement à la une (ex : « 120 participants ») |
 | `is_featured` | Coché : l'événement est mis en avant en haut de la page (le prochain événement coché est retenu) |
@@ -68,26 +92,18 @@ Le calendrier de la page **Événements** est lu dans la table `events` de Supab
 
 #### Écrire un article (colonne `details`)
 
-L'article s'affiche sur la page `/#/evenements/<id>`, accessible depuis la liste (« Lire la suite ») et depuis l'événement à la une (« En savoir plus »). Il s'écrit en Markdown :
+L'article s'affiche sur la page `/#/evenements/<id>`, accessible depuis la liste (« Lire la suite ») et depuis l'événement à la une (« En savoir plus »).
 
-```markdown
-Deux jours de **roulage** et de convivialité.
+**Depuis l'espace éditeur**, il se rédige dans un éditeur visuel, comme un traitement de texte : titres, gras, italique, souligné, barré, couleurs de la charte (blanc, rouge, orange, gris), alignement, listes, citations, séparateurs, liens et **images**. Les raccourcis habituels fonctionnent (Ctrl+B, Ctrl+I, Ctrl+U, Ctrl+Z).
 
-## Programme
-- Samedi : sessions par niveau
-- Dimanche : balade et barbecue
+- **Images** : le bouton 🖼 envoie la photo dans Supabase Storage (bucket `event-images`). Elle est d'abord redimensionnée dans le navigateur (1600 px maximum, 5 Mo maximum côté Supabase). Formats acceptés : JPEG, PNG, WebP, GIF.
+- **Contenu collé** depuis Word ou un site web : seules la couleur et l'alignement sont conservés. Les autres styles (polices, tailles, fonds) sont retirés pour garder la charte du site.
+- **Images d'autres sites** : elles sont retirées automatiquement (RGPD). Seules s'affichent les images de Supabase Storage et celles du site (`/fichier.jpg`, dans `public/`).
+- Les liens vers d'autres sites s'ouvrent dans un nouvel onglet, et le HTML dangereux (scripts…) est filtré.
 
-> Pensez à votre combinaison !
+**Depuis le dashboard Supabase**, `details` peut aussi être saisi en Markdown (`## Titre`, `**gras**`, `- liste`, `![photo](/moto1.jpg)`…). L'éditeur visuel le convertit à la première modification.
 
-![Photo du circuit](/moto1.jpg)
-
-[Site du circuit](https://www.circuit-loheac.fr)
-```
-
-- Un simple retour à la ligne est conservé tel quel.
-- **Images** : seules les images du site (`/fichier.jpg`, déposées dans `public/`) ou de Supabase Storage (bucket public) s'affichent. Les images d'autres sites sont retirées automatiquement (RGPD).
-- Les liens vers d'autres sites s'ouvrent dans un nouvel onglet.
-- Le HTML dangereux (scripts…) est filtré.
+**Images des articles, mise en place (une fois) :** exécuter `supabase/migrations/20260926090000_event_images_storage.sql` dans le SQL Editor. Il crée le bucket public `event-images`, où seuls les éditeurs peuvent déposer des fichiers. Pour supprimer une image : **Storage → event-images** dans le dashboard.
 
 **Mise en place (une fois) :**
 
