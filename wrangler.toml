@@ -1,3 +1,8 @@
 name = "ride4changev2"
+main = "./worker/index.ts"
 compatibility_date = "2026-09-24"
-pages_build_output_dir = "dist"
+
+# Le site Vue est servi comme fichiers statiques (le dossier est fixé par @cloudflare/vite-plugin).
+# Seules les URLs /api/* passent par le worker.
+[assets]
+run_worker_first = ["/api/*"]

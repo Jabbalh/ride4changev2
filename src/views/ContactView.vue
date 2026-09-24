@@ -56,8 +56,11 @@
                 <label>Message *</label>
                 <textarea v-model="form.message" rows="5" placeholder="Votre message..." required></textarea>
               </div>
-              <button type="submit" class="btn btn-primary submit-btn">
-                Envoyer le message →
+              <!-- Champ piège anti-spam : invisible pour les humains -->
+              <input v-model="form.website" type="text" name="website" class="honeypot" tabindex="-1" autocomplete="off" aria-hidden="true" />
+              <p v-if="error" class="error-msg">{{ error }}</p>
+              <button type="submit" class="btn btn-primary submit-btn" :disabled="sending">
+                {{ sending ? 'Envoi en cours…' : 'Envoyer le message →' }}
               </button>
             </form>
           </div>
@@ -115,11 +118,29 @@ import InstagramSocialLink from "@/components/InstagramSocialLink.vue";
 import TiktokSocialLink from "@/components/TiktokSocialLink.vue";
 
 const sent = ref(false)
-const form = reactive({ prenom:'', nom:'', email:'', objet:'', moto:'', message:'' })
+const sending = ref(false)
+const error = ref('')
+const form = reactive({ prenom:'', nom:'', email:'', objet:'', moto:'', message:'', website:'' })
 
-const handleSubmit = () => {
-  // Simulation d'envoi
-  sent.value = true
+const handleSubmit = async () => {
+  sending.value = true
+  error.value = ''
+  try {
+    const res = await fetch('/api/contact', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(form)
+    })
+    const data = await res.json().catch(() => ({}))
+    if (!res.ok) throw new Error(data.error || "L'envoi a échoué.")
+    sent.value = true
+  } catch (e) {
+    error.value = e instanceof Error && e.message !== 'Failed to fetch'
+      ? e.message
+      : "Impossible d'envoyer le message pour le moment. Réessayez plus tard."
+  } finally {
+    sending.value = false
+  }
 }
 
 const infos = [
@@ -174,6 +195,12 @@ const infos = [
 .field textarea { resize: vertical; min-height: 120px; }
 .field select option { background: var(--dark2); }
 .submit-btn { align-self: flex-start; }
+.submit-btn:disabled { opacity: 0.6; cursor: wait; }
+.error-msg {
+  background: rgba(230,57,70,0.1); border: 1px solid rgba(230,57,70,0.3);
+  padding: 0.85rem 1rem; font-size: 0.9rem;
+}
+.honeypot { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }
 
 /* INFO CARDS */
 .info-card {
