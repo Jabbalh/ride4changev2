@@ -158,10 +158,10 @@
     </section>
 
     <!-- PHOTO AGRANDIE -->
-    <dialog ref="photoDialog" class="photo-dialog" @click.self="closePhoto" @close="onPhotoClosed">
+    <dialog ref="photoDialog" class="photo-dialog" @click.self="closePhoto">
       <figure v-if="openedPhoto">
         <button type="button" class="photo-dialog-close" aria-label="Fermer" @click="closePhoto">✕</button>
-        <img :src="baseUrl + openedPhoto.icon" :alt="openedPhoto.title">
+        <img :src="baseUrl + openedPhoto.large" :alt="openedPhoto.title">
         <figcaption>{{ openedPhoto.title }}</figcaption>
       </figure>
     </dialog>
@@ -237,15 +237,14 @@ onMounted(() => {
 
 onUnmounted(() => {
   stopCarousel()
-  document.body.style.overflow = ''
 })
 const anneeExistance = new Date().getFullYear() - 2025;
 
 const values = [
-  { icon: 'lemans.jpg', title: 'Les compétitions', desc: 'PMR Bridgestone & Bol d’argent .' },
-  { icon: 'partenaire.jpg', title: 'Nos partenaires', desc: '' },
-  { icon: 'initiation.jpg', title: 'Initiation et Roulages', desc: "Le Mans & Fay de Bretagne." },
-  { icon: 'solidarite.jpg', title: 'La Solidarité', desc: "Parce que sans amis ou bénévoles rien n’es possible." },
+  { icon: 'lemans.jpg', large: 'lemans-grand.jpg', title: 'Les compétitions', desc: 'PMR Bridgestone & Bol d’argent .' },
+  { icon: 'partenaire.jpg', large: 'partenaire-grand.jpg', title: 'Nos partenaires', desc: '' },
+  { icon: 'initiation.jpg', large: 'initiation-grand.jpg', title: 'Initiation et Roulages', desc: "Le Mans & Fay de Bretagne." },
+  { icon: 'solidarite.jpg', large: 'solidarite-grand.jpg', title: 'La Solidarité', desc: "Parce que sans amis ou bénévoles rien n’es possible." },
 ]
 
 // PHOTO AGRANDIE : <dialog> natif (Échap, focus et fond inerte gérés par le navigateur)
@@ -255,14 +254,9 @@ const openedPhoto = ref<Value>()
 
 const openPhoto = (v: Value) => {
   openedPhoto.value = v
-  document.body.style.overflow = 'hidden'
   photoDialog.value?.showModal()
 }
 const closePhoto = () => photoDialog.value?.close()
-const onPhotoClosed = () => {
-  openedPhoto.value = undefined
-  document.body.style.overflow = ''
-}
 const actions = [
   { tag: 'Courses', emoji: '🏁', color: 'linear-gradient(135deg,#1f1a1a,#2d1f00)', title: 'Le mans', desc: 'Un petit tour au man.' },
   { tag: 'Baptèmes', emoji: '🪖', color: 'linear-gradient(135deg,#1a1f1a,#1f2d1f)', title: 'Initiation sécurité', desc: 'Des baptèmes de moto.' },
@@ -383,6 +377,8 @@ const testimonials = [
 .value-icon:focus-visible { outline: 2px solid var(--red); outline-offset: 2px; }
 
 /* PHOTO AGRANDIE */
+/* Bloque le défilement de la page tant que la photo est ouverte */
+:global(html:has(.photo-dialog[open])) { overflow: hidden; }
 .photo-dialog {
   margin: auto; padding: 0; border: none; background: none;
   max-width: calc(100vw - 2rem); max-height: calc(100vh - 2rem);
