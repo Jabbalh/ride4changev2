@@ -2,7 +2,12 @@
 <html lang="fr">
   <head>
     <meta charset="UTF-8">
-    <link rel="icon" href="/favicon.svg">
+    <!-- Icônes générées depuis public/logo.svg : tête du logo en rond pour l'onglet (16-48 px),
+         logo entier pour l'écran d'accueil des téléphones (180-512 px) -->
+    <link rel="icon" href="/favicon.ico" sizes="16x16 32x32 48x48">
+    <link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+    <link rel="manifest" href="/site.webmanifest">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- Valeurs par défaut (accueil), remplacées à chaque navigation par src/lib/seo.ts.
          Ce sont les seules que voient les robots sans JavaScript (aperçus Facebook, WhatsApp…). -->

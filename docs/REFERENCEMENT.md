@@ -51,6 +51,7 @@ Google classe les pages sur leur texte. Plus le site explique clairement qui vou
 | `robots.txt` | `public/robots.txt` | Indique le sitemap et exclut l'espace éditeur |
 | `sitemap.xml` | `worker/sitemap.ts` | Liste les pages et les événements avec article, lue dans Supabase (à jour sans redéploiement, cache 1 h) |
 | Langue | `index.html` (`lang="fr"`) | Référencement en français |
+| Icônes (favicon) | `public/favicon.ico`, `favicon-32.png`, `apple-touch-icon.png`, `icon-*.png`, `site.webmanifest` | Icône de l'onglet et des résultats Google sur mobile (tête du logo en rond), icône d'écran d'accueil (logo entier). Générées depuis `public/logo.svg` |
 | Domaines secondaires | Bulk Redirect 301 (voir [`DOMAINES.md`](DOMAINES.md)) | Un seul domaine indexé, `ride4change.fr`, sans contenu dupliqué |
 
 **Ajouter une page au site** : lui donner un `meta.title` et un `meta.description` dans `src/router/index.ts`, et l'ajouter à `STATIC_PAGES` dans `worker/sitemap.ts`.
