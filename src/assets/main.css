@@ -41,6 +41,34 @@ a { color: inherit; text-decoration: none; }
 /* height: auto : les attributs width/height des <img> réservent la place sans déformer l'image */
 img { max-width: 100%; height: auto; display: block; }
 
+/* ===== Accessibilité ===== */
+/* Contour visible pour la navigation au clavier (pas au clic souris) */
+:focus-visible { outline: 2px solid var(--red); outline-offset: 3px; }
+
+/* Lien d'évitement (App.vue) : invisible jusqu'à ce qu'il reçoive le focus clavier */
+.skip-link {
+  position: fixed; top: 0.5rem; left: 0.5rem; z-index: 3000;
+  padding: 0.6rem 1rem; background: var(--red); color: var(--white);
+  font-family: var(--font-condensed); letter-spacing: 0.1em; text-transform: uppercase;
+  transform: translateY(-200%); transition: transform 0.2s;
+}
+.skip-link:focus { transform: none; }
+
+/* Texte réservé aux lecteurs d'écran */
+.sr-only {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0;
+}
+
+/* Réglage système « réduire les animations » : on coupe les animations et le défilement doux */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important; animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important; scroll-behavior: auto !important;
+  }
+}
+
 /* ===== Scrollbar ===== */
 ::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-track { background: var(--dark); }

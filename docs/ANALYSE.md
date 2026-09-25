@@ -11,7 +11,7 @@ Analyse du 25/09/2026, portant sur le code, l'expérience utilisateur, le conten
 | **A. Formulaire de contact** | Envoi par mail (Resend), limitation anti-spam, contrôles d'origine et de taille | Claude ; l'utilisateur crée le compte Resend et ajoute les DNS | À faire |
 | **B. Nettoyage rapide** | Images inutilisées, fautes, bugs carrousel et indicateur, code mort, menus alignés | Claude | Fait (25/09/2026) |
 | **C. Performance et en-têtes** | `_headers` (sécurité et cache), images en WebP, chargement à la demande, allègement du JS public | Claude | Fait (25/09/2026) |
-| **D. Accessibilité** | Formulaire, menu mobile, focus, popins de la galerie, pause du carrousel | Claude | À faire |
+| **D. Accessibilité** | Formulaire, menu mobile, focus, popins de la galerie, pause du carrousel | Claude | Fait (25/09/2026) |
 | **E. Mentions légales** | Page `/mentions-legales` et lien dans le pied de page | Claude ; l'utilisateur fournit RNA et directeur de publication | À faire |
 | **F. Contenu** | Vraies photos, témoignages, textes Compétition et Boutique, téléphone | L'association (Claude intègre) | À faire |
 
@@ -69,15 +69,15 @@ Ordre conseillé : A (urgent), puis B et C (rapides, sans risque), puis D et E. 
 
 ## Accessibilité
 
-- [ ] **Formulaire de contact** (`ContactView.vue:28-59`) : aucun `<label>` relié à son champ (`for`/`id`), `outline: none` sur les champs, message d'erreur sans `role="alert"`, astérisque non expliqué. Pas de `maxlength`, alors que le worker refuse au-delà de 100, 200 ou 5000 caractères, avec un message qui cite le nom technique du champ (« prenom »).
-- [ ] **Menu mobile** (`NavBar.vue:8`) : bouton burger sans `aria-label` ni `aria-expanded`. Le menu ne se ferme pas avec Échap ni lors d'un retour arrière. `display: none` (ligne 105) annule sa transition.
-- [ ] **Galerie et Compétition** (`GalleryView.vue:33-67`, `CompetitionView.vue`) : cartes en `<div @click>` inaccessibles au clavier, popin en `div` (ni Échap, ni gestion du focus, le fond défile), bouton ✕ sans libellé, titres visibles seulement au survol (donc jamais sur mobile). → Reprendre le `<dialog>` de la popin de l'accueil.
-- [ ] **Carrousel** (`HomeView.vue:98-104, 203-211`) : défilement automatique sans pause ni respect de `prefers-reduced-motion` (WCAG 2.2.2) ; pastilles en `<span @click>` → `<button aria-label="Photo n">` de 24 px minimum.
-- [ ] **Focus clavier** : aucun style `:focus-visible` global dans `main.css`. Ajouter aussi un lien d'évitement « Aller au contenu » dans `App.vue`.
-- [ ] **Animations** : logo ⚙ qui tourne en boucle (`NavBar.vue:73`) et `scroll-behavior: smooth` (`main.css:28`) sans `prefers-reduced-motion`.
-- [ ] **Images** : photos de L'Association sans `alt` (`AboutView.vue:43, 46, 47`). Logo dans le `h1` avec `alt="Logo"` (`HomeView.vue:12`), lu « Logo Ride 4 Change » → `alt=""`.
-- [ ] **Contraste** : pourcentage de défilement en `#666` sur `#0d0d0d`, environ 3,4:1, sous le seuil AA (`ProgressScroll.vue:53`).
-- [ ] **Icônes réseaux** : nom accessible limité au `title`, et ouverture dans un nouvel onglet non signalée (`FacebookSocialLinkk.vue:5`…). Boutons flottants de 35 px (`SocialFloat.vue:18`) : viser 44 px sur mobile.
+- [x] **Formulaire de contact** (`ContactView.vue:28-59`) : aucun `<label>` relié à son champ (`for`/`id`), `outline: none` sur les champs, message d'erreur sans `role="alert"`, astérisque non expliqué. Pas de `maxlength`, alors que le worker refuse au-delà de 100, 200 ou 5000 caractères, avec un message qui cite le nom technique du champ (« prenom »).
+- [x] **Menu mobile** (`NavBar.vue:8`) : bouton burger sans `aria-label` ni `aria-expanded`. Le menu ne se ferme pas avec Échap ni lors d'un retour arrière. `display: none` (ligne 105) annule sa transition.
+- [x] **Galerie et Compétition** (`GalleryView.vue:33-67`, `CompetitionView.vue`) : cartes en `<div @click>` inaccessibles au clavier, popin en `div` (ni Échap, ni gestion du focus, le fond défile), bouton ✕ sans libellé, titres visibles seulement au survol (donc jamais sur mobile). → Reprendre le `<dialog>` de la popin de l'accueil.
+- [x] **Carrousel** (`HomeView.vue:98-104, 203-211`) : défilement automatique sans pause ni respect de `prefers-reduced-motion` (WCAG 2.2.2) ; pastilles en `<span @click>` → `<button aria-label="Photo n">` de 24 px minimum.
+- [x] **Focus clavier** : aucun style `:focus-visible` global dans `main.css`. Ajouter aussi un lien d'évitement « Aller au contenu » dans `App.vue`.
+- [x] **Animations** : logo ⚙ qui tourne en boucle (`NavBar.vue:73`) et `scroll-behavior: smooth` (`main.css:28`) sans `prefers-reduced-motion`.
+- [x] **Images** : photos de L'Association sans `alt` (`AboutView.vue:43, 46, 47`). Logo dans le `h1` avec `alt="Logo"` (`HomeView.vue:12`), lu « Logo Ride 4 Change » → `alt=""`.
+- [x] **Contraste** : pourcentage de défilement en `#666` sur `#0d0d0d`, environ 3,4:1, sous le seuil AA (`ProgressScroll.vue:53`).
+- [x] **Icônes réseaux** : nom accessible limité au `title`, et ouverture dans un nouvel onglet non signalée (`FacebookSocialLinkk.vue:5`…). Boutons flottants de 35 px (`SocialFloat.vue:18`) : viser 44 px sur mobile.
 
 ## Responsive
 
@@ -141,13 +141,13 @@ Sur chaque page publique, le visiteur télécharge environ 136 Ko compressés de
 
 ## Maintenance du code
 
-- [ ] **`GalleryView.vue` et `CompetitionView.vue` identiques à 95 %** (même template, même script, 110 lignes de CSS) → Composant `PhotoGallery.vue` et deux vues minces.
+- [x] **`GalleryView.vue` et `CompetitionView.vue` identiques à 95 %** (même template, même script, 110 lignes de CSS) → Composant `PhotoGallery.vue` et deux vues minces.
 - [ ] **Bloc `.page-header` copié dans 8 vues** (environ 15 lignes identiques ; seule la position du dégradé change). Même chose pour `.info-card` et `.info-row` (ContactView, EventDetailView) → Composant `PageHeader.vue` ou classe globale.
 - [x] **Code mort** : `anneeExistance` (`HomeView.vue:251`) ; import de `SocialFloat` inutilisé dans HomeView, GalleryView et CompetitionView (déjà monté dans `App.vue`) ; plugin `@vitejs/plugin-vue-jsx` sans aucun fichier JSX (`vite.config.ts`).
 - [x] **Blocs commentés et CSS orphelin** : `ContactView.vue:83-108` (réunions, cotisation) et styles associés ; `AboutView.vue:78-89` (reste de gabarit « Iron Brotherhood MC ») et `.docs-text`, `.docs-list`.
 - [x] **Typage faible** : `openModal = (photo: any)` (Galerie, Compétition) ; `slideInterval: any` (HomeView).
 - [x] **Nom de fichier** : `FacebookSocialLinkk.vue` (double « k », répété dans 3 imports).
-- [ ] **Chemins absolus** `/logo.svg` et `url('/accuei.jpg')` (`HomeView.vue:12, 333`), contraires à la convention `import.meta.env.BASE_URL` du projet. Sans conséquence aujourd'hui (le site est à la racine).
+- [x] **Chemins absolus** `/logo.svg` et `url('/accuei.jpg')` (`HomeView.vue:12, 333`), contraires à la convention `import.meta.env.BASE_URL` du projet. Sans conséquence aujourd'hui (le site est à la racine).
 
 ## Demandes de l'association (`description.txt`) pas encore faites
 

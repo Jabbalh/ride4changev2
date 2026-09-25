@@ -40,11 +40,11 @@
           </div>
           <div class="histoire-visual">
             <div class="visual-card big">
-              <span><img :src="baseUrl + 'Bassin.webp'" width="1200" height="675" loading="lazy" decoding="async"></span>
+              <span><img :src="baseUrl + 'Bassin.webp'" alt="Les membres de l'association réunis autour de la moto verte n° 99" width="1200" height="675" loading="lazy" decoding="async"></span>
             </div>
             <div class="visual-row">
-              <div class="visual-card small"><span><img :src="baseUrl + 'LeMans99.webp'" width="600" height="400" loading="lazy" decoding="async"></span></div>
-              <div class="visual-card small"><span><img :src="baseUrl + 'LeMans99-2.webp'" width="500" height="333" loading="lazy" decoding="async"></span></div>
+              <div class="visual-card small"><span><img :src="baseUrl + 'LeMans99.webp'" alt="La moto n° 99 en courbe sur le circuit du Mans" width="600" height="400" loading="lazy" decoding="async"></span></div>
+              <div class="visual-card small"><span><img :src="baseUrl + 'LeMans99-2.webp'" alt="La moto n° 99 en ligne droite sur le circuit du Mans" width="500" height="333" loading="lazy" decoding="async"></span></div>
             </div>
           </div>
         </div>

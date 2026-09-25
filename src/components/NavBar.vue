@@ -1,14 +1,14 @@
 <template>
-  <nav class="navbar" :class="{ scrolled: isScrolled, 'menu-open': menuOpen }">
+  <nav class="navbar" :class="{ scrolled: isScrolled, 'menu-open': menuOpen }" aria-label="Navigation principale" @keydown.esc="closeMenu(true)">
     <div class="nav-inner">
       <router-link to="/" class="nav-logo" @click="menuOpen = false">
-        <span class="logo-icon">⚙</span>
+        <span class="logo-icon" aria-hidden="true">⚙</span>
         <span class="logo-text"><strong>Ride 4 Change</strong></span>
       </router-link>
-      <button class="burger" @click="menuOpen = !menuOpen">
+      <button ref="burger" type="button" class="burger" :aria-label="menuOpen ? 'Fermer le menu' : 'Ouvrir le menu'" :aria-expanded="menuOpen" aria-controls="nav-menu" @click="menuOpen = !menuOpen">
         <span></span><span></span><span></span>
       </button>
-      <ul class="nav-links" :class="{ open: menuOpen, hidden: !menuOpen }">
+      <ul id="nav-menu" class="nav-links" :class="{ open: menuOpen, hidden: !menuOpen }">
         <li v-for="link in NAV_LINKS" :key="link.to">
           <router-link :to="link.to" @click="menuOpen = false">{{ link.label }}</router-link>
         </li>
@@ -22,11 +22,22 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, watch, onMounted, onUnmounted } from 'vue'
+import { useRoute } from 'vue-router'
 import ProgressScroll from "@/components/ProgressScroll.vue";
 import { NAV_LINKS } from "@/lib/navLinks";
 const isScrolled = ref(false)
 const menuOpen = ref(false)
+const burger = ref<HTMLButtonElement>()
+
+// Échap ferme le menu et rend le focus au bouton ; tout changement de page le ferme aussi (y compris « Retour »)
+function closeMenu(restoreFocus = false) {
+  if (!menuOpen.value) return
+  menuOpen.value = false
+  if (restoreFocus) burger.value?.focus()
+}
+const route = useRoute()
+watch(() => route.fullPath, () => closeMenu())
 const handleScroll = () => { isScrolled.value = window.scrollY > 50 }
 onMounted(() => window.addEventListener('scroll', handleScroll))
 onUnmounted(() => window.removeEventListener('scroll', handleScroll))
@@ -81,7 +92,7 @@ nav{
 .nav-links a:hover::after, .nav-links a.router-link-exact-active::after { width: 100%; }
 .nav-cta { padding: 0.55rem 1.25rem !important; font-size: 0.8rem !important; color: var(--white) !important; }
 .nav-cta::after { display: none !important; }
-.burger { display: none; flex-direction: column; gap: 5px; background: none; border: none; cursor: pointer; padding: 4px; }
+.burger { display: none; flex-direction: column; gap: 5px; background: none; border: none; cursor: pointer; padding: 10px; margin: -6px; position: relative; z-index: 2; }
 .burger span { display: block; width: 24px; height: 2px; background: var(--white); transition: all 0.3s ease; }
 /* 7 liens + bouton : bascule en menu burger avant que la barre ne déborde */
 @media (max-width: 1150px) {
@@ -94,7 +105,8 @@ nav{
     border-left: 2px solid var(--red);
   }
   .nav-links.open { transform: translateX(0); }
-  .nav-links.hidden { display: none; }
+  /* Menu fermé : hors de l'écran et inaccessible au clavier (visibility), sans casser la transition */
+  .nav-links.hidden { visibility: hidden; transition: transform 0.4s ease, visibility 0s linear 0.4s; }
   .nav-links a { font-size: 1.1rem; padding: 0.5rem 0; }
   .menu-open .burger span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
   .menu-open .burger span:nth-child(2) { opacity: 0; }

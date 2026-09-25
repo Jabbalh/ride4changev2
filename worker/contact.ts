@@ -9,7 +9,10 @@ export interface ContactMessage {
   message: string
 }
 
+// Longueurs maximales : garder identiques aux maxlength du formulaire (src/views/ContactView.vue)
 const MAX_LENGTHS = { prenom: 100, nom: 100, email: 254, moto: 200, message: 5000 }
+// Noms affichés dans les messages d'erreur
+const LABELS: Record<keyof typeof MAX_LENGTHS, string> = { prenom: 'Prénom', nom: 'Nom', email: 'Email', moto: 'Votre moto', message: 'Message' }
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
 function field(body: Record<string, unknown>, name: string): string {
@@ -31,7 +34,7 @@ function validate(body: Record<string, unknown>): ContactMessage | string {
   if (!EMAIL_RE.test(msg.email)) return 'Adresse email invalide.'
   if (!OBJETS.includes(msg.objet as ContactMessage['objet'])) return 'Objet invalide.'
   for (const [name, max] of Object.entries(MAX_LENGTHS)) {
-    if (msg[name as keyof typeof MAX_LENGTHS].length > max) return `Le champ « ${name} » est trop long.`
+    if (msg[name as keyof typeof MAX_LENGTHS].length > max) return `Le champ « ${LABELS[name as keyof typeof MAX_LENGTHS]} » est trop long (${max} caractères maximum).`
   }
 
   return msg as ContactMessage

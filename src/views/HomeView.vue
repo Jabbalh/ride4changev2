@@ -9,7 +9,8 @@
       <div class="container hero-content">
 
         <h1 class="hero-title">
-          <img src="/logo.svg" alt="Logo" class="image-logo">
+          <!-- alt vide : le titre se lit « Ride 4 Change », le logo est décoratif -->
+          <img :src="baseUrl + 'logo.svg'" alt="" class="image-logo" width="240" height="222">
           <span class="line1">Ride</span>
           <span class="line2">4</span>
           <span class="line3">Change</span>
@@ -77,39 +78,57 @@
             <h2>La galerie en mouvement</h2>
           </div>
           
-          <div class="carousel-container">
+          <!-- Défilement automatique suspendu au survol, au focus clavier, avec le bouton pause,
+               et désactivé si le système demande de réduire les animations (WCAG 2.2.2) -->
+          <div
+            class="carousel-container"
+            role="region" aria-roledescription="carrousel" aria-label="La galerie en mouvement"
+            @mouseenter="interacting = true" @mouseleave="interacting = false"
+            @focusin="interacting = true" @focusout="interacting = false"
+          >
             <div 
               v-for="(photo, index) in galleryPhotos" 
               :key="photo.id"
               class="carousel-slide"
               :class="{ active: currentSlide === index }"
               :style="{ background: photo.bg }"
+              role="group" aria-roledescription="diapositive"
+              :aria-label="`${index + 1} sur ${galleryPhotos.length}`"
+              :aria-hidden="currentSlide !== index"
             >
-              <span class="carousel-emoji">{{ photo.emoji }}</span>
+              <span class="carousel-emoji" aria-hidden="true">{{ photo.emoji }}</span>
               <div class="carousel-caption">
                 <h3>{{ photo.title }}</h3>
               </div>
             </div>
             
-            <div class="carousel-progress-container">
+            <div class="carousel-progress-container" aria-hidden="true">
               <div class="carousel-progress-bar" :style="{ width: progress + '%' }"></div>
             </div>
 
             <div class="carousel-indicators">
-              <span 
-                v-for="(_, index) in galleryPhotos" 
+              <button
+                v-for="(photo, index) in galleryPhotos"
                 :key="index"
+                type="button"
                 class="indicator"
                 :class="{ active: currentSlide === index }"
+                :aria-label="`Photo ${index + 1} : ${photo.title}`"
+                :aria-current="currentSlide === index ? 'true' : undefined"
                 @click="goToSlide(index)"
-              ></span>
+              ></button>
             </div>
 
-            <button class="carousel-control prev" @click="prevSlide" aria-label="Photo précédente">
-              <span>‹</span>
+            <button type="button" class="carousel-control prev" @click="prevSlide" aria-label="Photo précédente">
+              <span aria-hidden="true">‹</span>
             </button>
-            <button class="carousel-control next" @click="handleNext" aria-label="Photo suivante">
-              <span>›</span>
+            <button type="button" class="carousel-control next" @click="handleNext" aria-label="Photo suivante">
+              <span aria-hidden="true">›</span>
+            </button>
+            <button type="button" class="carousel-pause" @click="userPaused = !userPaused"
+              :aria-label="userPaused ? 'Reprendre le défilement automatique' : 'Mettre en pause le défilement automatique'">
+              <svg v-if="userPaused" viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path d="M8 5v14l11-7z" fill="currentColor" /></svg>
+              <svg v-else viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path d="M7 5h4v14H7zM13 5h4v14h-4z" fill="currentColor" /></svg>
             </button>
           </div>
         </div>
@@ -199,9 +218,14 @@ const PROGRESS_INTERVAL = 50 // Update progress every 50ms
 
 // Une seule minuterie : la barre avance, et la diapo change quand elle est pleine (puis la barre repart de zéro)
 let progressInterval: ReturnType<typeof setInterval> | undefined
+// Pause voulue par le visiteur (bouton), active d'office si le système demande de réduire les animations
+const userPaused = ref(typeof matchMedia !== 'undefined' && matchMedia('(prefers-reduced-motion: reduce)').matches)
+// Survol ou focus clavier dans le carrousel : on suspend aussi le défilement
+const interacting = ref(false)
 
 const startCarousel = () => {
   progressInterval = setInterval(() => {
+    if (userPaused.value || interacting.value) return
     progress.value += (PROGRESS_INTERVAL / SLIDE_DURATION) * 100
     if (progress.value >= 100) {
       nextSlide()
@@ -567,18 +591,28 @@ const testimonials = [
   gap: 0.75rem;
   z-index: 10;
 }
+/* Zone cliquable de 24 px, pastille de 8 px dessinée au centre */
 .indicator {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: rgba(255,255,255,0.3);
-  transition: all 0.3s;
-  cursor: pointer;
+  width: 24px; height: 24px; padding: 0; border: none; background: none;
+  display: flex; align-items: center; justify-content: center; cursor: pointer;
 }
-.indicator.active {
+.indicator::before {
+  content: ''; width: 8px; height: 8px; border-radius: 50%;
+  background: rgba(255,255,255,0.3); transition: all 0.3s;
+}
+.indicator.active::before {
   background: var(--red);
   transform: scale(1.3);
 }
+.carousel-indicators { gap: 0.25rem; }
+.carousel-pause {
+  position: absolute; right: 1rem; bottom: 1rem; z-index: 10;
+  width: 32px; height: 32px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(20,20,20,.8); border: 1px solid #333; color: #ccc; cursor: pointer;
+  transition: all .2s;
+}
+.carousel-pause:hover { background: var(--red); border-color: var(--red); color: #fff; }
 
 .carousel-control {
   position:absolute;

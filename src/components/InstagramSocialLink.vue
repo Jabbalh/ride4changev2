@@ -5,7 +5,7 @@ defineProps({ displayImage: {type: Boolean, default: true} });
 const gradientId = `ig-gradient-${useId()}`
 </script>
 <template>
-  <a href="https://www.instagram.com/ride4change_ludo_et_paule/" target="_blank" title="Instagram">
+  <a href="https://www.instagram.com/ride4change_ludo_et_paule/" target="_blank" rel="noopener" title="Instagram" aria-label="Instagram (nouvel onglet)">
     <svg v-if="displayImage" viewBox="0 0 24 24" aria-hidden="true">
       <defs>
         <radialGradient :id="gradientId" cx="0.3" cy="1.07" r="1.2">

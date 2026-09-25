@@ -15,31 +15,33 @@
           <!-- FORM -->
           <div class="contact-form-wrap">
             <h2>Envoyez-nous un message</h2>
-            <div v-if="sent" class="success-msg">
-              <span>✅</span>
+            <div v-if="sent" ref="successMsg" class="success-msg" role="status" tabindex="-1">
+              <span aria-hidden="true">✅</span>
               <div>
                 <strong>Message envoyé !</strong>
                 <p>Nous vous répondrons.</p>
               </div>
             </div>
-            <form v-else @submit.prevent="handleSubmit" class="form">
+            <form v-else @submit.prevent="handleSubmit" class="form" :aria-busy="sending">
+              <!-- Longueurs maximales identiques à MAX_LENGTHS dans worker/contact.ts -->
+              <p class="required-note">Les champs marqués <span aria-hidden="true">*</span> sont obligatoires.</p>
               <div class="form-row">
                 <div class="field">
-                  <label>Prénom *</label>
-                  <input v-model="form.prenom" type="text" placeholder="Jean" required />
+                  <label for="contact-prenom">Prénom <span aria-hidden="true">*</span></label>
+                  <input id="contact-prenom" v-model="form.prenom" type="text" placeholder="Jean" autocomplete="given-name" maxlength="100" required />
                 </div>
                 <div class="field">
-                  <label>Nom *</label>
-                  <input v-model="form.nom" type="text" placeholder="Dupont" required />
+                  <label for="contact-nom">Nom <span aria-hidden="true">*</span></label>
+                  <input id="contact-nom" v-model="form.nom" type="text" placeholder="Dupont" autocomplete="family-name" maxlength="100" required />
                 </div>
               </div>
               <div class="field">
-                <label>Email *</label>
-                <input v-model="form.email" type="email" placeholder="jean.dupont@mail.fr" required />
+                <label for="contact-email">Email <span aria-hidden="true">*</span></label>
+                <input id="contact-email" v-model="form.email" type="email" placeholder="jean.dupont@mail.fr" autocomplete="email" maxlength="254" required />
               </div>
               <div class="field">
-                <label>Objet</label>
-                <select v-model="form.objet">
+                <label for="contact-objet">Objet</label>
+                <select id="contact-objet" v-model="form.objet">
                   <option value="">Sélectionner...</option>
                   <option value="adhesion">Demande d'adhésion</option>
                   <option value="info">Informations générales</option>
@@ -51,16 +53,16 @@
                 </select>
               </div>
               <div class="field">
-                <label>Votre moto (optionnel)</label>
-                <input v-model="form.moto" type="text" placeholder="Ex : Honda CB 750, Harley Sportster..." />
+                <label for="contact-moto">Votre moto (optionnel)</label>
+                <input id="contact-moto" v-model="form.moto" type="text" placeholder="Ex : Honda CB 750, Harley Sportster..." maxlength="200" />
               </div>
               <div class="field">
-                <label>Message *</label>
-                <textarea v-model="form.message" rows="5" placeholder="Votre message..." required></textarea>
+                <label for="contact-message">Message <span aria-hidden="true">*</span></label>
+                <textarea id="contact-message" v-model="form.message" rows="5" placeholder="Votre message..." maxlength="5000" required></textarea>
               </div>
               <!-- Champ piège anti-spam : invisible pour les humains -->
               <input v-model="form.website" type="text" name="website" class="honeypot" tabindex="-1" autocomplete="off" aria-hidden="true" />
-              <p v-if="error" class="error-msg">{{ error }}</p>
+              <p v-if="error" class="error-msg" role="alert">{{ error }}</p>
               <button type="submit" class="btn btn-primary submit-btn" :disabled="sending">
                 {{ sending ? 'Envoi en cours…' : 'Envoyer le message →' }}
               </button>
@@ -97,13 +99,14 @@
 </template>
 
 <script setup  lang="ts">
-import { ref, reactive } from 'vue'
+import { ref, reactive, nextTick } from 'vue'
 import { useRoute } from 'vue-router'
 import FacebookSocialLink from "@/components/FacebookSocialLink.vue";
 import InstagramSocialLink from "@/components/InstagramSocialLink.vue";
 import TiktokSocialLink from "@/components/TiktokSocialLink.vue";
 
 const sent = ref(false)
+const successMsg = ref<HTMLElement>()
 const sending = ref(false)
 const error = ref('')
 // L'objet peut être pré-rempli via l'URL, ex : /contact?objet=boutique
@@ -126,6 +129,9 @@ const handleSubmit = async () => {
     const data = await res.json().catch(() => ({}))
     if (!res.ok) throw new Error(data.error || "L'envoi a échoué.")
     sent.value = true
+    // Le formulaire disparaît : on place le focus sur la confirmation, qui est aussi annoncée (role="status")
+    await nextTick()
+    successMsg.value?.focus()
   } catch (e) {
     error.value = e instanceof Error && e.message !== 'Failed to fetch'
       ? e.message
@@ -179,11 +185,16 @@ const infos = [
   background: var(--dark2); border: 1px solid rgba(255,255,255,0.1);
   color: var(--white); padding: 0.85rem 1rem;
   font-family: 'Barlow',sans-serif; font-size: 0.95rem;
-  transition: border-color 0.3s; outline: none;
+  transition: border-color 0.3s;
 }
 .field input:focus, .field select:focus, .field textarea:focus {
   border-color: var(--red);
 }
+.field input:focus-visible, .field select:focus-visible, .field textarea:focus-visible {
+  outline: 2px solid var(--red); outline-offset: 1px;
+}
+.required-note { font-size: 0.85rem; color: var(--grey-light); margin-bottom: 0.25rem; }
+.success-msg:focus { outline: none; }
 .field textarea { resize: vertical; min-height: 120px; }
 .field select option { background: var(--dark2); }
 .submit-btn { align-self: flex-start; }
