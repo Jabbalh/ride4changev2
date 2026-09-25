@@ -30,7 +30,7 @@ Toutes les requêtes passent par le proxy Cloudflare. Seul `ride4change.fr` atte
 
 ## Domaine principal : ride4change.fr
 
-La zone est active chez Cloudflare, le Worker `ride4changev2` répond sur `ride4change.fr` et HTTPS fonctionne (note B sur SSL Labs). Le site a été confirmé accessible le 25/09/2026.
+La zone est active chez Cloudflare, le Worker `ride4changev2` répond sur `ride4change.fr` et HTTPS fonctionne (note A sur SSL Labs depuis le passage à TLS 1.2 minimum). Le site a été confirmé accessible le 25/09/2026.
 
 1. **Créer la zone** : dans Cloudflare, *Add a domain* → `ride4change.fr` → plan **Free**.
 2. **Changer les serveurs DNS chez OVH** : *Domaines → ride4change.fr → Serveurs DNS → Modifier*. Mettre `daisy.ns.cloudflare.com` et `jay.ns.cloudflare.com`, et désactiver DNSSEC avant si besoin.
@@ -139,5 +139,5 @@ Les 8 adresses doivent toutes arriver sur `https://ride4change.fr/`, avec le cad
 
 **Points restants :**
 
-- [x] *SSL/TLS → Edge Certificates → Minimum TLS Version* passé à **1.2** sur `ride4change.fr` le 25/09/2026, pour obtenir la note A sur SSL Labs.
+- [x] *SSL/TLS → Edge Certificates → Minimum TLS Version* passé à **1.2** sur `ride4change.fr` le 25/09/2026. SSL Labs donne la note **A** sur les 4 IP, avec TLS 1.2 et 1.3 uniquement.
 - [ ] Envoi des messages de `/api/contact`, par exemple par Resend depuis `contact@ride4change.fr`. Il faudra alors ajouter les enregistrements SPF, DKIM et DMARC de Resend dans la zone `ride4change.fr`.

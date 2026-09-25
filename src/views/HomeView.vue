@@ -7,9 +7,7 @@
         <div class="hero-pattern"></div>
       </div>
       <div class="container hero-content">
-<!--        <div class="hero-badge">-->
-<!--          <span>Fondée en 2025 · Saint Meen le Grand, France</span>-->
-<!--        </div>-->
+
         <h1 class="hero-title">
           <img src="/logo.svg" alt="Logo" class="image-logo">
           <span class="line1">Ride</span>
@@ -17,29 +15,7 @@
           <span class="line3">Change</span>
         </h1>
         <p class="hero-sub">Profitez de votre seule vie et lâchez les chevaux</p>
-<!--        <div class="hero-actions">-->
-<!--          <router-link to="/association" class="btn btn-primary">Découvrir l'asso</router-link>-->
-<!--          <router-link to="/galerie" class="btn btn-outline">Voir la galerie</router-link>-->
-<!--        </div>-->
-<!--        <div class="hero-actions">-->
-<!--          <span class="stat-label">Nous suivre: </span>-->
-<!--          <div class="social-links">-->
-<!--            <a href="https://www.facebook.com/profile.php?id=61573516003975" target="_blank" aria-label="Facebook">FB</a>-->
-<!--            <a href="https://www.instagram.com/ride4change_ludo_et_paule/" target="_blank" aria-label="Instagram">IG</a>-->
-<!--            <a href="https://www.tiktok.com/@ride4change" target="_blank" aria-label="Tiktok">TT</a>-->
-<!--          </div>-->
-<!--        </div>-->
-<!--        <div class="hero-stats">-->
-<!--          <div v-for="s in stats" :key="s.label" class="stat">-->
-<!--            <span class="stat-value">{{ s.value }}</span>-->
-<!--            <span class="stat-label">{{ s.label }}</span>-->
-<!--          </div>-->
-<!--        </div>-->
       </div>
-<!--      <div class="hero-scroll">-->
-<!--        <span>Scroll</span>-->
-<!--        <div class="scroll-line"></div>-->
-<!--      </div>-->
     </section>
 
     <!-- INTRO -->
@@ -48,8 +24,12 @@
         <div class="intro-text">
           <div class="section-heading">
             <span class="overline">Qui sommes-nous</span>
-            <h2>Plus qu'un club,<br>une famille</h2>
-            <p>Ride 4 Change rassemble des passionnés de moto autour de valeurs communes : la solidarité, l’entraide et l’amour de la route et des circuits.</p>
+            <h2 >Nés d’une passion inébranlable,<br>portés par le défi permanent.</h2>
+            <p><span class="text-bold">Ride 4 Change,</span> c’est une équipe de passionnés de moto et de compétition, réunis autour d’une conviction : <span class="text-bold">le handicap ne doit pas être une limite à la passion.</span>
+              <br />Sur la piste comme dans la vie, nous repoussons les barrières, partageons nos expériences et faisons de chaque défi une nouvelle aventure.
+              <br /><span class="text-bold">Une équipe devenu une famille. Aucun frein</span>
+              <br /><span class="text-bold">Nos limites ? Elles sont faites pour être repoussées…</span>
+            </p>
           </div>
           <router-link to="/association" class="btn btn-primary">En savoir plus</router-link>
         </div>
@@ -71,7 +51,7 @@
         <div class="section-heading">
           <span class="overline">Nos actions</span>
           <h2>Sur le terrain</h2>
-          <p>Entre les courses, les baptèmes et le partage, chaque kilomètre a du sens.</p>
+          <p>Entre les courses, les initiations et le partage chaque kilomètre à du sens.</p>
         </div>
         <div class="actions-grid">
           <div v-for="action in actions" :key="action.title" class="action-card">
@@ -250,17 +230,12 @@ onUnmounted(() => {
   stopCarousel()
 })
 const anneeExistance = new Date().getFullYear() - 2025;
-const stats = [
-  { value: '10', label: 'Membres actifs' },
-  { value: anneeExistance, label: 'Année(s) d\'existence' },
-  { value: '20', label: 'Sorties par an' },
-  { value: '12000', label: 'Km parcourus / an' },
-]
+
 const values = [
-  { icon: 'ludo-pilote.jpg', title: 'Le pilote', desc: 'Ludo, notre pilote toujours au top.' },
-  { icon: 'partenaire.jpg', title: 'Un partenaire', desc: 'Ca sert toujours un bon garage.' },
-  { icon: 'moto1.jpg', title: 'Des courses', desc: "Parce qu'on aime aussi la compétition." },
-  { icon: 'toto.jpg', title: 'Des copains', desc: "Parce qu'on aime les copains qui nous accompagnent." },
+  { icon: 'ludo-pilote.jpg', title: 'Les compétitions', desc: 'PMR Bridgestone & Bol d’argent .' },
+  { icon: 'partenaire.jpg', title: 'Nos partenaires', desc: '' },
+  { icon: 'initiation.jpg', title: 'Initiation et Roulages', desc: "Le Mans & Fay de Bretagne." },
+  { icon: 'solidarite.jpg', title: 'La Solidarité', desc: "Parce que sans amis ou bénévoles rien n’es possible." },
 ]
 const actions = [
   { tag: 'Courses', emoji: '🏁', color: 'linear-gradient(135deg,#1f1a1a,#2d1f00)', title: 'Le mans', desc: 'Un petit tour au man.' },
@@ -275,6 +250,7 @@ const testimonials = [
 </script>
 
 <style scoped>
+
 /* HERO */
 .hero {
   position: relative;
