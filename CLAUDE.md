@@ -17,7 +17,7 @@ pnpm cf-typegen     # régénère worker-configuration.d.ts (après chaque modif
 
 Il n'y a ni tests ni linter. La vérification passe par `pnpm build` (type-check des trois projets TS) et un test dans le navigateur.
 
-Pour simuler le build Cloudflare en local : `WORKERS_CI=1 pnpm build`, puis `npx wrangler deploy --dry-run`.
+Pour simuler le build Cloudflare en local : `pnpm build`, puis `pnpm preview` (le site et le worker, avec la configuration de `wrangler.toml`) et `npx wrangler deploy --dry-run --config dist/ride4changev2/wrangler.json`.
 
 ## Architecture
 
@@ -40,8 +40,7 @@ Pour simuler le build Cloudflare en local : `WORKERS_CI=1 pnpm build`, puis `npx
 
 ### Build et `base`
 - `@cloudflare/vite-plugin` fait tourner le worker dans `pnpm dev` et `pnpm preview`. Il fait aussi sortir le build dans `dist/client/` (le site) et `dist/ride4changev2/` (le worker et le `wrangler.json` généré), et non dans `dist/`.
-- `base` dans `vite.config.ts` vaut `/` en dev et sur Cloudflare (`WORKERS_CI` ou `CF_PAGES` définis). Il vaut `/ride4changev2/` pour un simple `pnpm build` local (ancien usage GitHub Pages) : pour tester le build avec `pnpm preview`, lancer `WORKERS_CI=1 pnpm build` puis `WORKERS_CI=1 pnpm preview`, sinon les fichiers JS sont introuvables et la page reste blanche. Le plugin Cloudflare **ne supporte pas** un `base` non racine en dev, où tout renvoie le 404 du worker.
-- Pour les images de `public/` référencées dans les vues, utiliser `import.meta.env.BASE_URL`, jamais un chemin absolu.
+- Le site est toujours servi à la racine : `vite.config.ts` ne définit pas de `base`. Le plugin Cloudflare **ne supporte pas** un `base` non racine en dev, où tout renvoie le 404 du worker. Les vues utilisent encore `import.meta.env.BASE_URL` (qui vaut `/`) pour les images de `public/` : garder cette convention.
 
 ### Supabase (contenu)
 - Le navigateur interroge Supabase directement (`src/lib/supabase.ts`, avec la clé publishable). Il ne passe pas par le worker. Les droits reposent entièrement sur RLS : lecture seule des lignes `published`. La saisie se fait dans le dashboard Supabase.
@@ -66,8 +65,8 @@ Pour simuler le build Cloudflare en local : `WORKERS_CI=1 pnpm build`, puis `npx
 ## Déploiement
 
 - **Cloudflare Workers**, relié au dépôt GitHub : chaque push sur `main` déclenche `pnpm build` puis `npx wrangler deploy`. Node 22 est fixé par `.node-version`.
-- Domaines : `ride4change.fr` est le Custom Domain du Worker (configuré dans le dashboard, pas dans `wrangler.toml`). `www` et les domaines secondaires (`ride4change.eu`, `rideforchange.fr`, `rideforchange.eu`) redirigent en 301 via des règles Cloudflare. Le détail des opérations DNS est dans `DOMAINES.md`.
-- `docs/` est une ancienne copie du build servie par **GitHub Pages** (sous `/ride4changev2/`), sans backend. Elle est mise à jour à la main et n'est plus alimentée automatiquement. Depuis le passage aux vraies URL, un nouveau build n'y fonctionnerait plus (GitHub Pages ne renvoie pas `index.html` pour les URL inconnues).
+- Domaines : `ride4change.fr` est le Custom Domain du Worker (configuré dans le dashboard, pas dans `wrangler.toml`). `www` et les domaines secondaires (`ride4change.eu`, `rideforchange.fr`, `rideforchange.eu`) redirigent en 301 via des règles Cloudflare. Le détail des opérations DNS est dans `docs/DOMAINES.md`.
+- `docs/` contient la documentation d'exploitation, à tenir à jour : `docs/DOMAINES.md` (DNS, domaines, redirections, lien avec le Worker) et `docs/REFERENCEMENT.md` (ce qui est en place et les actions à mener). GitHub Pages n'est plus utilisé.
 
 ## Notes produit
 

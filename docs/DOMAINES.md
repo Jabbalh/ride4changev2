@@ -117,7 +117,7 @@ Le domaine est rattaché au Worker `ride4changev2` par le Custom Domain. Le code
 | `wrangler.toml` → `[assets] run_worker_first` | `["/api/*", "/sitemap.xml"]` | Seules ces URLs exécutent le code du worker, le reste est servi en statique |
 | `wrangler.toml` → `[assets] not_found_handling` | `"single-page-application"` | Toute URL sans fichier (`/association`, `/evenements/12`) renvoie `index.html`, et le router Vue affiche la page |
 | `wrangler.toml` → routes | aucune | Le domaine est géré dans le dashboard, pas par le code |
-| `vite.config.ts` → `base` | `/` quand `WORKERS_CI` est défini | Le site est servi à la racine de `ride4change.fr` |
+| `vite.config.ts` → `base` | non défini (`/`) | Le site est servi à la racine de `ride4change.fr` |
 | Router Vue | `createWebHistory` | Vraies URL (`/association`), référençables. Les anciens liens `/#/...` sont réécrits au chargement. Les redirections 301 conservent le chemin (*Preserve path suffix*) |
 
 **Déploiement** : chaque push sur `main` déclenche dans Cloudflare `pnpm build` puis `npx wrangler deploy`. Le Custom Domain reste en place d'un déploiement à l'autre. Les variables `VITE_SUPABASE_URL` et `VITE_SUPABASE_PUBLISHABLE_KEY` sont des *build variables* du Worker.

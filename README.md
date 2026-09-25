@@ -180,9 +180,10 @@ Le DNS du domaine doit être géré par Cloudflare :
 
 Si les mails du domaine restent chez OVH, vérifier que Cloudflare a bien importé les enregistrements MX et SPF.
 
-### GitHub Pages (historique)
+### Documentation d'exploitation
 
-Le dossier `docs/` contient une ancienne version du site, servie par GitHub Pages sous `/ride4changev2/`, sans backend. Un `pnpm build-only` en local produit un build compatible dans `dist/client/`.
+- [`docs/DOMAINES.md`](docs/DOMAINES.md) : DNS, domaines, redirections et lien avec le Worker.
+- [`docs/REFERENCEMENT.md`](docs/REFERENCEMENT.md) : référencement, ce qui est en place et les actions à mener.
 
 ## Vie privée
 

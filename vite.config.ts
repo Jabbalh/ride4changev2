@@ -7,10 +7,8 @@ import vueDevTools from 'vite-plugin-vue-devtools'
 import { cloudflare } from '@cloudflare/vite-plugin'
 
 // https://vite.dev/config/
-export default defineConfig(({ command }) => ({
-  // Cloudflare (Workers ou Pages) et le dev local servent le site à la racine ;
-  // seul le build GitHub Pages est sous /ride4changev2/ (le plugin Cloudflare ne gère pas ce sous-chemin en dev).
-  base: command === 'build' && !process.env.WORKERS_CI && !process.env.CF_PAGES ? '/ride4changev2/' : '/',
+// Le site est toujours servi à la racine (base par défaut '/'), en dev comme sur Cloudflare.
+export default defineConfig({
   plugins: [
     vue(),
     vueJsx(),
@@ -22,4 +20,4 @@ export default defineConfig(({ command }) => ({
       '@': fileURLToPath(new URL('./src', import.meta.url))
     },
   },
-}))
+})
