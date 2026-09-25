@@ -35,7 +35,7 @@
         </div>
         <div class="intro-values">
           <div v-for="v in values" :key="v.title" class="value-card">
-            <button type="button" class="value-icon" :aria-label="`Agrandir la photo : ${v.title}`" @click="openPhoto(v)">
+            <button type="button" class="value-icon" :aria-label="`Agrandir la photo : ${v.title}`" @click="openPhoto(v)" @pointerenter="preloadLarge(v)" @focus="preloadLarge(v)">
               <img :src="baseUrl + v.icon" :alt="v.title">
             </button>
             <h3>{{ v.title }}</h3>
@@ -159,10 +159,15 @@
     </section>
 
     <!-- PHOTO AGRANDIE -->
-    <dialog ref="photoDialog" class="photo-dialog" @click.self="closePhoto">
-      <figure v-if="openedPhoto">
-        <button type="button" class="photo-dialog-close" aria-label="Fermer" @click="closePhoto">✕</button>
-        <img :src="baseUrl + openedPhoto.large" :alt="openedPhoto.title">
+    <dialog ref="photoDialog" class="photo-dialog" :class="{ closing }" @click.self="closePhoto" @cancel.prevent="closePhoto">
+      <figure v-if="openedPhoto" :key="openedPhoto.icon" :style="{ '--w': openedPhoto.w, '--h': openedPhoto.h }">
+        <button type="button" class="photo-dialog-close" aria-label="Fermer" @click="closePhoto">
+          <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+            <path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+          </svg>
+        </button>
+        <!-- Vignette (déjà en cache) affichée tout de suite, remplacée par la grande version dès qu'elle est chargée -->
+        <img :src="baseUrl + (largeReady ? openedPhoto.large : openedPhoto.icon)" :alt="openedPhoto.title">
         <figcaption>{{ openedPhoto.title }}</figcaption>
       </figure>
     </dialog>
@@ -170,7 +175,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, nextTick, onMounted, onUnmounted } from 'vue'
 import SocialFloat from "@/components/SocialFloat.vue";
 import { useNextEvent } from '@/composables/useEvents'
 
@@ -246,22 +251,59 @@ onUnmounted(() => {
 const anneeExistance = new Date().getFullYear() - 2025;
 
 const values = [
-  { icon: 'lemans.jpg', large: 'lemans-grand.jpg', title: 'Les compétitions', desc: 'PMR Bridgestone & Bol d’argent .' },
-  { icon: 'partenaire.jpg', large: 'partenaire-grand.jpg', title: 'Nos partenaires', desc: '' },
-  { icon: 'initiation.jpg', large: 'initiation-grand.jpg', title: 'Initiation et Roulages', desc: "Le Mans & Fay de Bretagne." },
-  { icon: 'solidarite.jpg', large: 'solidarite-grand.jpg', title: 'La Solidarité', desc: "Parce que sans amis ou bénévoles rien n’es possible." },
+  { icon: 'lemans.jpg', large: 'lemans-grand.jpg', w: 1600, h: 1067, title: 'Les compétitions', desc: 'PMR Bridgestone & Bol d’argent .' },
+  { icon: 'partenaire.jpg', large: 'partenaire-grand.jpg', w: 1200, h: 1600, title: 'Nos partenaires', desc: '' },
+  { icon: 'initiation.jpg', large: 'initiation-grand.jpg', w: 1600, h: 1067, title: 'Initiation et Roulages', desc: "Le Mans & Fay de Bretagne." },
+  { icon: 'solidarite.jpg', large: 'solidarite-grand.jpg', w: 1600, h: 1067, title: 'La Solidarité', desc: "Parce que sans amis ou bénévoles rien n’es possible." },
 ]
 
 // PHOTO AGRANDIE : <dialog> natif (Échap, focus et fond inerte gérés par le navigateur)
 type Value = (typeof values)[number]
 const photoDialog = ref<HTMLDialogElement>()
 const openedPhoto = ref<Value>()
+const largeReady = ref(false)
+const closing = ref(false)
+const CLOSE_MS = 180 // durée de l'animation de fermeture (voir photo-out dans le CSS)
+let closeTimer: ReturnType<typeof setTimeout> | undefined
 
-const openPhoto = (v: Value) => {
-  openedPhoto.value = v
-  photoDialog.value?.showModal()
+// Précharge la grande version au survol : elle est souvent prête avant le clic
+const preloaded = new Map<string, Promise<void>>()
+function preloadLarge(v: Value): Promise<void> {
+  let p = preloaded.get(v.large)
+  if (!p) {
+    const img = new Image()
+    img.src = baseUrl + v.large
+    p = img.decode().catch(() => {})
+    preloaded.set(v.large, p)
+  }
+  return p
 }
-const closePhoto = () => photoDialog.value?.close()
+
+async function openPhoto(v: Value) {
+  clearTimeout(closeTimer)
+  closing.value = false
+  openedPhoto.value = v
+  largeReady.value = false
+  // Attendre que Vue affiche la nouvelle photo avant d'ouvrir : sinon la précédente apparaît un instant
+  await nextTick()
+  if (!photoDialog.value?.open) photoDialog.value?.showModal()
+  await preloadLarge(v)
+  // Comparaison par fichier : openedPhoto.value est un proxy réactif, jamais === v
+  if (openedPhoto.value?.large === v.large) largeReady.value = true
+}
+
+function closePhoto() {
+  const dialog = photoDialog.value
+  if (!dialog?.open || closing.value) return
+  const finish = () => {
+    dialog.close()
+    closing.value = false
+    openedPhoto.value = undefined
+  }
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return finish()
+  closing.value = true
+  closeTimer = setTimeout(finish, CLOSE_MS)
+}
 const actions = [
   { tag: 'Courses', emoji: '🏁', color: 'linear-gradient(135deg,#1f1a1a,#2d1f00)', title: 'Le Mans, Spa Francorchamps, Le Castellet', desc: '' },
   { tag: 'Initiations circuit', emoji: '🪖', color: 'linear-gradient(135deg,#1a1f1a,#1f2d1f)', title: 'Nos initiations et roulages', desc: 'Pour les handis comme les valides ' },
@@ -391,9 +433,25 @@ const testimonials = [
 }
 .photo-dialog::backdrop { background: rgba(0,0,0,0.92); backdrop-filter: blur(4px); }
 .photo-dialog figure { position: relative; margin: 0; }
+/* Taille calculée d'après les dimensions de la grande photo (--w, --h) : la vignette et la grande
+   version s'affichent exactement au même format, sans saut quand l'une remplace l'autre */
 .photo-dialog img {
-  max-width: calc(100vw - 2rem); max-height: calc(100vh - 5rem);
-  width: auto; height: auto; margin: 0 auto;
+  width: min(calc(100vw - 2rem), calc((100vh - 5rem) * var(--w) / var(--h)), calc(var(--w) * 1px));
+  aspect-ratio: var(--w) / var(--h);
+  height: auto; object-fit: cover; margin: 0 auto;
+}
+
+/* Animations d'ouverture et de fermeture */
+.photo-dialog[open] figure { animation: photo-in 0.22s ease-out; }
+.photo-dialog[open]::backdrop { animation: backdrop-in 0.22s ease-out; }
+.photo-dialog.closing figure { animation: photo-out 0.18s ease-in forwards; }
+.photo-dialog.closing::backdrop { animation: backdrop-out 0.18s ease-in forwards; }
+@keyframes photo-in { from { opacity: 0; transform: scale(0.96); } }
+@keyframes photo-out { to { opacity: 0; transform: scale(0.96); } }
+@keyframes backdrop-in { from { opacity: 0; } }
+@keyframes backdrop-out { to { opacity: 0; } }
+@media (prefers-reduced-motion: reduce) {
+  .photo-dialog figure, .photo-dialog::backdrop { animation: none !important; }
 }
 .photo-dialog figcaption {
   margin-top: 0.75rem; text-align: center;
@@ -401,12 +459,15 @@ const testimonials = [
   letter-spacing: 0.15em; text-transform: uppercase; color: var(--grey-light);
 }
 .photo-dialog-close {
-  position: absolute; top: 0.75rem; right: 0.75rem;
-  background: var(--red); border: none; color: var(--white);
-  width: 36px; height: 36px; cursor: pointer;
-  font-size: 0.85rem; transition: background 0.3s;
+  position: absolute; top: 0.75rem; right: 0.75rem; z-index: 1;
+  width: 40px; height: 40px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(13,13,13,0.55); backdrop-filter: blur(6px);
+  border: 1px solid rgba(255,255,255,0.25); color: var(--white);
+  cursor: pointer; transition: background 0.2s, border-color 0.2s, transform 0.2s;
 }
-.photo-dialog-close:hover { background: var(--red-dark); }
+.photo-dialog-close:hover { background: rgba(13,13,13,0.8); border-color: var(--red); color: var(--red); transform: rotate(90deg); }
+.photo-dialog-close:focus-visible { outline: 2px solid var(--red); outline-offset: 2px; }
 .value-card h3 {
   font-family: 'Barlow Condensed',sans-serif; font-size: 1rem;
   letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 0.5rem;
