@@ -53,7 +53,7 @@ Les images se déposent dans `public/`.
 Le calendrier de la page **Événements** est lu dans la table `events` de Supabase. Deux façons d'ajouter ou de modifier un événement, visibles immédiatement sur le site sans redéploiement :
 
 - **Depuis le site (espace éditeur)** : lien « Espace éditeur » en bas de page, ou `/#/admin/evenements`, puis connexion avec un compte éditeur. L'article se rédige dans un éditeur visuel (voir ci-dessous).
-- **Depuis le dashboard Supabase** : **Table Editor** → `events`. C'est aussi là qu'on **supprime** un événement ; depuis le site, on décoche « Publié » pour le masquer.
+- **Depuis le dashboard Supabase** : **Table Editor** → `events`. Pour masquer un événement sans le perdre, décocher « Publié ». Pour le supprimer définitivement : bouton **Supprimer** dans la liste de l'espace éditeur (avec confirmation), ou depuis le dashboard. Les images de son article restent dans **Storage → event-images**.
 
 #### Dates clés de L'Association (table `milestones`)
 

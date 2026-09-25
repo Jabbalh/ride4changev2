@@ -10,7 +10,8 @@
           </div>
         </div>
 
-        <p v-if="route.query.saved" class="success-msg">Événement enregistré.</p>
+        <p v-if="route.query.saved && !deletedTitle" class="success-msg">Événement enregistré.</p>
+        <p v-if="deletedTitle" class="success-msg">« {{ deletedTitle }} » a été supprimé.</p>
 
         <p v-if="loading" class="state">Chargement…</p>
         <div v-else-if="error" class="state">
@@ -30,15 +31,27 @@
                 <span class="type">{{ event.type }}</span>
                 <strong>{{ event.title }}</strong>
               </td>
-              <td class="badges">
-                <span v-if="event.published" class="badge ok">Publié</span>
-                <span v-else class="badge">Brouillon</span>
-                <span v-if="event.is_featured" class="badge accent">À la une</span>
-                <span v-if="event.has_details" class="badge">Article</span>
+              <td>
+                <!-- Le flex est sur un div : appliqué au td, il le sortirait du tableau et décalerait la ligne -->
+                <div class="badges">
+                  <span v-if="event.published" class="badge ok">Publié</span>
+                  <span v-else class="badge">Brouillon</span>
+                  <span v-if="event.is_featured" class="badge accent">À la une</span>
+                  <span v-if="event.has_details" class="badge">Article</span>
+                </div>
               </td>
               <td class="row-actions">
-                <router-link :to="`/admin/evenements/${event.id}`">Modifier</router-link>
-                <router-link v-if="event.published && event.has_details" :to="`/evenements/${event.id}`">Voir</router-link>
+                <template v-if="confirmDeleteId === event.id">
+                  <span class="confirm">Supprimer définitivement ?</span>
+                  <button class="link danger" :disabled="busyId === event.id" @click="remove(event)">Oui, supprimer</button>
+                  <button class="link" :disabled="busyId === event.id" @click="confirmDeleteId = null">Non</button>
+                </template>
+                <template v-else>
+                  <router-link :to="`/admin/evenements/${event.id}`">Modifier</router-link>
+                  <router-link v-if="event.published && event.has_details" :to="`/evenements/${event.id}`">Voir</router-link>
+                  <button class="link" @click="askDelete(event.id)">Supprimer</button>
+                </template>
+                <p v-if="rowError?.id === event.id" class="row-error">{{ rowError.message }}</p>
               </td>
             </tr>
           </tbody>
@@ -52,7 +65,7 @@
 import { ref } from 'vue'
 import { useRoute } from 'vue-router'
 import AdminNav from '@/components/admin/AdminNav.vue'
-import { adminErrorMessage, fetchAllEvents, type AdminEventRow } from '@/composables/useEventAdmin'
+import { adminErrorMessage, deleteEvent, fetchAllEvents, type AdminEventRow } from '@/composables/useEventAdmin'
 
 const route = useRoute()
 
@@ -73,6 +86,33 @@ async function load() {
   }
 }
 load()
+
+// Suppression : confirmation dans la ligne (pas de window.confirm)
+const confirmDeleteId = ref<number | null>(null)
+const busyId = ref<number | null>(null)
+const rowError = ref<{ id: number, message: string } | null>(null)
+const deletedTitle = ref('')
+
+function askDelete(id: number) {
+  rowError.value = null
+  confirmDeleteId.value = id
+}
+
+async function remove(event: AdminEventRow) {
+  busyId.value = event.id
+  rowError.value = null
+  try {
+    await deleteEvent(event.id)
+    confirmDeleteId.value = null
+    deletedTitle.value = event.title
+    events.value = events.value.filter(e => e.id !== event.id)
+  } catch (e) {
+    console.error(e)
+    rowError.value = { id: event.id, message: adminErrorMessage(e) }
+  } finally {
+    busyId.value = null
+  }
+}
 </script>
 
 <style scoped>
@@ -100,11 +140,21 @@ h1 { font-family:'Bebas Neue',sans-serif; font-size: 3rem; line-height: 1; }
 .row-actions { white-space: nowrap; text-align: right; }
 .row-actions a { font-family:'Barlow Condensed',sans-serif; font-size:0.85rem; letter-spacing:0.1em; text-transform:uppercase; color: var(--red); margin-left: 1rem; }
 .row-actions a:hover { color: var(--white); }
+.link {
+  background: none; border: none; padding: 0; cursor: pointer; margin-left: 1rem;
+  font-family:'Barlow Condensed',sans-serif; font-size:0.85rem; letter-spacing:0.1em; text-transform:uppercase; color: var(--red);
+}
+.link:hover { color: var(--white); }
+.link.danger { color: #ff6b6b; font-weight: 700; }
+.link:disabled { opacity: 0.5; cursor: wait; }
+.confirm { font-size: 0.85rem; color: var(--white); }
+.row-error { margin-top: 0.4rem; font-size: 0.8rem; color: #ff6b6b; white-space: normal; }
 
 @media (max-width: 700px) {
   .events-table thead { display: none; }
   .events-table tr { display: block; padding: 0.75rem 0; border-bottom: 1px solid rgba(255,255,255,0.07); }
   .events-table td { display: block; border: none; padding: 0.2rem 0; text-align: left; }
-  .row-actions a { margin: 0 1rem 0 0; }
+  .row-actions a, .row-actions .link { margin: 0 1rem 0 0; }
+  .confirm { margin-right: 1rem; }
 }
 </style>

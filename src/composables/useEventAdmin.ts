@@ -81,6 +81,20 @@ export async function fetchEventForEdit(id: number): Promise<{ values: EventForm
   }
 }
 
+/** Supprime l'événement. Les images de son article restent dans le bucket. */
+export async function deleteEvent(id: number): Promise<void> {
+  const { error } = await client()
+    .from('events')
+    .delete()
+    .eq('id', id)
+    // .single() : une suppression refusée par RLS ne touche aucune ligne, ce qui lève ici une erreur au lieu d'un faux succès
+    .select('id')
+    .single()
+  // Aucune ligne supprimée : l'événement était affiché dans la liste, c'est donc un refus de droits
+  if (error?.code === 'PGRST116') throw Object.assign(new Error('Suppression refusée'), { code: '42501' })
+  if (error) throw error
+}
+
 /** Crée (id absent) ou met à jour l'événement. Renvoie son id. */
 export async function saveEvent(values: EventFormValues, id?: number): Promise<number> {
   const optional = (v: string) => (v.trim() === '' ? null : v.trim())
