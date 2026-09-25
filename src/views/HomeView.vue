@@ -35,9 +35,9 @@
         </div>
         <div class="intro-values">
           <div v-for="v in values" :key="v.title" class="value-card">
-            <span class="value-icon">
-              <img :src="baseUrl + v.icon" alt="Value Icon">
-            </span>
+            <button type="button" class="value-icon" :aria-label="`Agrandir la photo : ${v.title}`" @click="openPhoto(v)">
+              <img :src="baseUrl + v.icon" :alt="v.title">
+            </button>
             <h3>{{ v.title }}</h3>
             <p>{{ v.desc }}</p>
           </div>
@@ -156,6 +156,15 @@
         </div>
       </div>
     </section>
+
+    <!-- PHOTO AGRANDIE -->
+    <dialog ref="photoDialog" class="photo-dialog" @click.self="closePhoto" @close="onPhotoClosed">
+      <figure v-if="openedPhoto">
+        <button type="button" class="photo-dialog-close" aria-label="Fermer" @click="closePhoto">✕</button>
+        <img :src="baseUrl + openedPhoto.icon" :alt="openedPhoto.title">
+        <figcaption>{{ openedPhoto.title }}</figcaption>
+      </figure>
+    </dialog>
   </div>
 </template>
 
@@ -228,15 +237,32 @@ onMounted(() => {
 
 onUnmounted(() => {
   stopCarousel()
+  document.body.style.overflow = ''
 })
 const anneeExistance = new Date().getFullYear() - 2025;
 
 const values = [
-  { icon: 'ludo-pilote.jpg', title: 'Les compétitions', desc: 'PMR Bridgestone & Bol d’argent .' },
+  { icon: 'lemans.jpg', title: 'Les compétitions', desc: 'PMR Bridgestone & Bol d’argent .' },
   { icon: 'partenaire.jpg', title: 'Nos partenaires', desc: '' },
   { icon: 'initiation.jpg', title: 'Initiation et Roulages', desc: "Le Mans & Fay de Bretagne." },
   { icon: 'solidarite.jpg', title: 'La Solidarité', desc: "Parce que sans amis ou bénévoles rien n’es possible." },
 ]
+
+// PHOTO AGRANDIE : <dialog> natif (Échap, focus et fond inerte gérés par le navigateur)
+type Value = (typeof values)[number]
+const photoDialog = ref<HTMLDialogElement>()
+const openedPhoto = ref<Value>()
+
+const openPhoto = (v: Value) => {
+  openedPhoto.value = v
+  document.body.style.overflow = 'hidden'
+  photoDialog.value?.showModal()
+}
+const closePhoto = () => photoDialog.value?.close()
+const onPhotoClosed = () => {
+  openedPhoto.value = undefined
+  document.body.style.overflow = ''
+}
 const actions = [
   { tag: 'Courses', emoji: '🏁', color: 'linear-gradient(135deg,#1f1a1a,#2d1f00)', title: 'Le mans', desc: 'Un petit tour au man.' },
   { tag: 'Baptèmes', emoji: '🪖', color: 'linear-gradient(135deg,#1a1f1a,#1f2d1f)', title: 'Initiation sécurité', desc: 'Des baptèmes de moto.' },
@@ -350,7 +376,36 @@ const testimonials = [
   transition: transform 0.3s;
 }
 .value-card:hover { transform: translateY(-4px); }
-.value-icon { font-size: 1.75rem; display: block; margin-bottom: 0.75rem; }
+.value-icon {
+  display: block; width: 100%; margin-bottom: 0.75rem;
+  padding: 0; border: none; background: none; cursor: zoom-in;
+}
+.value-icon:focus-visible { outline: 2px solid var(--red); outline-offset: 2px; }
+
+/* PHOTO AGRANDIE */
+.photo-dialog {
+  margin: auto; padding: 0; border: none; background: none;
+  max-width: calc(100vw - 2rem); max-height: calc(100vh - 2rem);
+  overflow: visible;
+}
+.photo-dialog::backdrop { background: rgba(0,0,0,0.92); backdrop-filter: blur(4px); }
+.photo-dialog figure { position: relative; margin: 0; }
+.photo-dialog img {
+  max-width: calc(100vw - 2rem); max-height: calc(100vh - 5rem);
+  width: auto; height: auto; margin: 0 auto;
+}
+.photo-dialog figcaption {
+  margin-top: 0.75rem; text-align: center;
+  font-family: 'Barlow Condensed', sans-serif; font-size: 0.9rem;
+  letter-spacing: 0.15em; text-transform: uppercase; color: var(--grey-light);
+}
+.photo-dialog-close {
+  position: absolute; top: 0.75rem; right: 0.75rem;
+  background: var(--red); border: none; color: var(--white);
+  width: 36px; height: 36px; cursor: pointer;
+  font-size: 0.85rem; transition: background 0.3s;
+}
+.photo-dialog-close:hover { background: var(--red-dark); }
 .value-card h3 {
   font-family: 'Barlow Condensed',sans-serif; font-size: 1rem;
   letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 0.5rem;
