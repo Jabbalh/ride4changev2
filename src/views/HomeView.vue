@@ -258,9 +258,9 @@ const openPhoto = (v: Value) => {
 }
 const closePhoto = () => photoDialog.value?.close()
 const actions = [
-  { tag: 'Courses', emoji: '🏁', color: 'linear-gradient(135deg,#1f1a1a,#2d1f00)', title: 'Le mans', desc: 'Un petit tour au man.' },
-  { tag: 'Baptèmes', emoji: '🪖', color: 'linear-gradient(135deg,#1a1f1a,#1f2d1f)', title: 'Initiation sécurité', desc: 'Des baptèmes de moto.' },
-  { tag: 'Je ne sais pas', emoji: '🩺', color: 'linear-gradient(135deg,#1a1a2d,#1a1a1a)', title: 'Je ne sais pas', desc: 'Un autre truc ?.' },
+  { tag: 'Courses', emoji: '🏁', color: 'linear-gradient(135deg,#1f1a1a,#2d1f00)', title: 'Le Mans, Spa Francorchamps, Le Castellet', desc: '' },
+  { tag: 'Initiations circuit', emoji: '🪖', color: 'linear-gradient(135deg,#1a1f1a,#1f2d1f)', title: 'Nos initiations et roulages', desc: 'Pour les handis comme les valides ' },
+  { tag: 'Les salons', emoji: '🩺', color: 'linear-gradient(135deg,#1a1a2d,#1a1a1a)', title: 'Venez nous rencontrer', desc: 'À Vannes, Rennes, etc...' },
 ]
 const testimonials = [
   { name: 'Toto', role: 'Membre depuis 2025', initials: 'TT', quote: "Moi je bricole." },
