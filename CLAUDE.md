@@ -63,6 +63,7 @@ Pour simuler le build Cloudflare en local : `WORKERS_CI=1 pnpm build`, puis `npx
 ## Déploiement
 
 - **Cloudflare Workers**, relié au dépôt GitHub : chaque push sur `main` déclenche `pnpm build` puis `npx wrangler deploy`. Node 22 est fixé par `.node-version`.
+- Domaines : `ride4change.fr` est le Custom Domain du Worker (configuré dans le dashboard, pas dans `wrangler.toml`). `www` et les domaines secondaires (`ride4change.eu`, `rideforchange.fr`, `rideforchange.eu`) redirigent en 301 via des règles Cloudflare. Le détail des opérations DNS est dans `DOMAINES.md`.
 - `docs/` est une ancienne copie du build servie par **GitHub Pages** (sous `/ride4changev2/`), sans backend. Elle est mise à jour à la main et n'est plus alimentée automatiquement.
 
 ## Notes produit
