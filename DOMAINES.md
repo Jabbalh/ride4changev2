@@ -135,7 +135,8 @@ Les 8 adresses doivent toutes arriver sur `https://ride4change.fr/`, avec le cad
 **Pour tester :**
 
 - Utiliser un téléphone en 4G ou un autre PC. Le réseau de l'entreprise LeGouessant bloque le domaine (erreur 403).
-- Après un changement de NS, un poste peut garder en cache l'ancienne réponse d'OVH : essayer en navigation privée ou sur un autre appareil.
+- Après un changement de NS, un poste peut garder en cache l'ancienne réponse d'OVH : essayer en navigation privée ou sur un autre appareil. Certains serveurs DNS publics la gardent aussi, jusqu'à 24 h. Le 25/09/2026, SSL Labs voyait encore `ride4change.eu` sur l'IP d'OVH `213.186.33.5` (`redirect.ovh.net`), alors que le registre `.eu` et Google DNS renvoyaient déjà Cloudflare.
+- Un domaine « introuvable » alors que ses NS sont chez Cloudflare : vérifier que sa zone contient bien les enregistrements `AAAA @` et `AAAA www`. Le 25/09/2026, ils manquaient dans la zone `rideforchange.eu`. Pour tester : `Resolve-DnsName <domaine> -Server daisy.ns.cloudflare.com` ne doit pas renvoyer une réponse vide.
 - Pour vérifier le DNS : `Resolve-DnsName <domaine> -Server 1.1.1.1`. Les IP Cloudflare (`188.114.x`, `104.21.x`, `172.67.x`, `2606:4700:…`, `2a06:98c1:…`) indiquent un enregistrement proxifié.
 
 **Points restants :**
