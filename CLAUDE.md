@@ -22,15 +22,17 @@ Pour simuler le build Cloudflare en local : `WORKERS_CI=1 pnpm build`, puis `npx
 ## Architecture
 
 ### Front (`src/`)
-- Le router utilise **`createWebHashHistory`** (URLs en `/#/...`). Il n'y a donc aucune règle de réécriture côté hébergeur, et aucun conflit possible entre les routes Vue et `/api/*`.
-- Pour ajouter une page, il faut toucher 3 endroits : `src/router/index.ts`, le tableau `links` de `src/components/NavBar.vue` et celui de `src/components/FooterBar.vue`.
+- Le router utilise **`createWebHistory`** (vraies URL `/association`, indispensables au référencement). Cloudflare renvoie `index.html` pour toute URL sans fichier (`not_found_handling = "single-page-application"` dans `wrangler.toml`). Les anciens liens `/#/page` sont réécrits au chargement, dans `src/router/index.ts`, **avant** `createWebHistory` (qui lit l'URL dès sa création). Route attrape-tout : une URL inconnue renvoie à l'accueil. Les liens internes des articles (`/contact`) sont de simples `<a>` : ils rechargent la page.
+- Pour ajouter une page, il faut toucher 4 endroits : `src/router/index.ts` (avec `meta.title` et `meta.description`), le tableau `links` de `src/components/NavBar.vue`, celui de `src/components/FooterBar.vue`, et `STATIC_PAGES` dans `worker/sitemap.ts`.
+- Référencement : `src/lib/seo.ts` (`setPageMeta`, `setPageJsonLd`) met à jour titre, description, canonique, robots et Open Graph à chaque navigation (`router.afterEach`, depuis `meta`). La page article complète ensuite avec l'événement chargé (titre, description, première image, JSON-LD `Event`). `meta.noindex` sur `/connexion` et `/admin/*`. `index.html` garde les valeurs par défaut et le JSON-LD de l'association : ce sont les seules lues par les robots sans JavaScript (aperçus Facebook, WhatsApp), à garder cohérentes avec `seo.ts`. Image de partage : `public/og-image.jpg` (1200×630). `public/robots.txt` exclut l'espace éditeur.
 - Le contenu des pages est codé en dur dans des tableaux au début du `<script setup>` de chaque vue (produits, formules…), **sauf les événements et les dates clés de L'Association** (`milestones`, via `useMilestones.ts`), qui viennent de Supabase. La présentation de L'Association reste volontairement en dur : c'est un choix de l'utilisateur, pour un contenu stable et sans appel à la base.
 - Styles : la seule feuille globale chargée est `src/assets/main.css` (variables `--red`, `--dark`, `--dark2`, `--grey`, `--grey-light`…). Toute classe utilitaire partagée (`.text-bold`…) va dans ce fichier. Les vues dupliquent un bloc `.page-header` en CSS scoped ; copier celui d'une vue existante pour une nouvelle page.
 - Polices : Bebas Neue (titres), Barlow Condensed (menus, labels) et Barlow (texte), servies localement via `@fontsource/*` et importées dans `src/main.ts`. Un nouveau `font-weight` doit y être importé. Ne pas réintroduire Google Fonts ni d'autres ressources tierces (seule exception : l'API Supabase) : le choix a été fait pour le RGPD.
 - Le menu passe en burger sous **1150px** : 7 liens + bouton tiennent tout juste. Ajouter un onglet impose de revérifier la largeur de la barre.
 
 ### Backend (`worker/`)
-- `wrangler.toml` déclare `main = "./worker/index.ts"` et `[assets] run_worker_first = ["/api/*"]`. Seules les URLs `/api/*` passent par le worker, tout le reste est servi en statique.
+- `wrangler.toml` déclare `main = "./worker/index.ts"` et `[assets] run_worker_first = ["/api/*", "/sitemap.xml"]`. Seules ces URLs passent par le worker, tout le reste est servi en statique.
+- `/sitemap.xml` (`worker/sitemap.ts`) : pages fixes + événements publiés qui ont un article, lus dans Supabase à chaque requête (cache 1 h, 5 min si Supabase ne répond pas). Le worker lit `SUPABASE_URL` et `SUPABASE_PUBLISHABLE_KEY` dans les `[vars]` de `wrangler.toml` (clé publique, déjà dans le JavaScript du site), à garder identiques aux variables de build `VITE_SUPABASE_*`.
 - `worker/index.ts` route les URLs, et chaque endpoint a son module (`worker/contact.ts`).
 - `/api/contact` valide les champs, contient un champ piège anti-spam (`website`) et **ne fait pour l'instant que `console.log` le message** (TODO : envoi de mail ou stockage).
 - La liste `OBJETS` de `worker/contact.ts` doit rester synchronisée avec les `<option>` et avec `objetsPrefill` dans `src/views/ContactView.vue`. Cette vue accepte `?objet=...` pour pré-sélectionner l'objet.
@@ -38,7 +40,7 @@ Pour simuler le build Cloudflare en local : `WORKERS_CI=1 pnpm build`, puis `npx
 
 ### Build et `base`
 - `@cloudflare/vite-plugin` fait tourner le worker dans `pnpm dev` et `pnpm preview`. Il fait aussi sortir le build dans `dist/client/` (le site) et `dist/ride4changev2/` (le worker et le `wrangler.json` généré), et non dans `dist/`.
-- `base` dans `vite.config.ts` vaut `/` en dev et sur Cloudflare (`WORKERS_CI` ou `CF_PAGES` définis). Il vaut `/ride4changev2/` uniquement pour un build local destiné à GitHub Pages. Le plugin Cloudflare **ne supporte pas** un `base` non racine en dev, où tout renvoie le 404 du worker.
+- `base` dans `vite.config.ts` vaut `/` en dev et sur Cloudflare (`WORKERS_CI` ou `CF_PAGES` définis). Il vaut `/ride4changev2/` pour un simple `pnpm build` local (ancien usage GitHub Pages) : pour tester le build avec `pnpm preview`, lancer `WORKERS_CI=1 pnpm build` puis `WORKERS_CI=1 pnpm preview`, sinon les fichiers JS sont introuvables et la page reste blanche. Le plugin Cloudflare **ne supporte pas** un `base` non racine en dev, où tout renvoie le 404 du worker.
 - Pour les images de `public/` référencées dans les vues, utiliser `import.meta.env.BASE_URL`, jamais un chemin absolu.
 
 ### Supabase (contenu)
@@ -58,14 +60,14 @@ Pour simuler le build Cloudflare en local : `WORKERS_CI=1 pnpm build`, puis `npx
 - `milestones` : pas de colonne `published`, et suppression permise aux éditeurs (policy delete). L'ordre est manuel, via la colonne `position` : un trigger place toute nouvelle ligne en tête, et le site ne peut pas fixer `position` à l'insertion. `reorder_milestones(ids[])` (security invoker, soumise à RLS) réécrit toutes les positions en une opération et renvoie le nombre de lignes modifiées. `reorderMilestones()` compare ce nombre à la longueur de la liste, car un refus RLS ne lève pas d'erreur. `useMilestoneAdmin.ts` enchaîne `.select().single()` après insert, update et delete. Page `/admin/association` avec édition sur place et confirmation de suppression dans la ligne (pas de `window.confirm`).
 - Navigation de l'espace éditeur : `src/components/admin/AdminNav.vue` (onglets et déconnexion). Toute nouvelle page `/admin/…` doit être ajoutée à `SECTIONS`.
 - Conséquence : un éditeur connecté voit aussi les brouillons. Les requêtes **publiques** doivent donc filtrer `.eq('published', true)` explicitement (voir `useEvents.ts`).
-- Pas de magic link ni d'OAuth : ils redirigent avec des jetons dans le `#` de l'URL, ce qui entre en conflit avec le hash router (`detectSessionInUrl: false`).
+- Pas de magic link ni d'OAuth : connexion par mot de passe uniquement (`detectSessionInUrl: false`).
 - Pour toute nouvelle rubrique ou évolution de schéma, suivre le skill `.claude/skills/supabase-content`.
 
 ## Déploiement
 
 - **Cloudflare Workers**, relié au dépôt GitHub : chaque push sur `main` déclenche `pnpm build` puis `npx wrangler deploy`. Node 22 est fixé par `.node-version`.
 - Domaines : `ride4change.fr` est le Custom Domain du Worker (configuré dans le dashboard, pas dans `wrangler.toml`). `www` et les domaines secondaires (`ride4change.eu`, `rideforchange.fr`, `rideforchange.eu`) redirigent en 301 via des règles Cloudflare. Le détail des opérations DNS est dans `DOMAINES.md`.
-- `docs/` est une ancienne copie du build servie par **GitHub Pages** (sous `/ride4changev2/`), sans backend. Elle est mise à jour à la main et n'est plus alimentée automatiquement.
+- `docs/` est une ancienne copie du build servie par **GitHub Pages** (sous `/ride4changev2/`), sans backend. Elle est mise à jour à la main et n'est plus alimentée automatiquement. Depuis le passage aux vraies URL, un nouveau build n'y fonctionnerait plus (GitHub Pages ne renvoie pas `index.html` pour les URL inconnues).
 
 ## Notes produit
 

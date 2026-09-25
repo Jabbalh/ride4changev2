@@ -11,7 +11,7 @@ if (!url || !key) {
 // null si non configuré (ex : build GitHub Pages) : les vues affichent alors un message d'erreur.
 // Clé publique : les droits réels sont définis par les règles RLS dans supabase/migrations/.
 // Session persistée (localStorage) uniquement pour les éditeurs connectés : un visiteur n'a aucune session.
-// detectSessionInUrl désactivé : connexion par mot de passe uniquement, et le router utilise déjà le # de l'URL.
+// detectSessionInUrl désactivé : connexion par mot de passe uniquement (ni magic link ni OAuth, qui passent des jetons dans l'URL).
 export const supabase = url && key
   ? createClient<Database>(url, key, { auth: { detectSessionInUrl: false } })
   : null

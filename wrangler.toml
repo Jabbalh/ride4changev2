@@ -3,6 +3,15 @@ main = "./worker/index.ts"
 compatibility_date = "2026-09-24"
 
 # Le site Vue est servi comme fichiers statiques (le dossier est fixé par @cloudflare/vite-plugin).
-# Seules les URLs /api/* passent par le worker.
+# Seules /api/* et /sitemap.xml passent par le worker.
+# single-page-application : toute URL inconnue (/association, /evenements/12…) renvoie index.html,
+# et le router Vue affiche la bonne page.
 [assets]
-run_worker_first = ["/api/*"]
+not_found_handling = "single-page-application"
+run_worker_first = ["/api/*", "/sitemap.xml"]
+
+# Lus par le worker (sitemap.xml). Clé publishable : publique par nature (déjà présente dans le JavaScript du site),
+# les droits reposent sur RLS. À garder identiques aux variables de build VITE_SUPABASE_* de Cloudflare.
+[vars]
+SUPABASE_URL = "https://qcdtwfynsgdffhmvinqf.supabase.co"
+SUPABASE_PUBLISHABLE_KEY = "sb_publishable_LMjepLTV6PwUeDYoavq2gA_uDrIlWmW"

@@ -31,7 +31,7 @@ src/
   views/        une vue par page (Accueil, Association, Compétition, Initiation & Roulage,
                 Événements, Boutique, Contact, Galerie)
   components/   barre de navigation, pied de page, liens réseaux sociaux…
-  router/       déclaration des routes (URLs en /#/...)
+  router/       déclaration des routes (vraies URL : /association, /evenements/12…)
   assets/       feuille de style globale et variables CSS
 public/         images servies telles quelles
 worker/         backend Cloudflare (API)
@@ -52,7 +52,7 @@ Les images se déposent dans `public/`.
 
 Le calendrier de la page **Événements** est lu dans la table `events` de Supabase. Deux façons d'ajouter ou de modifier un événement, visibles immédiatement sur le site sans redéploiement :
 
-- **Depuis le site (espace éditeur)** : lien « Espace éditeur » en bas de page, ou `/#/admin/evenements`, puis connexion avec un compte éditeur. L'article se rédige dans un éditeur visuel (voir ci-dessous).
+- **Depuis le site (espace éditeur)** : lien « Espace éditeur » en bas de page, ou `/admin/evenements`, puis connexion avec un compte éditeur. L'article se rédige dans un éditeur visuel (voir ci-dessous).
 - **Depuis le dashboard Supabase** : **Table Editor** → `events`. Pour masquer un événement sans le perdre, décocher « Publié ». Pour le supprimer définitivement : bouton **Supprimer** dans la liste de l'espace éditeur (avec confirmation), ou depuis le dashboard. Les images de son article restent dans **Storage → event-images**.
 
 #### Dates clés de L'Association (table `milestones`)
@@ -101,7 +101,7 @@ Mot de passe oublié : le réinitialiser depuis **Authentication → Users**.
 
 #### Écrire un article (colonne `details`)
 
-L'article s'affiche sur la page `/#/evenements/<id>`, accessible depuis la liste (« Lire la suite ») et depuis l'événement à la une (« En savoir plus »).
+L'article s'affiche sur la page `/evenements/<id>`, accessible depuis la liste (« Lire la suite ») et depuis l'événement à la une (« En savoir plus »).
 
 **Depuis l'espace éditeur**, il se rédige dans un éditeur visuel, comme un traitement de texte : titres, gras, italique, souligné, barré, couleurs de la charte (blanc, rouge, orange, gris), alignement, listes, citations, séparateurs, liens et **images**. Les raccourcis habituels fonctionnent (Ctrl+B, Ctrl+I, Ctrl+U, Ctrl+Z).
 
@@ -159,7 +159,7 @@ Reçoit le formulaire de contact en JSON :
 
 Pour ajouter une valeur à `objet`, la mettre à jour dans `worker/contact.ts` et dans `src/views/ContactView.vue` (les `<option>` et la liste `objetsPrefill`).
 
-La page de contact accepte un objet pré-sélectionné dans l'URL, par exemple `/#/contact?objet=boutique`.
+La page de contact accepte un objet pré-sélectionné dans l'URL, par exemple `/contact?objet=boutique`.
 
 ## Déploiement
 

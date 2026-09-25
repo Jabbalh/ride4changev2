@@ -78,7 +78,7 @@
 
     <!-- Pas de <form> : l'éditeur est lui-même dans le formulaire de l'événement -->
     <div v-if="linkOpen" class="link-form">
-      <input ref="linkInput" v-model="linkUrl" type="text" placeholder="https://… ou /#/contact"
+      <input ref="linkInput" v-model="linkUrl" type="text" placeholder="https://… ou /contact"
              @keydown.enter.prevent="applyLink" @keydown.esc.prevent="linkOpen = false" />
       <button type="button" class="btn btn-primary" @click="applyLink">OK</button>
       <button v-if="editor?.isActive('link')" type="button" class="btn btn-outline" @click="removeLink">Retirer le lien</button>
@@ -231,7 +231,7 @@ async function toggleLinkForm() {
 function applyLink() {
   let href = linkUrl.value.trim()
   if (!href) return removeLink()
-  // Liens internes (/#/…) et e-mails gardés tels quels ; sinon https:// par défaut
+  // Liens internes (/contact…) et e-mails gardés tels quels ; sinon https:// par défaut
   if (!/^(https?:\/\/|mailto:|\/)/i.test(href)) href = `https://${href}`
   editor.value?.chain().focus().extendMarkRange('link').setLink({ href }).run()
   linkOpen.value = false

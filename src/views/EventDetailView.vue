@@ -49,10 +49,11 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, watch } from 'vue'
 import { useEvent } from '@/composables/useEvents'
 import { renderRichText } from '@/lib/richText'
 import { useAuth } from '@/composables/useAuth'
+import { SITE_NAME, SITE_URL, setPageJsonLd, setPageMeta } from '@/lib/seo'
 
 const props = defineProps<{ id: number }>()
 
@@ -64,6 +65,38 @@ init()
 
 // HTML nettoyé par DOMPurify dans renderRichText : v-html est sûr ici
 const articleHtml = computed(() => event.value?.has_details && event.value.details ? renderRichText(event.value.details) : '')
+
+// Référencement : titre, description et image de l'événement, et données structurées « Event » pour Google
+const firstImage = computed(() => {
+  const src = /<img[^>]+src="([^"]+)"/.exec(articleHtml.value)?.[1]
+  return src ? new URL(src, SITE_URL).href : undefined
+})
+watch([event, loading], () => {
+  if (loading.value) return
+  const e = event.value
+  const path = `/evenements/${props.id}`
+  if (!e) return setPageMeta({ title: 'Événement introuvable', path, noindex: true })
+  setPageMeta({
+    title: e.title,
+    description: e.description ?? `${e.type} organisé par ${SITE_NAME} : ${[e.dateLabel, e.location].filter(Boolean).join(', ')}.`,
+    path,
+    image: firstImage.value,
+  })
+  setPageJsonLd({
+    '@context': 'https://schema.org',
+    '@type': 'Event',
+    name: e.title,
+    startDate: e.starts_on,
+    endDate: e.ends_on ?? e.starts_on,
+    eventStatus: 'https://schema.org/EventScheduled',
+    eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
+    ...(e.description && { description: e.description }),
+    ...(firstImage.value && { image: [firstImage.value] }),
+    ...(e.location && { location: { '@type': 'Place', name: e.location, address: e.location } }),
+    organizer: { '@type': 'Organization', name: SITE_NAME, url: SITE_URL },
+    url: SITE_URL + path,
+  })
+})
 </script>
 
 <style scoped>

@@ -1,0 +1,6 @@
+# Espace éditeur : inutile pour les moteurs de recherche (pages aussi marquées noindex)
+User-agent: *
+Disallow: /admin/
+Disallow: /connexion
+
+Sitemap: https://ride4change.fr/sitemap.xml

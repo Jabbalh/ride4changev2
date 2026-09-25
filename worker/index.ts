@@ -1,8 +1,11 @@
 import { handleContact } from './contact'
+import { handleSitemap } from './sitemap'
 
 export default {
   async fetch(request, env) {
     const url = new URL(request.url)
+
+    if (url.pathname === '/sitemap.xml') return handleSitemap(env)
 
     if (url.pathname === '/api/contact') {
       if (request.method !== 'POST') {

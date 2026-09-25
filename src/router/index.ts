@@ -1,4 +1,4 @@
-import { createRouter, createWebHashHistory } from 'vue-router'
+import { createRouter, createWebHistory } from 'vue-router'
 import Home from '@/views/HomeView.vue'
 import About from '@/views/AboutView.vue'
 import Gallery from '@/views/GalleryView.vue'
@@ -9,38 +9,78 @@ import InitiationView from "@/views/InitiationView.vue";
 import BoutiqueView from "@/views/BoutiqueView.vue";
 import EventDetailView from "@/views/EventDetailView.vue";
 import { useAuth } from '@/composables/useAuth'
+import { setPageJsonLd, setPageMeta } from '@/lib/seo'
 
 declare module 'vue-router' {
   interface RouteMeta {
     // Page réservée aux éditeurs (table public.editors). Confort d'interface : la vraie protection est RLS.
     requiresEditor?: boolean
+    // Référencement : titre (sans le nom du site) et description de la page
+    title?: string
+    description?: string
+    // Page exclue des moteurs de recherche (espace éditeur)
+    noindex?: boolean
   }
 }
 
+const editor = { requiresEditor: true, noindex: true, title: 'Espace éditeur' }
+
+// Anciens liens en /#/page (avant le passage aux vraies URL) : l'adresse est réécrite ici,
+// avant createWebHistory qui lit l'URL courante dès sa création.
+if (location.hash.startsWith('#/')) {
+  history.replaceState(null, '', import.meta.env.BASE_URL.replace(/\/$/, '') + location.hash.slice(1))
+}
+
 const router = createRouter({
-  history: createWebHashHistory(import.meta.env.BASE_URL),
+  // Vraies URL (/association) et non /#/association : indispensable pour le référencement.
+  // Cloudflare renvoie index.html pour toute URL inconnue (not_found_handling dans wrangler.toml).
+  history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     { path: '/', component: Home },
-    { path: '/association', component: About },
-    { path: '/galerie', component: Gallery },
-    { path: '/competition', component: CompetitionView },
-    { path: '/initiation-roulage', component: InitiationView },
-    { path: '/evenements', component: Events },
+    { path: '/association', component: About, meta: {
+      title: "L'Association",
+      description: "Qui sommes-nous ? L'histoire, les valeurs et l'engagement de Ride 4 Change, association moto et handicap fondée en 2025 en Bretagne.",
+    } },
+    { path: '/galerie', component: Gallery, meta: {
+      title: 'Galerie',
+      description: "Sorties, actions solidaires, rassemblements : l'aventure Ride 4 Change en images.",
+    } },
+    { path: '/competition', component: CompetitionView, meta: {
+      title: 'Compétition',
+      description: "Ride 4 Change en compétition moto : courses, pilotes et résultats de l'équipe.",
+    } },
+    { path: '/initiation-roulage', component: InitiationView, meta: {
+      title: 'Initiation & Roulage',
+      description: "Découvrir la piste en toute sécurité ou progresser à votre rythme : initiations et roulages moto encadrés par Ride 4 Change.",
+    } },
+    { path: '/evenements', component: Events, meta: {
+      title: 'Événements',
+      description: "L'agenda de Ride 4 Change : sorties, compétitions, roulages et actions solidaires à venir.",
+    } },
     { path: '/evenements/:id(\\d+)', component: EventDetailView, props: route => ({ id: Number(route.params.id) }) },
-    { path: '/boutique', component: BoutiqueView },
-    { path: '/contact', component: Contact },
+    { path: '/boutique', component: BoutiqueView, meta: {
+      title: 'Boutique',
+      description: "Portez les couleurs de Ride 4 Change : chaque achat soutient les actions de l'association.",
+    } },
+    { path: '/contact', component: Contact, meta: {
+      title: 'Contact',
+      description: "Une question, envie de nous rejoindre ou de devenir partenaire ? Contactez l'association Ride 4 Change.",
+    } },
 
     // Espace éditeur : chargé à la demande (les visiteurs ne téléchargent pas ce code)
-    { path: '/connexion', component: () => import('@/views/admin/LoginView.vue') },
-    { path: '/admin/evenements', component: () => import('@/views/admin/AdminEventsView.vue'), meta: { requiresEditor: true } },
-    { path: '/admin/evenements/nouveau', component: () => import('@/views/admin/EventFormView.vue'), meta: { requiresEditor: true } },
-    { path: '/admin/association', component: () => import('@/views/admin/AdminMilestonesView.vue'), meta: { requiresEditor: true } },
+    { path: '/connexion', component: () => import('@/views/admin/LoginView.vue'), meta: { noindex: true, title: 'Connexion' } },
+    { path: '/admin/evenements', component: () => import('@/views/admin/AdminEventsView.vue'), meta: editor },
+    { path: '/admin/evenements/nouveau', component: () => import('@/views/admin/EventFormView.vue'), meta: editor },
+    { path: '/admin/association', component: () => import('@/views/admin/AdminMilestonesView.vue'), meta: editor },
     {
       path: '/admin/evenements/:id(\\d+)',
       component: () => import('@/views/admin/EventFormView.vue'),
       props: route => ({ id: Number(route.params.id) }),
-      meta: { requiresEditor: true },
+      meta: editor,
     },
+
+    // URL inconnue : retour à l'accueil (sinon page blanche)
+    { path: '/:pathMatch(.*)*', redirect: '/' },
   ],
   scrollBehavior() { return { top: 0 } }
 })
@@ -50,6 +90,12 @@ router.beforeEach(async to => {
   const { init, isEditor } = useAuth()
   await init()
   if (!isEditor.value) return { path: '/connexion', query: { redirect: to.fullPath } }
+})
+
+router.afterEach(to => {
+  setPageJsonLd(null)
+  // Page article : valeurs par défaut en attendant l'événement, que la vue complète une fois chargé
+  setPageMeta({ title: to.meta.title, description: to.meta.description, path: to.path, noindex: to.meta.noindex })
 })
 
 export default router
