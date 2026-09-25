@@ -16,6 +16,7 @@ export type CalendarEvent<T extends EventRow = EventRow> = T & {
   past: boolean
   month: string   // « Juin »
   day: string     // « 14 »
+  year: string    // « 2026 »
   dateLabel: string // « 14-15 juin 2026 »
 }
 
@@ -31,6 +32,13 @@ function parseDate(value: string): Date {
 function today(): Date {
   const now = new Date()
   return new Date(now.getFullYear(), now.getMonth(), now.getDate())
+}
+
+// Date locale au format des colonnes `date` ('YYYY-MM-DD'), pour filtrer côté base
+function toIsoDate(date: Date): string {
+  return [date.getFullYear(), date.getMonth() + 1, date.getDate()]
+    .map((n, i) => String(n).padStart(i ? 2 : 4, '0'))
+    .join('-')
 }
 
 const monthShort = new Intl.DateTimeFormat('fr-FR', { month: 'short' })
@@ -53,6 +61,7 @@ function toCalendarEvent<T extends EventRow>(row: T, now: Date): CalendarEvent<T
     past: (end ?? start) < now,
     month: month.charAt(0).toUpperCase() + month.slice(1),
     day: String(start.getDate()).padStart(2, '0'),
+    year: String(start.getFullYear()),
     dateLabel: formatRange(start, end),
   }
 }
@@ -93,6 +102,40 @@ export function useEvents() {
   load()
 
   return { upcoming, past, featured, loading, error, reload: load }
+}
+
+/**
+ * Prochain événement publié, à venir ou en cours (page d'accueil).
+ * `event` vaut null s'il n'y en a pas, ou si le chargement échoue : l'accueil n'affiche alors rien.
+ */
+export function useNextEvent() {
+  const event = ref<CalendarEvent | null>(null)
+
+  async function load() {
+    try {
+      if (!supabase) throw new Error('Supabase non configuré')
+      const now = today()
+      const iso = toIsoDate(now)
+      const { data, error: dbError } = await supabase
+        .from('events')
+        .select(LIST_COLUMNS)
+        .eq('published', true)
+        // Pas encore terminé : commence aujourd'hui ou plus tard, ou se termine aujourd'hui ou plus tard
+        .or(`starts_on.gte.${iso},ends_on.gte.${iso}`)
+        .order('starts_on', { ascending: true })
+        .limit(1)
+        .maybeSingle()
+      if (dbError) throw dbError
+      event.value = data ? toCalendarEvent(data, now) : null
+    } catch (e) {
+      console.error('Chargement du prochain événement impossible', e)
+      event.value = null
+    }
+  }
+
+  load()
+
+  return { event }
 }
 
 /** Un événement avec son article (page /evenements/:id). `event` vaut null s'il n'existe pas ou n'est pas publié. */

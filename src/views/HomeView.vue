@@ -116,19 +116,20 @@
     </section>
 
     <!-- PROCHAIN ÉVÈNEMENT -->
-    <section class="next-event section">
+    <section v-if="nextEvent" class="next-event section">
       <div class="container">
         <div class="event-banner">
           <div class="event-date-box">
-            <span class="month">Avril</span>
-            <span class="day">25</span>
-            <span class="year">2026</span>
+            <span class="month">{{ nextEvent.month }}</span>
+            <span class="day">{{ nextEvent.day }}</span>
+            <span class="year">{{ nextEvent.year }}</span>
           </div>
           <div class="event-info">
             <span class="overline">Prochain événement</span>
-            <h2>Barbecue chez Ludo</h2>
-            <p>Le rendez-vous incontournable, de la viande, du palet et des boules.</p>
-            <router-link to="/evenements" class="btn btn-primary">Voir le programme</router-link>
+            <h2>{{ nextEvent.title }}</h2>
+            <p v-if="nextEvent.description">{{ nextEvent.description }}</p>
+            <router-link v-if="nextEvent.has_details" :to="`/evenements/${nextEvent.id}`" class="btn btn-primary">En savoir plus</router-link>
+            <router-link v-else to="/evenements" class="btn btn-primary">Voir le programme</router-link>
           </div>
           <div class="event-decoration">🏍</div>
         </div>
@@ -171,8 +172,12 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue'
 import SocialFloat from "@/components/SocialFloat.vue";
+import { useNextEvent } from '@/composables/useEvents'
 
 const baseUrl = import.meta.env.BASE_URL;
+
+// Section « Prochain événement » : masquée s'il n'y en a pas
+const { event: nextEvent } = useNextEvent()
 
 // GALLERY CAROUSEL
 const galleryPhotos = [
