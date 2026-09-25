@@ -15,7 +15,7 @@
       <div class="container">
         <div class="section-heading">
           <span class="overline">Notre histoire</span>
-          <h2>Née de la passion, unis par la route</h2>
+          <h2>Née de la passion, unie par la route</h2>
         </div>
         <div class="histoire-grid">
           <div class="histoire-text">
@@ -75,22 +75,10 @@
     <section class="section docs">
       <div class="container">
         <div class="docs-grid">
-<!--          <div class="docs-text">-->
-<!--            <div class="section-heading">-->
-<!--              <span class="overline">Organisation</span>-->
-<!--              <h2>Transparence et<br>gouvernance</h2>-->
-<!--            </div>-->
-<!--            <p>Iron Brotherhood MC est une association loi 1901. Nos statuts garantissent la démocratie interne et la transparence financière. L'assemblée générale se réunit chaque année en janvier.</p>-->
-<!--            <ul class="docs-list">-->
-<!--              <li v-for="doc in docs" :key="doc">-->
-<!--                <span class="doc-icon">📄</span> {{ doc }}-->
-<!--              </li>-->
-<!--            </ul>-->
-<!--          </div>-->
           <div class="adhesion-box">
             <h3>Rejoindre l'association</h3>
             <p>Vous partagez nos valeurs ? Venez rouler avec nous !</p>
-            <router-link to="/contact" class="btn btn-primary" style="margin-top:1.5rem;">Faire une demande</router-link>
+            <router-link :to="{ path: '/contact', query: { objet: 'adhesion' } }" class="btn btn-primary" style="margin-top:1.5rem;">Faire une demande</router-link>
           </div>
         </div>
       </div>
@@ -173,11 +161,6 @@ const bureau = [
 .member-info p { font-size: 0.88rem; color: var(--grey); line-height: 1.6; }
 
 .docs-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: start; }
-.docs-text .section-heading { margin-bottom: 1.5rem; }
-.docs-text p { color: var(--grey-light); line-height: 1.8; margin-bottom: 1.5rem; }
-.docs-list { list-style: none; }
-.docs-list li { display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem 0; border-bottom: 1px solid rgba(255,255,255,0.07); font-size: 0.9rem; color: var(--grey-light); cursor: pointer; transition: color 0.3s; }
-.docs-list li:hover { color: var(--white); }
 .adhesion-box {
   background: var(--dark); padding: 2.5rem;
   border-top: 4px solid var(--red);

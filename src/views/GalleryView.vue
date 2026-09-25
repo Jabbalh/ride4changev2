@@ -71,7 +71,6 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import type {Photo} from "@/models/CustomType.ts";
-import SocialFloat from "@/components/SocialFloat.vue";
 
 const activeFilter = ref('all')
 const selected = ref<Photo>()
@@ -100,7 +99,7 @@ const filteredPhotos = computed(() =>
   activeFilter.value === 'all' ? photos : photos.filter(p => p.cat === activeFilter.value)
 )
 
-const openModal = (photo: any) => { selected.value = photo }
+const openModal = (photo: Photo) => { selected.value = photo }
 const closeModal = () => { selected.value = undefined }
 </script>
 

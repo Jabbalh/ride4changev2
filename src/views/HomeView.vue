@@ -27,7 +27,7 @@
             <h2 >Nés d’une passion inébranlable,<br>portés par le défi permanent.</h2>
             <p><span class="text-bold">Ride 4 Change,</span> c’est une équipe de passionnés de moto et de compétition, réunis autour d’une conviction : <span class="text-bold">le handicap ne doit pas être une limite à la passion.</span>
               <br />Sur la piste comme dans la vie, nous repoussons les barrières, partageons nos expériences et faisons de chaque défi une nouvelle aventure.
-              <br /><span class="text-bold">Une équipe devenu une famille. Aucun frein</span>
+              <br /><span class="text-bold">Une équipe devenue une famille. Aucun frein.</span>
               <br /><span class="text-bold">Nos limites ? Elles sont faites pour être repoussées…</span>
             </p>
           </div>
@@ -51,7 +51,7 @@
         <div class="section-heading">
           <span class="overline">Nos actions</span>
           <h2>Sur le terrain</h2>
-          <p>Entre les courses, les initiations et le partage chaque kilomètre à du sens.</p>
+          <p>Entre les courses, les initiations et le partage, chaque kilomètre a du sens.</p>
         </div>
         <div class="actions-grid">
           <div v-for="action in actions" :key="action.title" class="action-card">
@@ -176,7 +176,6 @@
 
 <script setup lang="ts">
 import { ref, nextTick, onMounted, onUnmounted } from 'vue'
-import SocialFloat from "@/components/SocialFloat.vue";
 import { useNextEvent } from '@/composables/useEvents'
 
 const baseUrl = import.meta.env.BASE_URL;
@@ -197,21 +196,20 @@ const progress = ref(0)
 const SLIDE_DURATION = 5000 // 5 seconds
 const PROGRESS_INTERVAL = 50 // Update progress every 50ms
 
-let slideInterval: any
-let progressInterval: any
+// Une seule minuterie : la barre avance, et la diapo change quand elle est pleine (puis la barre repart de zéro)
+let progressInterval: ReturnType<typeof setInterval> | undefined
 
 const startCarousel = () => {
-  slideInterval = setInterval(() => {
-    nextSlide()
-  }, SLIDE_DURATION)
-
   progressInterval = setInterval(() => {
     progress.value += (PROGRESS_INTERVAL / SLIDE_DURATION) * 100
+    if (progress.value >= 100) {
+      nextSlide()
+      progress.value = 0
+    }
   }, PROGRESS_INTERVAL)
 }
 
 const stopCarousel = () => {
-  clearInterval(slideInterval)
   clearInterval(progressInterval)
 }
 
@@ -248,13 +246,12 @@ onMounted(() => {
 onUnmounted(() => {
   stopCarousel()
 })
-const anneeExistance = new Date().getFullYear() - 2025;
 
 const values = [
-  { icon: 'lemans.jpg', large: 'lemans-grand.jpg', w: 1600, h: 1067, title: 'Les compétitions', desc: 'PMR Bridgestone & Bol d’argent .' },
+  { icon: 'lemans.jpg', large: 'lemans-grand.jpg', w: 1600, h: 1067, title: 'Les compétitions', desc: 'PMR Bridgestone & Bol d’Argent.' },
   { icon: 'partenaire.jpg', large: 'partenaire-grand.jpg', w: 1200, h: 1600, title: 'Nos partenaires', desc: '' },
   { icon: 'initiation.jpg', large: 'initiation-grand.jpg', w: 1600, h: 1067, title: 'Initiation et Roulages', desc: "Le Mans & Fay de Bretagne." },
-  { icon: 'solidarite.jpg', large: 'solidarite-grand.jpg', w: 1600, h: 1067, title: 'La Solidarité', desc: "Parce que sans amis ou bénévoles rien n’es possible." },
+  { icon: 'solidarite.jpg', large: 'solidarite-grand.jpg', w: 1600, h: 1067, title: 'La Solidarité', desc: "Parce que sans amis ni bénévoles, rien n’est possible." },
 ]
 
 // PHOTO AGRANDIE : <dialog> natif (Échap, focus et fond inerte gérés par le navigateur)
@@ -307,7 +304,7 @@ function closePhoto() {
 const actions = [
   { tag: 'Courses', emoji: '🏁', color: 'linear-gradient(135deg,#1f1a1a,#2d1f00)', title: 'Le Mans, Spa Francorchamps, Le Castellet', desc: '' },
   { tag: 'Initiations circuit', emoji: '🪖', color: 'linear-gradient(135deg,#1a1f1a,#1f2d1f)', title: 'Nos initiations et roulages', desc: 'Pour les handis comme les valides ' },
-  { tag: 'Les salons', emoji: '🩺', color: 'linear-gradient(135deg,#1a1a2d,#1a1a1a)', title: 'Venez nous rencontrer', desc: 'À Vannes, Rennes, etc...' },
+  { tag: 'Les salons', emoji: '🩺', color: 'linear-gradient(135deg,#1a1a2d,#1a1a1a)', title: 'Venez nous rencontrer', desc: 'À Vannes, Rennes, etc.' },
 ]
 const testimonials = [
   { name: 'Toto', role: 'Membre depuis 2025', initials: 'TT', quote: "Moi je bricole." },

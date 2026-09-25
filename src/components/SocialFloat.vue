@@ -1,6 +1,6 @@
 <template>
   <div class="social-float">
-    <FacebookSocialLinkk />
+    <FacebookSocialLink />
     <TiktokSocialLink />
     <InstagramSocialLink />
   </div>
@@ -8,7 +8,7 @@
 
 <script setup lang="ts">
 
-import FacebookSocialLinkk from "@/components/FacebookSocialLinkk.vue";
+import FacebookSocialLink from "@/components/FacebookSocialLink.vue";
 import TiktokSocialLink from "@/components/TiktokSocialLink.vue";
 import InstagramSocialLink from "@/components/InstagramSocialLink.vue";
 </script>

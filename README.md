@@ -184,6 +184,7 @@ Si les mails du domaine restent chez OVH, vérifier que Cloudflare a bien import
 
 - [`docs/DOMAINES.md`](docs/DOMAINES.md) : DNS, domaines, redirections et lien avec le Worker.
 - [`docs/REFERENCEMENT.md`](docs/REFERENCEMENT.md) : référencement, ce qui est en place et les actions à mener.
+- [`docs/ANALYSE.md`](docs/ANALYSE.md) : analyse du site (bugs, contenu, accessibilité, performance, sécurité) et plan d'amélioration par lots.
 
 ## Vie privée
 

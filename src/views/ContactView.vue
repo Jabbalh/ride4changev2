@@ -80,32 +80,15 @@
               </div>
             </div>
 
-<!--            <div class="info-card">-->
-<!--              <h3>Réunions mensuelles</h3>-->
-<!--              <p>Tous les premiers samedis du mois à 10h au garage du club.</p>-->
-<!--              <p style="margin-top:0.5rem;color:var(&#45;&#45;grey);">Ouvertes aux sympathisants sur invitation.</p>-->
-<!--            </div>-->
-
             <div class="info-card social-card">
               <h3>Suivez-nous</h3>
               <div class="social-row">
-                <FacebookSocialLinkk :displayImage="false" class="social-btn"/>
+                <FacebookSocialLink :displayImage="false" class="social-btn"/>
                 <InstagramSocialLink :displayImage="false" class="social-btn"/>
                 <TiktokSocialLink :displayImage="false" class="social-btn"/>
               </div>
             </div>
 
-<!--            <div class="adhesion-cta">-->
-<!--              <span class="overline-label">Prêt à nous rejoindre ?</span>-->
-<!--              <h3>Cotisation annuelle</h3>-->
-<!--              <div class="price">80 <span>€ / an</span></div>-->
-<!--              <ul>-->
-<!--                <li>✅ Accès à toutes les sorties</li>-->
-<!--                <li>✅ Assurance groupe</li>-->
-<!--                <li>✅ Gilet officiel</li>-->
-<!--                <li>✅ Newsletter & agenda prioritaire</li>-->
-<!--              </ul>-->
-<!--            </div>-->
           </div>
         </div>
       </div>
@@ -116,7 +99,7 @@
 <script setup  lang="ts">
 import { ref, reactive } from 'vue'
 import { useRoute } from 'vue-router'
-import FacebookSocialLinkk from "@/components/FacebookSocialLinkk.vue";
+import FacebookSocialLink from "@/components/FacebookSocialLink.vue";
 import InstagramSocialLink from "@/components/InstagramSocialLink.vue";
 import TiktokSocialLink from "@/components/TiktokSocialLink.vue";
 
@@ -153,7 +136,7 @@ const handleSubmit = async () => {
 }
 
 const infos = [
-  { icon:'📍', label:'Adresse', value:'24 rue Maurice, 35290 Saint Meen le Grand' },
+  { icon:'📍', label:'Adresse', value:'24 rue Maurice, 35290 Saint-Méen-le-Grand' },
   { icon:'📧', label:'Email', value:'1ride4change@gmail.com' },
   { icon:'📞', label:'Téléphone', value:'+33 00 00 00 00 00' }
 ]
@@ -232,16 +215,6 @@ const infos = [
   transition:all 0.3s;
 }
 .social-btn:hover { border-color:var(--red); color:var(--red); }
-.adhesion-cta {
-  background: var(--dark); padding: 1.75rem;
-  border-top: 4px solid var(--red);
-}
-.overline-label { font-family:'Barlow Condensed',sans-serif; font-size:0.75rem; letter-spacing:0.25em; text-transform:uppercase; color:var(--red); display:block; margin-bottom:0.5rem; }
-.adhesion-cta h3 { font-family:'Bebas Neue',sans-serif; font-size:1.5rem; }
-.price { font-family:'Bebas Neue',sans-serif; font-size:3rem; color:var(--red); line-height:1.1; margin:0.5rem 0 1rem; }
-.price span { font-size:1.2rem; color:var(--grey); }
-.adhesion-cta ul { list-style:none; }
-.adhesion-cta li { padding:0.4rem 0; font-size:0.88rem; border-bottom:1px solid rgba(255,255,255,0.07); }
 
 @media (max-width: 900px) {
   .contact-layout { grid-template-columns: 1fr; }

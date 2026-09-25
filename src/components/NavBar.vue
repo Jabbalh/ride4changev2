@@ -9,11 +9,11 @@
         <span></span><span></span><span></span>
       </button>
       <ul class="nav-links" :class="{ open: menuOpen, hidden: !menuOpen }">
-        <li v-for="link in links" :key="link.to">
+        <li v-for="link in NAV_LINKS" :key="link.to">
           <router-link :to="link.to" @click="menuOpen = false">{{ link.label }}</router-link>
         </li>
         <li>
-          <router-link to="/contact" class="btn btn-primary nav-cta" @click="menuOpen = false">Nous rejoindre</router-link>
+          <router-link :to="{ path: '/contact', query: { objet: 'adhesion' } }" class="btn btn-primary nav-cta" @click="menuOpen = false">Nous rejoindre</router-link>
         </li>
       </ul>
     </div>
@@ -24,17 +24,9 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue'
 import ProgressScroll from "@/components/ProgressScroll.vue";
+import { NAV_LINKS } from "@/lib/navLinks";
 const isScrolled = ref(false)
 const menuOpen = ref(false)
-const links = [
-  { to: '/', label: 'Accueil' },
-  { to: '/association', label: "L'Association" },
-  { to: '/competition', label: 'Compétition' },
-  { to: '/evenements', label: 'Événements' },
-  { to: '/initiation-roulage', label: 'Initiation & Roulage' },
-  { to: '/boutique', label: 'Boutique' },
-  { to: '/contact', label: 'Contact' },
-]
 const handleScroll = () => { isScrolled.value = window.scrollY > 50 }
 onMounted(() => window.addEventListener('scroll', handleScroll))
 onUnmounted(() => window.removeEventListener('scroll', handleScroll))

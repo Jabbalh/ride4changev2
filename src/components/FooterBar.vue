@@ -8,9 +8,9 @@
               <span class="logo-icon">⚙</span>
               <span><strong>Ride</strong> 4 Change</span>
             </div>
-            <p>Suivez nous sur les réseaux sociaux.</p>
+            <p>Suivez-nous sur les réseaux sociaux.</p>
             <div class="social-links">
-              <FacebookSocialLinkk />
+              <FacebookSocialLink />
               <InstagramSocialLink />
               <TiktokSocialLink />
 
@@ -19,14 +19,14 @@
           <div class="footer-nav">
             <h4>Navigation</h4>
             <ul>
-              <li v-for="link in links" :key="link.to">
+              <li v-for="link in NAV_LINKS" :key="link.to">
                 <router-link :to="link.to">{{ link.label }}</router-link>
               </li>
             </ul>
           </div>
           <div class="footer-contact">
             <h4>Contact</h4>
-            <p>📍 24 rue Maurice<br>35290 Saint Meen le Grand, France</p>
+            <p>📍 24 rue Maurice<br>35290 Saint-Méen-le-Grand, France</p>
             <p>📧 1ride4change@gmail.com</p>
             <p>📞 +33 00 00 00 00 00</p>
           </div>
@@ -35,7 +35,7 @@
     </div>
     <div class="footer-bottom">
       <div class="container">
-        <p>© {{ new Date().getFullYear() }} Ride 4 change — Tous droits réservés</p>
+        <p>© {{ new Date().getFullYear() }} Ride 4 Change — Tous droits réservés</p>
         <p>Association loi 1901 — Fondée en 2025 · <router-link to="/admin/evenements" class="editor-link">Espace éditeur</router-link></p>
       </div>
     </div>
@@ -43,19 +43,12 @@
 </template>
 
 <script setup lang="ts">
-import FacebookSocialLinkk from "@/components/FacebookSocialLinkk.vue";
+import FacebookSocialLink from "@/components/FacebookSocialLink.vue";
 import InstagramSocialLink from "@/components/InstagramSocialLink.vue";
 import TiktokSocialLink from "@/components/TiktokSocialLink.vue";
+import { NAV_LINKS } from "@/lib/navLinks";
 
-const links = [
-  { to: '/', label: 'Accueil' },
-  { to: '/association', label: "L'Association" },
-  { to: '/galerie', label: 'Galerie' },
-  { to: '/initiation-roulage', label: 'Initiation & Roulage' },
-  { to: '/evenements', label: 'Événements' },
-  { to: '/boutique', label: 'Boutique' },
-  { to: '/contact', label: 'Contact' },
-]
+
 </script>
 
 <style scoped>

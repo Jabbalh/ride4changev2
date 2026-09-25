@@ -80,7 +80,7 @@ const deroulement = [
   { time: 'Matin', label: 'Accueil, contrôle technique et briefing' },
   { time: 'Journée', label: 'Sessions sur piste par groupe de niveau' },
   { time: 'Midi', label: 'Pause déjeuner et échanges' },
-  { time: 'Fin', label: 'Debriefing et verre de l\'amitié' },
+  { time: 'Fin', label: 'Débriefing et verre de l\'amitié' },
 ]
 </script>
 
