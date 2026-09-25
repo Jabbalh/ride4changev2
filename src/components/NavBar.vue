@@ -30,8 +30,8 @@ const links = [
   { to: '/', label: 'Accueil' },
   { to: '/association', label: "L'Association" },
   { to: '/competition', label: 'Compétition' },
-  { to: '/initiation-roulage', label: 'Initiation & Roulage' },
   { to: '/evenements', label: 'Événements' },
+  { to: '/initiation-roulage', label: 'Initiation & Roulage' },
   { to: '/boutique', label: 'Boutique' },
   { to: '/contact', label: 'Contact' },
 ]
