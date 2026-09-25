@@ -8,7 +8,7 @@ Analyse du 25/09/2026, portant sur le code, l'expérience utilisateur, le conten
 
 | Lot | Contenu | Qui | État |
 |---|---|---|---|
-| **A. Formulaire de contact** | Envoi par mail (Resend), limitation anti-spam, contrôles d'origine et de taille | Claude ; l'utilisateur crée le compte Resend et ajoute les DNS | À faire |
+| **A. Formulaire de contact** | Envoi par mail via Cloudflare Email Routing (voir « Lot A : envoi des messages »), limitation anti-spam, contrôles d'origine et de taille | Claude ; l'utilisateur active Email Routing | En attente de validation par l'association |
 | **B. Nettoyage rapide** | Images inutilisées, fautes, bugs carrousel et indicateur, code mort, menus alignés | Claude | Fait (25/09/2026) |
 | **C. Performance et en-têtes** | `_headers` (sécurité et cache), images en WebP, chargement à la demande, allègement du JS public | Claude | Fait (25/09/2026) |
 | **D. Accessibilité** | Formulaire, menu mobile, focus, popins de la galerie, pause du carrousel | Claude | Fait (25/09/2026) |
@@ -17,9 +17,38 @@ Analyse du 25/09/2026, portant sur le code, l'expérience utilisateur, le conten
 
 Ordre conseillé : A (urgent), puis B et C (rapides, sans risque), puis D et E. F avance en parallèle, au rythme de l'association.
 
+## Lot A : envoi des messages du formulaire
+
+Réflexion du 25/09/2026, **en attente de validation par le responsable de l'association**.
+
+**Solution retenue : Cloudflare Email Routing + envoi depuis le Worker**, à la place de Resend (proposé au départ).
+
+- **Email Routing** (gratuit) : Cloudflare reçoit les mails de `@ride4change.fr` et les fait suivre. Exemple : `contact@ride4change.fr` → `1ride4change@gmail.com`, sans boîte à gérer.
+- **Envoi depuis le Worker** (liaison `send_email`, gratuite) : le Worker envoie chaque message du formulaire à une adresse **vérifiée** dans Email Routing (le Gmail de l'association). Expéditeur `contact@ride4change.fr`, `Reply-To` réglé sur l'adresse du visiteur : il suffit de cliquer sur « Répondre » dans Gmail.
+- **Limite** : on ne peut envoyer qu'aux adresses vérifiées. Pas de mail de confirmation automatique au visiteur ; l'écran de confirmation du site suffit. (Cloudflare propose aussi un service d'envoi généraliste, *Email Service*, lancé en bêta : disponibilité à vérifier dans le dashboard, inutile pour ce besoin.)
+- **Avantages** : aucun service tiers (cohérent avec le choix RGPD du site, où Supabase est la seule exception), gratuit, pas de compte supplémentaire, et `contact@ride4change.fr` devient une vraie adresse de réception.
+
+**Point bloquant à confirmer.** Au 25/09/2026, les MX de `ride4change.fr` pointent chez OVH (`mx1`, `mx2`, `mx3.mail.ovh.net`, offre MX Plan incluse avec le domaine), avec le SPF `v=spf1 include:mx.ovh.com -all`. Activer Email Routing remplace ces MX par ceux de Cloudflare : **une éventuelle boîte OVH en `@ride4change.fr` cesserait de recevoir des mails.**
+
+Questions pour le responsable de l'association :
+
+- [ ] La messagerie OVH de `ride4change.fr` est-elle utilisée (une adresse créée, des mails reçus) ? Si oui, il faut la migrer ou choisir une autre solution.
+- [ ] À quelle adresse les messages du formulaire doivent-ils arriver : `1ride4change@gmail.com`, ou une autre ?
+- [ ] Faut-il aussi créer `contact@ride4change.fr` (redirigée vers cette adresse) pour l'afficher sur le site à la place du Gmail ?
+
+**Ensuite :**
+
+1. **Utilisateur (dashboard Cloudflare)** : zone `ride4change.fr` → *Email* → *Email Routing* → *Enable* (Cloudflare remplace les MX et le SPF). Ajouter l'adresse de destination, puis cliquer sur le lien de vérification reçu. Optionnel : règle `contact@ride4change.fr` → cette adresse.
+2. **Claude (code)** :
+    - liaison `send_email` dans `wrangler.toml` (puis `pnpm cf-typegen`) ;
+    - envoi du message dans `worker/contact.ts` ;
+    - protections anti-spam de la section « Sécurité » : limite de débit, vérification de `Origin` et `Content-Type`, taille maximale du corps, rejet des retours à la ligne dans les champs courts, contrôle de délai ;
+    - suppression du `console.log` des données personnelles.
+3. Tester en ligne avec un vrai message, puis mettre à jour `docs/DOMAINES.md` (nouveaux enregistrements MX et SPF).
+
 ## Les 5 priorités
 
-- [ ] **Le formulaire de contact perd tous les messages.** Le visiteur voit « Message envoyé ! », mais `worker/contact.ts:62-66` ne fait qu'un `console.log`, dans des journaux que personne ne consulte (pas de `[observability]` dans `wrangler.toml`). Les demandes d'adhésion, de boutique et d'inscription aux événements passent toutes par ce formulaire. Les noms, emails et messages restent en clair dans les logs. → Envoyer un mail (Resend depuis `contact@ride4change.fr`), puis ne journaliser qu'un identifiant.
+- [ ] **Le formulaire de contact perd tous les messages** (solution envisagée : voir « Lot A : envoi des messages »). Le visiteur voit « Message envoyé ! », mais `worker/contact.ts:62-66` ne fait qu'un `console.log`, dans des journaux que personne ne consulte (pas de `[observability]` dans `wrangler.toml`). Les demandes d'adhésion, de boutique et d'inscription aux événements passent toutes par ce formulaire. Les noms, emails et messages restent en clair dans les logs. → Envoyer un mail (Cloudflare Email Routing, expéditeur `contact@ride4change.fr`), puis ne journaliser qu'un identifiant.
 - [ ] **Pas de mentions légales ni de politique de confidentialité**, obligatoires pour une association qui édite un site (LCEN) et collecte des données (RGPD). → Page `/mentions-legales` : éditeur (nom, siège, numéro RNA), directeur de la publication, hébergeurs (Cloudflare, Supabase), finalité et durée de conservation des données, droits des visiteurs. Lien dans `FooterBar.vue:39`, et mention d'information sous le bouton du formulaire (`ContactView.vue:57-66`).
 - [ ] **Contenu d'exemple visible par les visiteurs** (détail dans « Contenu à remplacer »).
 - [x] **Environ 2 Mo d'images inutilisées en ligne**, accessibles par leur adresse (détail dans « Performance »).
