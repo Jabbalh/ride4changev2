@@ -36,7 +36,7 @@
     <div class="footer-bottom">
       <div class="container">
         <p>© {{ new Date().getFullYear() }} Ride 4 Change — Tous droits réservés</p>
-        <p>Association loi 1901 — Fondée en 2025 · <router-link to="/admin/evenements" class="editor-link">Espace éditeur</router-link></p>
+        <p>Association loi 1901 — Fondée en 2025 · <router-link to="/mentions-legales" class="editor-link">Mentions légales</router-link> · <router-link to="/admin/evenements" class="editor-link">Espace éditeur</router-link></p>
       </div>
     </div>
   </footer>

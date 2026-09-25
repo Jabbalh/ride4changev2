@@ -4,7 +4,7 @@
 const SITE_URL = 'https://ride4change.fr'
 
 // Pages publiques à référencer (la galerie, encore en contenu d'exemple, et l'espace éditeur en sont exclus)
-const STATIC_PAGES = ['/', '/association', '/competition', '/initiation-roulage', '/evenements', '/boutique', '/contact']
+const STATIC_PAGES = ['/', '/association', '/competition', '/initiation-roulage', '/evenements', '/boutique', '/contact', '/mentions-legales']
 
 type EventEntry = { id: number, updated_at: string }
 

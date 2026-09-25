@@ -10,6 +10,7 @@ const CompetitionView = () => import('@/views/CompetitionView.vue')
 const InitiationView = () => import('@/views/InitiationView.vue')
 const BoutiqueView = () => import('@/views/BoutiqueView.vue')
 const EventDetailView = () => import('@/views/EventDetailView.vue')
+const LegalView = () => import('@/views/LegalView.vue')
 import { useAuth } from '@/composables/useAuth'
 import { setPageJsonLd, setPageMeta } from '@/lib/seo'
 
@@ -69,6 +70,11 @@ const router = createRouter({
       description: "Une question, envie de nous rejoindre ou de devenir partenaire ? Contactez l'association Ride 4 Change.",
     } },
 
+    { path: '/mentions-legales', component: LegalView, meta: {
+      title: 'Mentions légales',
+      description: "Mentions légales du site de l'association Ride 4 Change : éditeur, hébergement et protection des données personnelles.",
+    } },
+
     // Espace éditeur : chargé à la demande (les visiteurs ne téléchargent pas ce code)
     { path: '/connexion', component: () => import('@/views/admin/LoginView.vue'), meta: { noindex: true, title: 'Connexion' } },
     { path: '/admin/evenements', component: () => import('@/views/admin/AdminEventsView.vue'), meta: editor },
@@ -84,7 +90,14 @@ const router = createRouter({
     // URL inconnue : retour à l'accueil (sinon page blanche)
     { path: '/:pathMatch(.*)*', redirect: '/' },
   ],
-  scrollBehavior() { return { top: 0 } }
+  scrollBehavior(to, _from, savedPosition) {
+    // Bouton Retour : position précédente
+    if (savedPosition) return savedPosition
+    // Lien vers une section (ex : /mentions-legales#donnees-personnelles) : on attend la fin du fondu
+    // de changement de page (App.vue), le temps que la section existe, et on laisse la place de la barre de navigation
+    if (to.hash) return new Promise(resolve => setTimeout(() => resolve({ el: to.hash, top: 100 }), 350))
+    return { top: 0 }
+  },
 })
 
 router.beforeEach(async to => {

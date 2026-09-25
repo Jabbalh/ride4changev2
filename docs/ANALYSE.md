@@ -12,7 +12,7 @@ Analyse du 25/09/2026, portant sur le code, l'expérience utilisateur, le conten
 | **B. Nettoyage rapide** | Images inutilisées, fautes, bugs carrousel et indicateur, code mort, menus alignés | Claude | Fait (25/09/2026) |
 | **C. Performance et en-têtes** | `_headers` (sécurité et cache), images en WebP, chargement à la demande, allègement du JS public | Claude | Fait (25/09/2026) |
 | **D. Accessibilité** | Formulaire, menu mobile, focus, popins de la galerie, pause du carrousel | Claude | Fait (25/09/2026) |
-| **E. Mentions légales** | Page `/mentions-legales` et lien dans le pied de page | Claude ; l'utilisateur fournit RNA et directeur de publication | À faire |
+| **E. Mentions légales** | Page `/mentions-legales` et lien dans le pied de page | Claude ; l'utilisateur fournit RNA et directeur de publication | Page faite (25/09/2026), 3 informations à compléter |
 | **F. Contenu** | Vraies photos, témoignages, textes Compétition et Boutique, téléphone | L'association (Claude intègre) | À faire |
 
 Ordre conseillé : A (urgent), puis B et C (rapides, sans risque), puis D et E. F avance en parallèle, au rythme de l'association.
@@ -49,7 +49,8 @@ Questions pour le responsable de l'association :
 ## Les 5 priorités
 
 - [ ] **Le formulaire de contact perd tous les messages** (solution envisagée : voir « Lot A : envoi des messages »). Le visiteur voit « Message envoyé ! », mais `worker/contact.ts:62-66` ne fait qu'un `console.log`, dans des journaux que personne ne consulte (pas de `[observability]` dans `wrangler.toml`). Les demandes d'adhésion, de boutique et d'inscription aux événements passent toutes par ce formulaire. Les noms, emails et messages restent en clair dans les logs. → Envoyer un mail (Cloudflare Email Routing, expéditeur `contact@ride4change.fr`), puis ne journaliser qu'un identifiant.
-- [ ] **Pas de mentions légales ni de politique de confidentialité**, obligatoires pour une association qui édite un site (LCEN) et collecte des données (RGPD). → Page `/mentions-legales` : éditeur (nom, siège, numéro RNA), directeur de la publication, hébergeurs (Cloudflare, Supabase), finalité et durée de conservation des données, droits des visiteurs. Lien dans `FooterBar.vue:39`, et mention d'information sous le bouton du formulaire (`ContactView.vue:57-66`).
+- [x] **Pas de mentions légales ni de politique de confidentialité** : page `/mentions-legales` créée (`src/views/LegalView.vue`), liée dans le pied de page et depuis le formulaire. **Reste à fournir par l'association**, en haut du fichier (constantes `EDITEUR` et `HEBERGEMENT`) : numéro RNA, directeur ou directrice de la publication, région d'hébergement Supabase (dashboard → *Project Settings* → *General*). Facultatif : crédits photos. Tant qu'une valeur manque, la page affiche « à compléter ». À revoir quand le lot A sera fait (destinataires des messages).
+    - Constat initial : mentions obligatoires pour une association qui édite un site (LCEN) et collecte des données (RGPD). → Page `/mentions-legales` : éditeur (nom, siège, numéro RNA), directeur de la publication, hébergeurs (Cloudflare, Supabase), finalité et durée de conservation des données, droits des visiteurs. Lien dans `FooterBar.vue:39`, et mention d'information sous le bouton du formulaire (`ContactView.vue:57-66`).
 - [ ] **Contenu d'exemple visible par les visiteurs** (détail dans « Contenu à remplacer »).
 - [x] **Environ 2 Mo d'images inutilisées en ligne**, accessibles par leur adresse (détail dans « Performance »).
 - [x] **Aucun en-tête de sécurité ni de cache** → fichier `public/_headers` (proposition dans « Sécurité »).

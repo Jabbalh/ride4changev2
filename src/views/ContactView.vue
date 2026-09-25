@@ -66,6 +66,13 @@
               <button type="submit" class="btn btn-primary submit-btn" :disabled="sending">
                 {{ sending ? 'Envoi en cours…' : 'Envoyer le message →' }}
               </button>
+              <!-- Information RGPD obligatoire lors de la collecte (article 13) -->
+              <p class="privacy-note">
+                Vos données sont utilisées uniquement par l'association Ride 4 Change pour répondre à votre demande,
+                et conservées au plus 3 ans après notre dernier échange. Vous pouvez y accéder, les rectifier ou les
+                faire supprimer en nous écrivant.
+                <router-link to="/mentions-legales#donnees-personnelles">En savoir plus sur vos données</router-link>
+              </p>
             </form>
           </div>
 
@@ -193,6 +200,8 @@ const infos = [
 .field input:focus-visible, .field select:focus-visible, .field textarea:focus-visible {
   outline: 2px solid var(--red); outline-offset: 1px;
 }
+.privacy-note { font-size: 0.8rem; color: var(--grey-light); line-height: 1.6; max-width: 560px; }
+.privacy-note a { color: var(--red); text-decoration: underline; text-underline-offset: 2px; }
 .required-note { font-size: 0.85rem; color: var(--grey-light); margin-bottom: 0.25rem; }
 .success-msg:focus { outline: none; }
 .field textarea { resize: vertical; min-height: 120px; }
