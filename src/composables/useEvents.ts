@@ -1,5 +1,5 @@
 import { computed, ref, watch, type MaybeRefOrGetter, toValue } from 'vue'
-import { supabase } from '@/lib/supabase'
+import { restSelect, restSelectOne } from '@/lib/publicApi'
 import type { Tables } from '@/lib/database.types'
 
 // Colonnes chargées pour la liste : tout sauf `details` (article Markdown, potentiellement long).
@@ -81,14 +81,12 @@ export function useEvents() {
     loading.value = true
     error.value = null
     try {
-      if (!supabase) throw new Error('Supabase non configuré')
-      const { data, error: dbError } = await supabase
-        .from('events')
-        .select(LIST_COLUMNS)
-        // Filtre explicite : RLS laisse un éditeur connecté voir aussi les brouillons
-        .eq('published', true)
-        .order('starts_on', { ascending: true })
-      if (dbError) throw dbError
+      const data = await restSelect<EventRow>('events', {
+        select: LIST_COLUMNS,
+        // Filtre explicite (requête anonyme, mais on ne dépend pas de RLS pour masquer les brouillons)
+        published: 'eq.true',
+        order: 'starts_on.asc',
+      })
       const now = today()
       events.value = data.map(row => toCalendarEvent(row, now))
     } catch (e) {
@@ -113,19 +111,15 @@ export function useNextEvent() {
 
   async function load() {
     try {
-      if (!supabase) throw new Error('Supabase non configuré')
       const now = today()
       const iso = toIsoDate(now)
-      const { data, error: dbError } = await supabase
-        .from('events')
-        .select(LIST_COLUMNS)
-        .eq('published', true)
+      const data = await restSelectOne<EventRow>('events', {
+        select: LIST_COLUMNS,
+        published: 'eq.true',
         // Pas encore terminé : commence aujourd'hui ou plus tard, ou se termine aujourd'hui ou plus tard
-        .or(`starts_on.gte.${iso},ends_on.gte.${iso}`)
-        .order('starts_on', { ascending: true })
-        .limit(1)
-        .maybeSingle()
-      if (dbError) throw dbError
+        or: `(starts_on.gte.${iso},ends_on.gte.${iso})`,
+        order: 'starts_on.asc',
+      })
       event.value = data ? toCalendarEvent(data, now) : null
     } catch (e) {
       console.error('Chargement du prochain événement impossible', e)
@@ -151,14 +145,11 @@ export function useEvent(id: MaybeRefOrGetter<number>) {
     try {
       const eventId = toValue(id)
       if (!Number.isInteger(eventId)) return
-      if (!supabase) throw new Error('Supabase non configuré')
-      const { data, error: dbError } = await supabase
-        .from('events')
-        .select(DETAIL_COLUMNS)
-        .eq('id', eventId)
-        .eq('published', true)
-        .maybeSingle()
-      if (dbError) throw dbError
+      const data = await restSelectOne<EventDetailRow>('events', {
+        select: DETAIL_COLUMNS,
+        id: `eq.${eventId}`,
+        published: 'eq.true',
+      })
       event.value = data ? toCalendarEvent(data, today()) : null
     } catch (e) {
       console.error('Chargement de l\'événement impossible', e)

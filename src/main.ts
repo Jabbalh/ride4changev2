@@ -1,16 +1,17 @@
 import { createApp } from 'vue'
 import App from './App.vue'
 import router from './router'
-// Polices hébergées avec le site (pas d'appel à Google Fonts)
-import '@fontsource/bebas-neue/400.css'
-import '@fontsource/barlow-condensed/400.css'
-import '@fontsource/barlow-condensed/600.css'
-import '@fontsource/barlow-condensed/700.css'
-import '@fontsource/barlow/300.css'
-import '@fontsource/barlow/400.css'
-import '@fontsource/barlow/400-italic.css'
-import '@fontsource/barlow/600.css'
-import '@fontsource/barlow/700.css'
+// Polices hébergées avec le site (pas d'appel à Google Fonts). Sous-ensemble latin seul : il couvre le français
+// (accents, œ, « »), et évite de publier les variantes vietnamienne et latin étendu.
+import '@fontsource/bebas-neue/latin-400.css'
+import '@fontsource/barlow-condensed/latin-400.css'
+import '@fontsource/barlow-condensed/latin-600.css'
+import '@fontsource/barlow-condensed/latin-700.css'
+import '@fontsource/barlow/latin-300.css'
+import '@fontsource/barlow/latin-400.css'
+import '@fontsource/barlow/latin-400-italic.css'
+import '@fontsource/barlow/latin-600.css'
+import '@fontsource/barlow/latin-700.css'
 import './assets/main.css'
 import './assets/article.css'
 

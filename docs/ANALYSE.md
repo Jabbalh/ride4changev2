@@ -10,7 +10,7 @@ Analyse du 25/09/2026, portant sur le code, l'expérience utilisateur, le conten
 |---|---|---|---|
 | **A. Formulaire de contact** | Envoi par mail (Resend), limitation anti-spam, contrôles d'origine et de taille | Claude ; l'utilisateur crée le compte Resend et ajoute les DNS | À faire |
 | **B. Nettoyage rapide** | Images inutilisées, fautes, bugs carrousel et indicateur, code mort, menus alignés | Claude | Fait (25/09/2026) |
-| **C. Performance et en-têtes** | `_headers` (sécurité et cache), images en WebP, chargement à la demande, allègement du JS public | Claude | À faire |
+| **C. Performance et en-têtes** | `_headers` (sécurité et cache), images en WebP, chargement à la demande, allègement du JS public | Claude | Fait (25/09/2026) |
 | **D. Accessibilité** | Formulaire, menu mobile, focus, popins de la galerie, pause du carrousel | Claude | À faire |
 | **E. Mentions légales** | Page `/mentions-legales` et lien dans le pied de page | Claude ; l'utilisateur fournit RNA et directeur de publication | À faire |
 | **F. Contenu** | Vraies photos, témoignages, textes Compétition et Boutique, téléphone | L'association (Claude intègre) | À faire |
@@ -22,8 +22,8 @@ Ordre conseillé : A (urgent), puis B et C (rapides, sans risque), puis D et E. 
 - [ ] **Le formulaire de contact perd tous les messages.** Le visiteur voit « Message envoyé ! », mais `worker/contact.ts:62-66` ne fait qu'un `console.log`, dans des journaux que personne ne consulte (pas de `[observability]` dans `wrangler.toml`). Les demandes d'adhésion, de boutique et d'inscription aux événements passent toutes par ce formulaire. Les noms, emails et messages restent en clair dans les logs. → Envoyer un mail (Resend depuis `contact@ride4change.fr`), puis ne journaliser qu'un identifiant.
 - [ ] **Pas de mentions légales ni de politique de confidentialité**, obligatoires pour une association qui édite un site (LCEN) et collecte des données (RGPD). → Page `/mentions-legales` : éditeur (nom, siège, numéro RNA), directeur de la publication, hébergeurs (Cloudflare, Supabase), finalité et durée de conservation des données, droits des visiteurs. Lien dans `FooterBar.vue:39`, et mention d'information sous le bouton du formulaire (`ContactView.vue:57-66`).
 - [ ] **Contenu d'exemple visible par les visiteurs** (détail dans « Contenu à remplacer »).
-- [ ] **Environ 2 Mo d'images inutilisées en ligne**, accessibles par leur adresse (détail dans « Performance »).
-- [ ] **Aucun en-tête de sécurité ni de cache** → fichier `public/_headers` (proposition dans « Sécurité »).
+- [x] **Environ 2 Mo d'images inutilisées en ligne**, accessibles par leur adresse (détail dans « Performance »).
+- [x] **Aucun en-tête de sécurité ni de cache** → fichier `public/_headers` (proposition dans « Sécurité »).
 
 ## Bugs
 
@@ -96,23 +96,23 @@ Sur chaque page publique, le visiteur télécharge environ 136 Ko compressés de
 | supabase-js (`supabase-*.js`) | 299 Ko | 87 Ko |
 | CSS (`index-*.css`, 26 `@font-face`) | 62 Ko | 9 Ko |
 
-- [ ] **supabase-js complet sur toutes les pages** (87 Ko compressés), alors que les pages publiques ne font que lire. → Lectures publiques en `fetch` direct vers `/rest/v1/` (comme `worker/sitemap.ts`), et `import()` de supabase-js seulement pour l'espace éditeur.
-- [ ] **marked et DOMPurify dans le JS principal** (environ 20 Ko compressés), utiles seulement pour `/evenements/:id`. → `EventDetailView` en import dynamique dans `src/router/index.ts`.
-- [ ] **Toutes les vues publiques en import statique** → Galerie, Boutique, Compétition et Initiation en `() => import(...)`.
+- [x] **supabase-js complet sur toutes les pages** (87 Ko compressés), alors que les pages publiques ne font que lire. → Lectures publiques en `fetch` direct vers `/rest/v1/` (comme `worker/sitemap.ts`), et `import()` de supabase-js seulement pour l'espace éditeur.
+- [x] **marked et DOMPurify dans le JS principal** (environ 20 Ko compressés), utiles seulement pour `/evenements/:id`. → `EventDetailView` en import dynamique dans `src/router/index.ts`.
+- [x] **Toutes les vues publiques en import statique** → Galerie, Boutique, Compétition et Initiation en `() => import(...)`.
 - [x] **Images inutilisées, déployées et accessibles publiquement** (2,08 Mo) : `partenaire1.png` (471 Ko), `ales.PNG` (448 Ko), `moto3.jpg` (440 Ko), `moto2.jpg` (307 Ko), `la_mans.jpeg` (241 Ko), `yeye.jpg` (166 Ko), `icons.svg` (5 Ko). → Les supprimer. Ce sont peut-être des photos personnelles.
-- [ ] **`logo.svg` de 180 Ko** (export Inkscape) pour une icône de 1,2 em dans le titre (`HomeView.vue:12`). → Optimiser avec SVGO, ou remplacer par un PNG ou WebP de 128 px (environ 5 Ko).
-- [ ] **Image de fond de l'accueil** `accuei.jpg` (468 Ko, 2000 px), chargée par le CSS donc découverte tard. → WebP de 1600 px (environ 150 Ko) et `<link rel="preload" as="image">`.
-- [ ] **`Bassin.jpg`** (633 Ko, 2000 px) affichée dans une carte (`AboutView.vue:43`) → 1200 px en WebP (environ 100 Ko).
-- [ ] **Vignettes et grandes photos de l'accueil** en JPEG : 590 Ko pour les 4 vignettes, 260 à 370 Ko par grande photo → WebP (environ 40 Ko par vignette).
-- [ ] **Balises `<img>` sans `loading="lazy"`, `width`/`height` ni `decoding="async"`** (`HomeView.vue:39`, `AboutView.vue:43-47`) : décalages de mise en page et téléchargement de tout au premier affichage.
-- [ ] **Polices** : 9 imports `@fontsource` (`src/main.ts`), environ 195 Ko téléchargés. `barlow/300` et `400-italic` sont très peu utilisées → les retirer (environ 45 Ko).
-- [ ] **Cache** : sans `public/_headers`, Cloudflare sert tout en `max-age=0`, y compris les fichiers hashés de `/assets/`, qui sont revalidés à chaque visite → `Cache-Control: public, max-age=31536000, immutable` sur `/assets/*`.
+- [x] **`logo.svg` de 180 Ko** (export Inkscape) pour une icône de 1,2 em dans le titre (`HomeView.vue:12`). → Optimiser avec SVGO, ou remplacer par un PNG ou WebP de 128 px (environ 5 Ko).
+- [x] **Image de fond de l'accueil** `accuei.jpg` (468 Ko, 2000 px), chargée par le CSS donc découverte tard. → WebP de 1600 px (environ 150 Ko) et `<link rel="preload" as="image">`.
+- [x] **`Bassin.jpg`** (633 Ko, 2000 px) affichée dans une carte (`AboutView.vue:43`) → 1200 px en WebP (environ 100 Ko).
+- [x] **Vignettes et grandes photos de l'accueil** en JPEG : 590 Ko pour les 4 vignettes, 260 à 370 Ko par grande photo → WebP (environ 40 Ko par vignette).
+- [x] **Balises `<img>` sans `loading="lazy"`, `width`/`height` ni `decoding="async"`** (`HomeView.vue:39`, `AboutView.vue:43-47`) : décalages de mise en page et téléchargement de tout au premier affichage.
+- [x] **Polices** : 9 imports `@fontsource` (`src/main.ts`), environ 195 Ko téléchargés. `barlow/300` et `400-italic` sont très peu utilisées → les retirer (environ 45 Ko).
+- [x] **Cache** : sans `public/_headers`, Cloudflare sert tout en `max-age=0`, y compris les fichiers hashés de `/assets/`, qui sont revalidés à chaque visite → `Cache-Control: public, max-age=31536000, immutable` sur `/assets/*`.
 
 ## Sécurité
 
 **Aucun trou critique.** RLS est activé sur toutes les tables, avec `revoke all` puis des droits par colonne. `is_editor()` est en `security definer` avec `search_path` fixé. Le bucket d'images refuse le SVG et limite à 5 Mo. `.env.local` n'a jamais été commité, et aucune clé secrète n'est présente (`wrangler.toml` ne contient que la clé publishable, volontairement).
 
-- [ ] **Aucun en-tête de sécurité** (CSP, `nosniff`, `Referrer-Policy`, `Permissions-Policy`, `frame-ancestors`). C'est le point le plus important, puisque les articles passent par `v-html`. Proposition de `public/_headers`, où `<ref>` est le sous-domaine du projet Supabase. À déployer d'abord en `Content-Security-Policy-Report-Only` et à tester sur l'accueil, un article, la connexion et l'éditeur avec envoi d'image :
+- [x] **Aucun en-tête de sécurité** (CSP, `nosniff`, `Referrer-Policy`, `Permissions-Policy`, `frame-ancestors`). C'est le point le plus important, puisque les articles passent par `v-html`. Proposition de `public/_headers`, où `<ref>` est le sous-domaine du projet Supabase. À déployer d'abord en `Content-Security-Policy-Report-Only` et à tester sur l'accueil, un article, la connexion et l'éditeur avec envoi d'image :
 
   ```
   /*

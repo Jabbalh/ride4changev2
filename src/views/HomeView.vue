@@ -36,7 +36,8 @@
         <div class="intro-values">
           <div v-for="v in values" :key="v.title" class="value-card">
             <button type="button" class="value-icon" :aria-label="`Agrandir la photo : ${v.title}`" @click="openPhoto(v)" @pointerenter="preloadLarge(v)" @focus="preloadLarge(v)">
-              <img :src="baseUrl + v.icon" :alt="v.title">
+              <!-- Vignette : 900 px de large, même format que la grande version (v.w × v.h) -->
+              <img :src="baseUrl + v.icon" :alt="v.title" width="900" :height="Math.round(900 * v.h / v.w)" loading="lazy" decoding="async">
             </button>
             <h3>{{ v.title }}</h3>
             <p>{{ v.desc }}</p>
@@ -248,10 +249,10 @@ onUnmounted(() => {
 })
 
 const values = [
-  { icon: 'lemans.jpg', large: 'lemans-grand.jpg', w: 1600, h: 1067, title: 'Les compétitions', desc: 'PMR Bridgestone & Bol d’Argent.' },
-  { icon: 'partenaire.jpg', large: 'partenaire-grand.jpg', w: 1200, h: 1600, title: 'Nos partenaires', desc: '' },
-  { icon: 'initiation.jpg', large: 'initiation-grand.jpg', w: 1600, h: 1067, title: 'Initiation et Roulages', desc: "Le Mans & Fay de Bretagne." },
-  { icon: 'solidarite.jpg', large: 'solidarite-grand.jpg', w: 1600, h: 1067, title: 'La Solidarité', desc: "Parce que sans amis ni bénévoles, rien n’est possible." },
+  { icon: 'lemans.webp', large: 'lemans-grand.webp', w: 1600, h: 1067, title: 'Les compétitions', desc: 'PMR Bridgestone & Bol d’Argent.' },
+  { icon: 'partenaire.webp', large: 'partenaire-grand.webp', w: 1200, h: 1600, title: 'Nos partenaires', desc: '' },
+  { icon: 'initiation.webp', large: 'initiation-grand.webp', w: 1600, h: 1067, title: 'Initiation et Roulages', desc: "Le Mans & Fay de Bretagne." },
+  { icon: 'solidarite.webp', large: 'solidarite-grand.webp', w: 1600, h: 1067, title: 'La Solidarité', desc: "Parce que sans amis ni bénévoles, rien n’est possible." },
 ]
 
 // PHOTO AGRANDIE : <dialog> natif (Échap, focus et fond inerte gérés par le navigateur)
@@ -327,7 +328,7 @@ const testimonials = [
 }
 .hero-bg {
   position: absolute; inset: 0;
-  background-image: linear-gradient(160deg, rgba(13, 13, 13, 0.9) 0%, rgba(26, 10, 10, 0.4) 40%, rgba(13, 13, 13, 0.9) 100%), url('/accuei.jpg');
+  background-image: linear-gradient(160deg, rgba(13, 13, 13, 0.9) 0%, rgba(26, 10, 10, 0.4) 40%, rgba(13, 13, 13, 0.9) 100%), url('/accuei.webp');
   background-size: cover;
   background-position: center;
 }

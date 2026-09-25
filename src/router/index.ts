@@ -1,13 +1,15 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import Home from '@/views/HomeView.vue'
-import About from '@/views/AboutView.vue'
-import Gallery from '@/views/GalleryView.vue'
-import Events from '@/views/EventsView.vue'
-import Contact from '@/views/ContactView.vue';
-import CompetitionView from "@/views/CompetitionView.vue";
-import InitiationView from "@/views/InitiationView.vue";
-import BoutiqueView from "@/views/BoutiqueView.vue";
-import EventDetailView from "@/views/EventDetailView.vue";
+// Les autres pages sont chargées à la demande : l'accueil ne télécharge que son propre code
+// (la page article, par exemple, apporte marked et DOMPurify).
+const About = () => import('@/views/AboutView.vue')
+const Gallery = () => import('@/views/GalleryView.vue')
+const Events = () => import('@/views/EventsView.vue')
+const Contact = () => import('@/views/ContactView.vue')
+const CompetitionView = () => import('@/views/CompetitionView.vue')
+const InitiationView = () => import('@/views/InitiationView.vue')
+const BoutiqueView = () => import('@/views/BoutiqueView.vue')
+const EventDetailView = () => import('@/views/EventDetailView.vue')
 import { useAuth } from '@/composables/useAuth'
 import { setPageJsonLd, setPageMeta } from '@/lib/seo'
 

@@ -1,5 +1,5 @@
 import { ref } from 'vue'
-import { supabase } from '@/lib/supabase'
+import { restSelect } from '@/lib/publicApi'
 import type { Tables } from '@/lib/database.types'
 
 // Dates clés de la page « L'Association » (table milestones).
@@ -11,14 +11,8 @@ export const MILESTONE_COLUMNS = 'id, year, description'
 
 /** Récupère les dates clés dans l'ordre choisi par les éditeurs (colonne position). */
 export async function fetchMilestones(): Promise<Milestone[]> {
-  if (!supabase) throw new Error('Supabase non configuré')
-  const { data, error } = await supabase
-    .from('milestones')
-    .select(MILESTONE_COLUMNS)
-    .order('position', { ascending: true })
-    .order('id', { ascending: true })
-  if (error) throw error
-  return data
+  // Lecture publique en fetch direct (pas de supabase-js sur la page publique)
+  return restSelect<Milestone>('milestones', { select: MILESTONE_COLUMNS, order: 'position.asc,id.asc' })
 }
 
 /** Liste pour la page publique. */

@@ -40,11 +40,11 @@
           </div>
           <div class="histoire-visual">
             <div class="visual-card big">
-              <span><img :src="baseUrl + 'Bassin.jpg'" ></span>
+              <span><img :src="baseUrl + 'Bassin.webp'" width="1200" height="675" loading="lazy" decoding="async"></span>
             </div>
             <div class="visual-row">
-              <div class="visual-card small"><span><img :src="baseUrl + 'LeMans99.jpg'" ></span></div>
-              <div class="visual-card small"><span><img :src="baseUrl + 'LeMans99-2.jpg'" ></span></div>
+              <div class="visual-card small"><span><img :src="baseUrl + 'LeMans99.webp'" width="600" height="400" loading="lazy" decoding="async"></span></div>
+              <div class="visual-card small"><span><img :src="baseUrl + 'LeMans99-2.webp'" width="500" height="333" loading="lazy" decoding="async"></span></div>
             </div>
           </div>
         </div>
